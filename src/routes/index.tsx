@@ -1,24 +1,53 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowRight, MapPin, Package, PackageOpen, Search } from "lucide-react";
+import { ClientShell } from "@/apps/client/ClientShell";
+import { useI18n } from "@/packages/i18n";
+import { buttonVariants } from "@/packages/ui";
+import { cn } from "@/lib/utils";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
-  component: Index,
+  head: () => ({
+    meta: [
+      { title: "Tembera Cargo — Send anything across Rwanda" },
+      { name: "description", content: "Send, track and receive cargo anywhere in Rwanda. Snap a photo, get a clear price in RWF, and follow your delivery." },
+      { property: "og:title", content: "Tembera Cargo — Send anything across Rwanda" },
+      { property: "og:description", content: "From your door to their door, Tembera Cargo finds the way." },
+    ],
+  }),
+  component: Home,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+function Home() {
+  const { t } = useI18n();
+  const secondary = [
+    { to: "/track", icon: Search, label: t("home.track") },
+    { to: "/receive", icon: PackageOpen, label: t("home.receive") },
+    { to: "/shipments", icon: Package, label: t("home.mine") },
+  ] as const;
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <ClientShell>
+      <section className="relative -mx-4 -mt-6 overflow-hidden bg-glow px-4 pb-10 pt-12 md:rounded-b-3xl md:pt-20">
+        <div className="max-w-2xl">
+          <p className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-accent"><MapPin className="size-3.5" />Rwanda</p>
+          <h1 className="text-4xl font-bold leading-[1.05] md:text-6xl">{t("home.title")}</h1>
+          <p className="mt-4 text-lg text-muted-foreground">{t("home.subtitle")}</p>
+        </div>
+        <Link to="/send" className={cn(buttonVariants({ variant: "hero", size: "xl", block: true }), "mt-8 justify-between md:max-w-md")}>
+          <span className="text-left">
+            <span className="block">{t("home.send")}</span>
+            <span className="block text-sm font-medium opacity-80">{t("home.sendHint")}</span>
+          </span>
+          <ArrowRight className="size-6" />
+        </Link>
+      </section>
+      <section className="mt-6 grid grid-cols-3 gap-3">
+        {secondary.map((s) => (
+          <Link key={s.to} to={s.to} className="flex flex-col items-start gap-3 rounded-2xl border border-border bg-card p-4 transition-colors hover:border-accent/50">
+            <s.icon className="size-6 text-accent" />
+            <span className="text-sm font-semibold leading-tight">{s.label}</span>
+          </Link>
+        ))}
+      </section>
+    </ClientShell>
   );
 }
