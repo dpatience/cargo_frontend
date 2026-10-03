@@ -3,7 +3,15 @@ import { createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 
 export const getRouter = () => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 30_000,
+        refetchOnWindowFocus: false,
+        retry: (n, e) => n < 2 && !["unconfigured", "unauthorized", "forbidden", "not_found", "validation"].includes((e as { kind?: string }).kind ?? ""),
+      },
+    },
+  });
 
   const router = createRouter({
     routeTree,
