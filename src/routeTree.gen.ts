@@ -11,10 +11,19 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AccountRouteImport } from './routes/account'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as DriverRouteImport } from './routes/driver'
 import { Route as ReceiveRouteImport } from './routes/receive'
+import { Route as SendRouteImport } from './routes/send'
 import { Route as ShipmentsRouteImport } from './routes/shipments'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminPricingRouteImport } from './routes/admin.pricing'
+import { Route as AdminShipmentsRouteImport } from './routes/admin.shipments'
+import { Route as AdminVisionRouteImport } from './routes/admin.vision'
+import { Route as DriverIndexRouteImport } from './routes/driver.index'
 import { Route as TrackIndexRouteImport } from './routes/track.index'
 import { Route as TrackCodeRouteImport } from './routes/track.$code'
+import { Route as DriverJobsIdRouteImport } from './routes/driver.jobs.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -26,15 +35,55 @@ const AccountRoute = AccountRouteImport.update({
   path: '/account',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DriverRoute = DriverRouteImport.update({
+  id: '/driver',
+  path: '/driver',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ReceiveRoute = ReceiveRouteImport.update({
   id: '/receive',
   path: '/receive',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SendRoute = SendRouteImport.update({
+  id: '/send',
+  path: '/send',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ShipmentsRoute = ShipmentsRouteImport.update({
   id: '/shipments',
   path: '/shipments',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPricingRoute = AdminPricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminShipmentsRoute = AdminShipmentsRouteImport.update({
+  id: '/shipments',
+  path: '/shipments',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminVisionRoute = AdminVisionRouteImport.update({
+  id: '/vision',
+  path: '/vision',
+  getParentRoute: () => AdminRoute,
+} as any)
+const DriverIndexRoute = DriverIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DriverRoute,
 } as any)
 const TrackIndexRoute = TrackIndexRouteImport.update({
   id: '/track/',
@@ -46,52 +95,121 @@ const TrackCodeRoute = TrackCodeRouteImport.update({
   path: '/track/$code',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DriverJobsIdRoute = DriverJobsIdRouteImport.update({
+  id: '/jobs/$id',
+  path: '/jobs/$id',
+  getParentRoute: () => DriverRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/driver': typeof DriverRouteWithChildren
   '/receive': typeof ReceiveRoute
+  '/send': typeof SendRoute
   '/shipments': typeof ShipmentsRoute
+  '/admin/pricing': typeof AdminPricingRoute
+  '/admin/shipments': typeof AdminShipmentsRoute
+  '/admin/vision': typeof AdminVisionRoute
   '/track/$code': typeof TrackCodeRoute
+  '/admin/': typeof AdminIndexRoute
+  '/driver/': typeof DriverIndexRoute
   '/track/': typeof TrackIndexRoute
+  '/driver/jobs/$id': typeof DriverJobsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
   '/receive': typeof ReceiveRoute
+  '/send': typeof SendRoute
   '/shipments': typeof ShipmentsRoute
+  '/admin/pricing': typeof AdminPricingRoute
+  '/admin/shipments': typeof AdminShipmentsRoute
+  '/admin/vision': typeof AdminVisionRoute
   '/track/$code': typeof TrackCodeRoute
+  '/admin': typeof AdminIndexRoute
+  '/driver': typeof DriverIndexRoute
   '/track': typeof TrackIndexRoute
+  '/driver/jobs/$id': typeof DriverJobsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/driver': typeof DriverRouteWithChildren
   '/receive': typeof ReceiveRoute
+  '/send': typeof SendRoute
   '/shipments': typeof ShipmentsRoute
+  '/admin/pricing': typeof AdminPricingRoute
+  '/admin/shipments': typeof AdminShipmentsRoute
+  '/admin/vision': typeof AdminVisionRoute
   '/track/$code': typeof TrackCodeRoute
+  '/admin/': typeof AdminIndexRoute
+  '/driver/': typeof DriverIndexRoute
   '/track/': typeof TrackIndexRoute
+  '/driver/jobs/$id': typeof DriverJobsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/account' | '/receive' | '/shipments' | '/track/$code' | '/track/'
+    | '/'
+    | '/account'
+    | '/admin'
+    | '/driver'
+    | '/receive'
+    | '/send'
+    | '/shipments'
+    | '/admin/pricing'
+    | '/admin/shipments'
+    | '/admin/vision'
+    | '/track/$code'
+    | '/admin/'
+    | '/driver/'
+    | '/track/'
+    | '/driver/jobs/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/account' | '/receive' | '/shipments' | '/track/$code' | '/track'
+  to:
+    | '/'
+    | '/account'
+    | '/receive'
+    | '/send'
+    | '/shipments'
+    | '/admin/pricing'
+    | '/admin/shipments'
+    | '/admin/vision'
+    | '/track/$code'
+    | '/admin'
+    | '/driver'
+    | '/track'
+    | '/driver/jobs/$id'
   id:
     | '__root__'
     | '/'
     | '/account'
+    | '/admin'
+    | '/driver'
     | '/receive'
+    | '/send'
     | '/shipments'
+    | '/admin/pricing'
+    | '/admin/shipments'
+    | '/admin/vision'
     | '/track/$code'
+    | '/admin/'
+    | '/driver/'
     | '/track/'
+    | '/driver/jobs/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AccountRoute: typeof AccountRoute
+  AdminRoute: typeof AdminRouteWithChildren
+  DriverRoute: typeof DriverRouteWithChildren
   ReceiveRoute: typeof ReceiveRoute
+  SendRoute: typeof SendRoute
   ShipmentsRoute: typeof ShipmentsRoute
   TrackCodeRoute: typeof TrackCodeRoute
   TrackIndexRoute: typeof TrackIndexRoute
@@ -113,11 +231,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccountRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/driver': {
+      id: '/driver'
+      path: '/driver'
+      fullPath: '/driver'
+      preLoaderRoute: typeof DriverRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/receive': {
       id: '/receive'
       path: '/receive'
       fullPath: '/receive'
       preLoaderRoute: typeof ReceiveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/send': {
+      id: '/send'
+      path: '/send'
+      fullPath: '/send'
+      preLoaderRoute: typeof SendRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/shipments': {
@@ -126,6 +265,41 @@ declare module '@tanstack/react-router' {
       fullPath: '/shipments'
       preLoaderRoute: typeof ShipmentsRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/pricing': {
+      id: '/admin/pricing'
+      path: '/pricing'
+      fullPath: '/admin/pricing'
+      preLoaderRoute: typeof AdminPricingRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/shipments': {
+      id: '/admin/shipments'
+      path: '/shipments'
+      fullPath: '/admin/shipments'
+      preLoaderRoute: typeof AdminShipmentsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/vision': {
+      id: '/admin/vision'
+      path: '/vision'
+      fullPath: '/admin/vision'
+      preLoaderRoute: typeof AdminVisionRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/driver/': {
+      id: '/driver/'
+      path: '/'
+      fullPath: '/driver/'
+      preLoaderRoute: typeof DriverIndexRouteImport
+      parentRoute: typeof DriverRoute
     }
     '/track/': {
       id: '/track/'
@@ -141,13 +315,52 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TrackCodeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/driver/jobs/$id': {
+      id: '/driver/jobs/$id'
+      path: '/jobs/$id'
+      fullPath: '/driver/jobs/$id'
+      preLoaderRoute: typeof DriverJobsIdRouteImport
+      parentRoute: typeof DriverRoute
+    }
   }
 }
+
+interface AdminRouteChildren {
+  AdminPricingRoute: typeof AdminPricingRoute
+  AdminShipmentsRoute: typeof AdminShipmentsRoute
+  AdminVisionRoute: typeof AdminVisionRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminPricingRoute: AdminPricingRoute,
+  AdminShipmentsRoute: AdminShipmentsRoute,
+  AdminVisionRoute: AdminVisionRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
+interface DriverRouteChildren {
+  DriverIndexRoute: typeof DriverIndexRoute
+  DriverJobsIdRoute: typeof DriverJobsIdRoute
+}
+
+const DriverRouteChildren: DriverRouteChildren = {
+  DriverIndexRoute: DriverIndexRoute,
+  DriverJobsIdRoute: DriverJobsIdRoute,
+}
+
+const DriverRouteWithChildren =
+  DriverRoute._addFileChildren(DriverRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AccountRoute: AccountRoute,
+  AdminRoute: AdminRouteWithChildren,
+  DriverRoute: DriverRouteWithChildren,
   ReceiveRoute: ReceiveRoute,
+  SendRoute: SendRoute,
   ShipmentsRoute: ShipmentsRoute,
   TrackCodeRoute: TrackCodeRoute,
   TrackIndexRoute: TrackIndexRoute,
