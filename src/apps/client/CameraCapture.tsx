@@ -4,7 +4,7 @@ import { useI18n } from "@/packages/i18n";
 import { Button } from "@/packages/ui";
 
 /** Captures up to 3 compressed JPEG frames (max 1280px) for low-bandwidth upload. */
-export function CameraCapture({ onSubmit, busy }: { onSubmit: (images: Blob[]) => void; busy?: boolean }) {
+export function CameraCapture({ onSubmit, busy }: { onSubmit: (images: Blob[]) => void; busy?: boolean | undefined }) {
   const { t } = useI18n();
   const video = useRef<HTMLVideoElement>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);

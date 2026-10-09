@@ -28,7 +28,7 @@ type RequestOpts = {
   formData?: FormData;
 };
 
-export async function apiRequest<T>(path: string, schema: z.ZodType<T>, opts: RequestOpts = {}): Promise<T> {
+export async function apiRequest<S extends z.ZodTypeAny>(path: string, schema: S, opts: RequestOpts = {}): Promise<z.output<S>> {
   if (!isApiConfigured()) throw new ApiError("unconfigured", "The Tembera Cargo service is not connected yet.");
   if (typeof navigator !== "undefined" && navigator.onLine === false) throw new ApiError("offline", "You are offline.");
 
@@ -37,8 +37,8 @@ export async function apiRequest<T>(path: string, schema: z.ZodType<T>, opts: Re
 
   const headers: Record<string, string> = { Accept: "application/json" };
   const token = opts.area ? tokenStore.get(opts.area) : null;
-  if (token) headers.Authorization = `Bearer ${token}`;
-  let body: BodyInit | undefined;
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  let body: BodyInit | null = null;
   if (opts.formData) body = opts.formData;
   else if (opts.body !== undefined) { headers["Content-Type"] = "application/json"; body = JSON.stringify(opts.body); }
 
@@ -61,5 +61,5 @@ export async function apiRequest<T>(path: string, schema: z.ZodType<T>, opts: Re
   }
   const parsed = schema.safeParse(json);
   if (!parsed.success) throw new ApiError("validation", "Unexpected response from server.", res.status, parsed.error.flatten());
-  return parsed.data;
+  return parsed.data as z.output<S>;
 }
