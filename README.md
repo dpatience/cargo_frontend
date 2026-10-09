@@ -24,5 +24,13 @@ src/routes            route entry points per app
 ## Setup
 Copy `.env.example` → `.env` and set `VITE_API_BASE_URL`. Without it every screen shows "Service not connected" — no mock data is ever shown. Endpoints: see `api.md`.
 
-## Independent deployment
-Deploy the same build to three domains and route each domain's root to its app area (e.g. edge redirect `driver.cargo.tembera.rw/` → `/driver`), or split `src/routes/driver*` / `admin*` into separate projects that import `src/packages`.
+## Running each app on its own port
+```
+bun run dev:client   # http://localhost:3000
+bun run dev:driver   # http://localhost:3001  (opens /driver)
+bun run dev:admin    # http://localhost:3002  (opens /admin)
+```
+`VITE_APP` pins a server to one app; any path from another app redirects to that app's home.
+
+## Independent deployment (one project, three domains)
+Connect `cargo.tembera.rw`, `driver.cargo.tembera.rw` and `admin.cargo.tembera.rw` to the project and do NOT set a primary domain (so none redirect to another). The hostname picks the app: `driver.*` → Driver, `admin.*` → Admin, `VITE_CLIENT_HOST` → Client. Opening the driver domain lands on `/driver`; client or admin pages there redirect back. Preview and other hosts show all apps for testing.
