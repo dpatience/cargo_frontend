@@ -24,7 +24,7 @@ export const buttonVariants = cva(
     defaultVariants: { variant: "primary", size: "md" },
   },
 );
-export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & VariantProps<typeof buttonVariants> & { loading?: boolean };
+export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & VariantProps<typeof buttonVariants> & { loading?: boolean | undefined };
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({ className, variant, size, block, loading, children, disabled, ...p }, ref) => (
   <button ref={ref} className={cn(buttonVariants({ variant, size, block }), className)} disabled={disabled || loading} {...p}>
     {loading && <Loader2 className="size-4 animate-spin" />}{children}
@@ -62,7 +62,7 @@ export function LoadingList({ rows = 3 }: { rows?: number }) {
   return <div className="space-y-3">{Array.from({ length: rows }).map((_, i) => <Skeleton key={i} className="h-20" />)}</div>;
 }
 
-function StateBox({ icon, title, body, action }: { icon: ReactNode; title: string; body?: string; action?: ReactNode }) {
+function StateBox({ icon, title, body, action }: { icon: ReactNode; title: string; body?: string | undefined; action?: ReactNode }) {
   return (
     <div role="status" className="flex flex-col items-center rounded-2xl border border-dashed border-border px-6 py-10 text-center">
       <div className="mb-3 grid size-12 place-items-center rounded-full bg-secondary text-accent">{icon}</div>
@@ -72,7 +72,7 @@ function StateBox({ icon, title, body, action }: { icon: ReactNode; title: strin
     </div>
   );
 }
-export function EmptyState({ title, body, action }: { title: string; body?: string; action?: ReactNode }) {
+export function EmptyState({ title, body, action }: { title: string; body?: string | undefined; action?: ReactNode }) {
   return <StateBox icon={<Inbox className="size-5" />} title={title} body={body} action={action} />;
 }
 export function ErrorState({ error, onRetry }: { error: unknown; onRetry?: () => void }) {

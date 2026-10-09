@@ -37,7 +37,7 @@ export const visionApi = {
 export type QuoteRequest = {
   originId: string; destinationId: string;
   analysisId?: string;
-  manual?: { category: string; weightKg?: number; sizeClass?: string; fragile?: boolean; description?: string };
+  manual?: { category: string; weightKg?: number | undefined; sizeClass?: string | undefined; fragile?: boolean; description?: string | undefined };
 };
 export const quotesApi = { create: (body: QuoteRequest) => apiRequest("/quotes", Quote, { method: "POST", body, area: "client" }) };
 
