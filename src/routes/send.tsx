@@ -25,7 +25,7 @@ export const Route = createFileRoute("/send")({
 });
 
 type Step = "route" | "cargo" | "price" | "recipient" | "confirm" | "done";
-const steps: Step[] = ["route", "cargo", "price", "recipient", "confirm"];
+const steps: Exclude<Step, "done">[] = ["route", "cargo", "price", "recipient", "confirm"];
 
 function Send() {
   const { t } = useI18n();
@@ -56,8 +56,8 @@ function Send() {
     onSuccess: (s) => { setShipment(s); setStep("done"); },
   });
 
-  const idx = steps.indexOf(step);
-  const back = () => idx > 0 && setStep(steps[idx - 1]);
+  const idx = step === "done" ? steps.length : steps.indexOf(step);
+  const back = () => idx > 0 && setStep(steps[idx - 1]!);
 
   return (
     <ClientShell>
@@ -224,6 +224,6 @@ function Send() {
   );
 }
 
-function Row({ k, v, strong }: { k: string; v?: string; strong?: boolean }) {
+function Row({ k, v, strong }: { k: string; v?: string | undefined; strong?: boolean }) {
   return <div className="flex justify-between gap-4 border-b border-border py-2 last:border-0"><span className="text-muted-foreground">{k}</span><span className={strong ? "font-display text-lg font-bold" : "text-right font-medium"}>{v}</span></div>;
 }

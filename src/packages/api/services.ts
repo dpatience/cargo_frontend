@@ -41,7 +41,7 @@ export type QuoteRequest = {
 };
 export const quotesApi = { create: (body: QuoteRequest) => apiRequest("/quotes", Quote, { method: "POST", body, area: "client" }) };
 
-export type CreateShipmentBody = { quoteId: string; optionId: string; recipient: { name: string; phone: string; notes?: string }; sender?: { name?: string; phone?: string } };
+export type CreateShipmentBody = { quoteId: string; optionId: string; recipient: { name: string; phone: string; notes?: string | undefined }; sender?: { name?: string; phone?: string } };
 export const shipmentsApi = {
   create: (body: CreateShipmentBody) => apiRequest("/shipments", Shipment, { method: "POST", body, area: "client" }),
 };
@@ -68,7 +68,7 @@ export const driverJobQuery = (id: string) => queryOptions({
 });
 export const driverApi = {
   confirmHandoff: (jobId: string, code: string) => apiRequest(`/driver/jobs/${jobId}/handoff`, Ok, { method: "POST", body: { code }, area: "driver" }),
-  submitProof: (jobId: string, data: { photo?: Blob; recipientCode: string; recipientName: string }) => {
+  submitProof: (jobId: string, data: { photo?: Blob | undefined; recipientCode: string; recipientName: string }) => {
     const fd = new FormData();
     if (data.photo) fd.append("photo", data.photo, "pod.jpg");
     fd.append("recipientCode", data.recipientCode);
