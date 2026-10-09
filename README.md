@@ -1,29 +1,28 @@
-# Welcome to your Lovable project
+# Tembera Cargo — Frontend
 
-This project was built with [Lovable](https://lovable.dev).
+Three separate apps sharing one design system and API layer:
 
-## Build with Lovable
+| App | Path (this repo) | Target domain | Sign-in |
+|---|---|---|---|
+| Client | `/`, `/send`, `/track/:code`, `/receive`, `/shipments`, `/account` | cargo.tembera.rw | Phone + OTP |
+| Driver | `/driver/*` | driver.cargo.tembera.rw | Phone + OTP |
+| Admin | `/admin/*` | admin.cargo.tembera.rw | Email + password |
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
+Each app has its own layout, navigation, auth gate and token storage (`tembera-cargo:<app>:token`). No role-based switching.
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
-
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
-
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+## Structure
+```
+src/packages/config   env config
+src/packages/api      fetch client (timeouts, typed ApiError, Zod validation) + services/queries
+src/packages/types    Zod schemas
+src/packages/i18n     EN + Kinyarwanda keys, RWF formatting (French-ready)
+src/packages/ui       buttons, cards, loading/empty/error/offline states, auth
+src/apps/client       client-only components (camera, location picker, timeline)
+src/routes            route entry points per app
 ```
 
-## Built with
+## Setup
+Copy `.env.example` → `.env` and set `VITE_API_BASE_URL`. Without it every screen shows "Service not connected" — no mock data is ever shown. Endpoints: see `api.md`.
 
-- TanStack Start
-- TypeScript
-- React
-- Tailwind CSS
+## Independent deployment
+Deploy the same build to three domains and route each domain's root to its app area (e.g. edge redirect `driver.cargo.tembera.rw/` → `/driver`), or split `src/routes/driver*` / `admin*` into separate projects that import `src/packages`.
