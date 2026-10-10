@@ -10,12 +10,15 @@ are validated at runtime.
 
 Authenticated requests send the access token as a bearer authorization
 credential. Error responses use `{ "message": string }` and the
-operation-appropriate status from 400/401/403/404/422/5xx. Money is
+operation-appropriate status from 401/403/404/422/429/5xx. Money is
 `{ amount: number, currency: "RWF" }`. Access tokens expire after 15 minutes.
 Refresh sessions rotate, are revocable, and last 30 days; the refresh
 credential is sent only as a Secure, HttpOnly cookie. Refresh/logout requests
-must include credentials. Cookie, CORS, and CSRF policy requires
-backend/security approval before implementation.
+must include credentials and the applicable `app` (`client`, `driver`, or
+`admin`). The cookie is host-only, HttpOnly, SameSite=Lax, scoped to
+`/v1/auth`, and Secure in production. Refresh/logout require an allowlisted
+Origin. The client refreshes shortly before expiry and retries an unauthorized
+request at most once after rotating the refresh session.
 
 These endpoints and rules are the Phase 0 contract baseline for backend and
 frontend owner review. Unapproved assumptions and open decisions are tracked
@@ -42,22 +45,53 @@ in JSON. `/auth/me` returns the user object directly:
 | POST | /auth/otp/request | `{ phone, app: "client"\|"driver" }` | `{ requestId, expiresInSeconds }` |
 | POST | /auth/otp/verify | `{ requestId, code, app }` | `Session` + refresh cookie |
 | POST | /auth/login | `{ email, password, app: "admin" }` | `Session` + refresh cookie |
-| POST | /auth/refresh | — (refresh cookie) | `Session` + rotated refresh cookie |
-| POST | /auth/logout | — (refresh cookie) | `204`; revoke refresh session and clear cookie |
+| POST | /auth/refresh | `{ app }` + refresh cookie | `Session` + rotated refresh cookie |
+| POST | /auth/logout | `{ app }` + refresh cookie | `204`; revoke refresh session and clear cookie |
 | GET | /auth/me | — | `user { id, name?, phone?, email?, roles[] }` |
+| POST | /auth/email/request | `{ email }` + bearer access token | `{ requestId, expiresInSeconds }` |
+| POST | /auth/email/verify | `{ requestId, code }` + bearer access token | updated `user` |
 
-OTP validity, rate limits, role names, administrator provisioning/recovery,
-and cookie/CORS/CSRF details require owner approval.
+Client accounts are created only after a verified phone OTP. Driver accounts
+and administrator credentials are provisioned by Cargo; OTP is not a
+self-enrollment path for drivers. OTPs are six digits, expire after five
+minutes, allow five attempts, and have a 60-second resend cooldown. Sends are
+limited to three per phone per 15 minutes and 20 per IP per hour. Administrator
+login attempts are limited to five per email per 15 minutes and 20 per IP per
+hour, without account lockout. Africa's Talking delivers SMS OTP. Gmail SMTP
+verifies email as a contact method only; email is not a sign-in credential.
+Email verification uses the same six-digit, five-minute challenge limits.
+Guest shipment OTP is a separate planned workflow and is not implemented by
+the account sign-in endpoints.
+
+OTP/login rate-limit errors return 429 with `Retry-After`; invalid input uses
+422, invalid credentials/challenges use 401, rejected origins use 403, and
+provider unavailability uses 503. Authentication errors use the
+`{ "message": string }` envelope. Client location search uses live Google
+Places API (New) Text Search. The server-side key is never returned to the
+frontend; results are filtered to Rwanda; and the frontend shows Google
+Maps attribution. Results are transient and the endpoint responds with
+`Cache-Control: no-store`. Cargo must not import or persist Google content;
+Place IDs may be retained as permitted by Google's current terms. Provider or
+configuration failures return 503 with the standard error envelope.
 
 ## Locations
 
 | Method | Path | Body | Response |
 |---|---|---|---|
-| GET | /locations/search?q= | — | `Location[] { id, name, district?, province?, lat?, lng?, type? }` |
+| GET | /locations/search?q= | — | `Location[] { id, name, address?, lat?, lng?, source: "google" }` |
 
-The source is a Cargo-managed approved directory. Results must be limited to
-activated service coverage; directory ownership and update cadence remain to
-be approved.
+`id` is the Google Place ID. The source is Google Places API (New) Text
+Search, filtered to Rwanda and limited to ten results. Cargo does not
+import or persist Google names, addresses, or coordinates. `address` is the
+Google formatted address. The picker displays Google Maps attribution.
+Production use requires an API key restricted to the Places API and production
+server IP, billing/quota controls, and publicly accessible Cargo Terms of Use
+and Privacy Policy incorporating Google's terms. Provider search does not
+establish Cargo service coverage; Operations must approve coverage criteria.
+Later quote/shipment flows must use Place IDs and obtain current Google data
+instead of storing API content. Quote, history, and public tracking responses
+mark live Google-derived location names with source `"google"` and do not
+persist the returned names or addresses.
 
 ## Cargo vision
 
@@ -73,16 +107,27 @@ ownership are not yet approved.
 
 | Method | Path | Body | Response |
 |---|---|---|---|
-| POST | /quotes | `{ originId, destinationId, analysisId?, manual?: { category, weightKg?, sizeClass?, fragile?, description? } }` | `Quote { quoteId, expiresAt, options[]: { id, label, speed?, estimatedDelivery?, price, breakdown[{label,amount}], explanation?, route[{label,mode?}], recommended? } }` |
+| POST | /quotes | `{ originId, destinationId, manual: { category, weightKg, sizeClass, fragile? } }` | `Quote { quoteId, expiresAt, options[]: { id, label, price, breakdown[{label,amount}], explanation?, route[{label,source?}], recommended? } }` |
 | POST | /shipments | `Idempotency-Key` header; `{ quoteId, optionId, recipient: { name, phone, notes? }, sender?: { name?, phone? } }` | `Shipment { id, trackingCode, status, statusLabel?, origin, destination, recipientName?, recipientPhone?, price?, createdAt, eta?, events[], paymentUrl? }` (payment URL is not evidence of payment) |
 | GET | /shipments | `page?`, `pageSize?` | `{ items: Shipment[], total, page, pageSize }` |
-| GET | /tracking/:code | public, no auth | `PublicTracking { id, trackingCode, status, statusLabel?, origin, destination, eta?, price?, createdAt, events[{at,status,label,location?}] }` |
+| GET | /tracking/:code | public, no auth | `PublicTracking { id, trackingCode, status, statusLabel?, origin, destination, originSource: "google", destinationSource: "google", eta?, price?, createdAt, events[{at,status,label,location?}] }` |
 
-Quote expiry is a required timezone-aware ISO-8601 timestamp. Quotes must be
-valid and unexpired at shipment creation. Public tracking must not return
-recipient/sender details, payment URLs, or internal evidence. Quote lifetime,
-price provenance/rounding, idempotency retention, and exact shipment snapshot
-fields require backend, finance, and product approval.
+Quotes require manual cargo category, weight, and size class; cargo-vision
+estimates are not accepted as booking inputs without the approved policy and
+manual review. The only current quote option is `standard`. Quotes expire
+after 15 minutes and include price provenance from the active tariff and
+Google road distance; the distance itself is not persisted. The total is
+rounded to the nearest whole RWF. Shipment creation accepts only the quoted
+option and an unexpired, unused quote owned by the authenticated customer.
+`Idempotency-Key` is required and same-key retries with the same request return
+the original shipment; reusing it with different data returns 409.
+
+Public tracking must not return recipient/sender details, payment URLs, or
+internal evidence and responds `Cache-Control: no-store`. Location names are
+resolved live from Place IDs and marked with Google Maps attribution. No
+delivery time is promised. Quote and shipment endpoints return 503 until both
+the legally reviewed cargo acceptance matrix and an approved tariff are
+configured; an active tariff alone does not enable booking.
 
 ## Driver
 
@@ -104,10 +149,16 @@ mandatory regardless of client throttling.
 |---|---|---|---|
 | GET | /admin/dashboard | — | `{ metrics[{key,label,value,unit?,trend?}], alerts[{id,severity,message}] }` |
 | GET | /admin/shipments?q=&status=&page=&pageSize= | — | `{ items: Shipment[], total, page, pageSize }` |
-| GET | /admin/pricing/rules | — | `PricingRule[] { id, name, description?, value, unit, active, updatedAt? }` |
-| PATCH | /admin/pricing/rules/:id | `{ value?, active? }` | `PricingRule` (server must audit-log) |
+| GET | /admin/pricing/tariffs | — | `TariffVersion[]` |
+| POST | /admin/pricing/tariffs | `{ name, baseFeeRwf, perKgRwf, perKmRwf, sizeRatesRwf, fragileSurchargeRwf }` | New draft `TariffVersion` |
+| POST | /admin/pricing/tariffs/:id/activate | `{}` | Activated `TariffVersion`; prior active version is retired |
 | GET | /admin/cargo-vision/reviews | — | `VisionReview[] { id, shipmentId?, imageUrls[], analysis, createdAt }` |
 | POST | /admin/cargo-vision/reviews/:id | `{ decision: approve\|correct, corrections? }` | `{ ok }` |
+
+Tariff versions are immutable once created except for the controlled
+draft→active→retired status changes. Creation and activation are audited.
+Tariff rates are not seeded; Finance and Operations must approve actual
+values and effective dates before the active tariff is used for quotes.
 
 ## Planned (not launch commitments)
 

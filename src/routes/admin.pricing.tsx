@@ -1,37 +1,240 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { adminApi, adminPricingQuery } from "@/packages/api/services";
-import type { PricingRule } from "@/packages/types";
-import { Button, Card, EmptyState, ErrorState, Input, LoadingList } from "@/packages/ui";
+import type { TariffVersion } from "@/packages/types";
+import { Button, Card, EmptyState, ErrorState, Field, Input, LoadingList } from "@/packages/ui";
 
 export const Route = createFileRoute("/admin/pricing")({ component: Pricing });
 
-function RuleRow({ rule }: { rule: PricingRule }) {
-  const qc = useQueryClient();
-  const [value, setValue] = useState(String(rule.value));
-  const m = useMutation({ mutationFn: (patch: { value?: number; active?: boolean }) => adminApi.updatePricingRule(rule.id, patch), onSuccess: () => qc.invalidateQueries({ queryKey: ["admin", "pricing"] }) });
+type TariffDraft = {
+  name: string;
+  baseFeeRwf: string;
+  perKgRwf: string;
+  perKmRwf: string;
+  fragileSurchargeRwf: string;
+  sizeRatesRwf: string;
+};
+
+const emptyDraft: TariffDraft = {
+  name: "",
+  baseFeeRwf: "",
+  perKgRwf: "",
+  perKmRwf: "",
+  fragileSurchargeRwf: "0",
+  sizeRatesRwf: "",
+};
+
+function parseSizeRates(value: string): Record<string, number> {
+  const parsed: unknown = JSON.parse(value);
+  if (
+    typeof parsed !== "object" ||
+    parsed === null ||
+    Array.isArray(parsed) ||
+    Object.keys(parsed).length === 0 ||
+    !Object.entries(parsed).every(
+      ([key, amount]) =>
+        key.trim().length > 0 &&
+        key.length <= 40 &&
+        Number.isSafeInteger(amount) &&
+        typeof amount === "number" &&
+        amount >= 0,
+    )
+  ) {
+    throw new Error("Size rates must be a non-empty JSON object of nonnegative whole RWF amounts.");
+  }
+  return Object.fromEntries(Object.entries(parsed).map(([key, amount]) => [key, amount]));
+}
+
+function TariffCard({
+  tariff,
+  onActivate,
+  busy,
+}: {
+  tariff: TariffVersion;
+  onActivate: (id: string) => void;
+  busy: boolean;
+}) {
   return (
-    <Card className="flex flex-col gap-3 md:flex-row md:items-center">
-      <div className="flex-1"><p className="font-semibold">{rule.name}</p>{rule.description && <p className="text-sm text-muted-foreground">{rule.description}</p>}</div>
-      <div className="flex items-center gap-2">
-        <Input type="number" value={value} onChange={(e) => setValue(e.target.value)} className="w-32" aria-label={`${rule.name} value`} />
-        <span className="w-16 text-sm text-muted-foreground">{rule.unit}</span>
-        <Button size="sm" disabled={Number(value) === rule.value} loading={m.isPending} onClick={() => m.mutate({ value: Number(value) })}>Save</Button>
-        <Button size="sm" variant={rule.active ? "subtle" : "outline"} onClick={() => m.mutate({ active: !rule.active })}>{rule.active ? "Active" : "Inactive"}</Button>
+    <Card className="space-y-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <p className="font-semibold">
+            v{tariff.version} · {tariff.name}
+          </p>
+          <p className="text-sm capitalize text-muted-foreground">{tariff.status}</p>
+        </div>
+        {tariff.status === "draft" && (
+          <Button
+            size="sm"
+            loading={busy}
+            onClick={() => {
+              if (
+                window.confirm(
+                  `Activate tariff v${tariff.version}? It will replace the current active tariff.`,
+                )
+              ) {
+                onActivate(tariff.id);
+              }
+            }}
+          >
+            Activate
+          </Button>
+        )}
       </div>
-      {m.error && <p className="text-sm text-destructive">{m.error.message}</p>}
+      <dl className="grid grid-cols-2 gap-2 text-sm md:grid-cols-3">
+        <Rate label="Base fee" value={tariff.baseFeeRwf} />
+        <Rate label="Per kg" value={tariff.perKgRwf} />
+        <Rate label="Per km" value={tariff.perKmRwf} />
+        <Rate label="Fragile surcharge" value={tariff.fragileSurchargeRwf} />
+        {Object.entries(tariff.sizeRatesRwf).map(([size, amount]) => (
+          <Rate key={size} label={`Size: ${size}`} value={amount} />
+        ))}
+      </dl>
     </Card>
   );
 }
 
-function Pricing() {
-  const q = useQuery(adminPricingQuery());
+function Rate({ label, value }: { label: string; value: number }) {
   return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold">Pricing rules</h1>
-      <p className="text-sm text-muted-foreground">All prices shown to clients are computed by the pricing service from these rules. Changes are audited server-side.</p>
-      {q.isPending ? <LoadingList /> : q.error ? <ErrorState error={q.error} onRetry={() => q.refetch()} /> : q.data.length === 0 ? <EmptyState title="No pricing rules defined" /> : q.data.map((r) => <RuleRow key={r.id} rule={r} />)}
+    <div>
+      <dt className="text-muted-foreground">{label}</dt>
+      <dd className="font-medium">{value.toLocaleString()} RWF</dd>
+    </div>
+  );
+}
+
+function Pricing() {
+  const queryClient = useQueryClient();
+  const query = useQuery(adminPricingQuery());
+  const [draft, setDraft] = useState(emptyDraft);
+  const [formError, setFormError] = useState<string | null>(null);
+  const create = useMutation({
+    mutationFn: () =>
+      adminApi.createTariff({
+        name: draft.name.trim(),
+        baseFeeRwf: Number(draft.baseFeeRwf),
+        perKgRwf: Number(draft.perKgRwf),
+        perKmRwf: Number(draft.perKmRwf),
+        fragileSurchargeRwf: Number(draft.fragileSurchargeRwf),
+        sizeRatesRwf: parseSizeRates(draft.sizeRatesRwf),
+      }),
+    onSuccess: async () => {
+      setDraft(emptyDraft);
+      setFormError(null);
+      await queryClient.invalidateQueries({ queryKey: ["admin", "pricing", "tariffs"] });
+    },
+  });
+  const activate = useMutation({
+    mutationFn: adminApi.activateTariff,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin", "pricing", "tariffs"] }),
+  });
+
+  function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setFormError(null);
+    try {
+      const sizeRatesRwf = parseSizeRates(draft.sizeRatesRwf);
+      const amounts = [
+        draft.baseFeeRwf,
+        draft.perKgRwf,
+        draft.perKmRwf,
+        draft.fragileSurchargeRwf,
+        ...Object.values(sizeRatesRwf).map(String),
+      ];
+      if (
+        !draft.name.trim() ||
+        amounts.some((amount) => !/^\d+$/.test(amount) || !Number.isSafeInteger(Number(amount)))
+      ) {
+        throw new Error("Enter a tariff name and nonnegative whole RWF amounts.");
+      }
+      create.mutate();
+    } catch (error) {
+      setFormError(error instanceof Error ? error.message : "Invalid tariff values.");
+    }
+  }
+
+  return (
+    <div className="space-y-5">
+      <header className="space-y-1">
+        <h1 className="text-2xl font-bold">Tariff versions</h1>
+        <p className="text-sm text-muted-foreground">
+          Tariffs are versioned and audited. Creating a draft does not enable quotes; only activate
+          a tariff after the cargo policy and rates have been approved.
+        </p>
+      </header>
+
+      <Card>
+        <form className="space-y-4" onSubmit={submit}>
+          <h2 className="text-lg font-semibold">Create draft tariff</h2>
+          <Field label="Version name">
+            <Input
+              required
+              maxLength={120}
+              value={draft.name}
+              onChange={(event) => setDraft({ ...draft, name: event.target.value })}
+            />
+          </Field>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {(
+              [
+                ["baseFeeRwf", "Base fee (RWF)"],
+                ["perKgRwf", "Per kg (RWF)"],
+                ["perKmRwf", "Per km (RWF)"],
+                ["fragileSurchargeRwf", "Fragile surcharge (RWF)"],
+              ] as const
+            ).map(([key, label]) => (
+              <Field key={key} label={label}>
+                <Input
+                  required
+                  type="number"
+                  min={0}
+                  step={1}
+                  value={draft[key]}
+                  onChange={(event) => setDraft({ ...draft, [key]: event.target.value })}
+                />
+              </Field>
+            ))}
+          </div>
+          <Field label="Size-class rates (JSON; each value is a whole RWF amount)">
+            <textarea
+              required
+              value={draft.sizeRatesRwf}
+              onChange={(event) => setDraft({ ...draft, sizeRatesRwf: event.target.value })}
+              className="min-h-24 w-full rounded-xl border border-input bg-surface p-3 font-mono text-sm"
+              placeholder='{"small": 0, "medium": 0}'
+            />
+          </Field>
+          {(formError || create.error) && (
+            <p role="alert" className="text-sm text-destructive">
+              {formError ?? create.error?.message}
+            </p>
+          )}
+          <Button type="submit" loading={create.isPending}>
+            Save draft
+          </Button>
+        </form>
+      </Card>
+
+      {activate.error && <ErrorState error={activate.error} />}
+      {query.isPending ? (
+        <LoadingList />
+      ) : query.error ? (
+        <ErrorState error={query.error} onRetry={() => query.refetch()} />
+      ) : query.data.length === 0 ? (
+        <EmptyState title="No tariff versions defined" />
+      ) : (
+        <div className="space-y-3">
+          {query.data.map((tariff) => (
+            <TariffCard
+              key={tariff.id}
+              tariff={tariff}
+              onActivate={(id) => activate.mutate(id)}
+              busy={activate.isPending}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

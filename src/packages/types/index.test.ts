@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { PublicTracking, Quote, Session } from "./index";
+import { Location, PublicTracking, Quote, Session } from "./index";
 
 describe("frontend API contract schemas", () => {
   it("requires an access-token lifetime in session responses", () => {
@@ -33,6 +33,8 @@ describe("frontend API contract schemas", () => {
       status: "in_transit",
       origin: "Kigali",
       destination: "Huye",
+      originSource: "google",
+      destinationSource: "google",
       createdAt: "2026-10-09T12:00:00Z",
       events: [],
     };
@@ -44,5 +46,19 @@ describe("frontend API contract schemas", () => {
     expect(
       PublicTracking.safeParse({ ...tracking, paymentUrl: "https://pay.example" }).success,
     ).toBe(false);
+  });
+
+  it("validates transient Google Places location results", () => {
+    const location = {
+      id: "ChIJ-test",
+      name: "Kigali",
+      address: "Kigali, Rwanda",
+      lat: -1.9441,
+      lng: 30.0619,
+      source: "google",
+    };
+
+    expect(Location.safeParse(location).success).toBe(true);
+    expect(Location.safeParse({ ...location, source: "cargo" }).success).toBe(false);
   });
 });
