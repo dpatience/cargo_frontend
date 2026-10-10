@@ -4,9 +4,9 @@ Three separate apps sharing one design system and API layer:
 
 | App | Path (this repo) | Target domain | Sign-in |
 |---|---|---|---|
-| Client | `/`, `/send`, `/track/:code`, `/receive`, `/shipments`, `/account` | cargo.tembera.rw | Phone + OTP |
-| Driver | `/driver/*` | driver.cargo.tembera.rw | Phone + OTP |
-| Admin | `/admin/*` | admin.cargo.tembera.rw | Email + password |
+| Client | `/`, `/send`, `/track/:code`, `/receive`, `/shipments`, `/account` | cargo.tembera.app | Phone + OTP |
+| Driver | `/driver/*` | driver.cargo.tembera.app | Phone + OTP |
+| Admin | `/admin/*` | admin.cargo.tembera.app | Email + password |
 
 Each app has its own layout, navigation, auth gate and token storage (`tembera-cargo:<app>:token`). No role-based switching.
 
@@ -45,4 +45,7 @@ npm run dev:admin    # http://localhost:3002 (or: bun run dev:admin)
 `VITE_APP` pins a server to one app; any path from another app redirects to that app's home.
 
 ## Independent deployment (one project, three domains)
-Connect `cargo.tembera.rw`, `driver.cargo.tembera.rw` and `admin.cargo.tembera.rw` to the project and do NOT set a primary domain (so none redirect to another). The hostname picks the app: `driver.*` → Driver, `admin.*` → Admin, `VITE_CLIENT_HOST` → Client. Opening the driver domain lands on `/driver`; client or admin pages there redirect back. Preview and other hosts show all apps for testing.
+Connect `cargo.tembera.app`, `driver.cargo.tembera.app` and `admin.cargo.tembera.app` to the project and do NOT set a primary domain (so none redirect to another). The hostname picks the app: `driver.*` → Driver, `admin.*` → Admin, `VITE_CLIENT_HOST` → Client. Opening the driver domain lands on `/driver`; client or admin pages there redirect back. Preview and other hosts show all apps for testing.
+
+## Search and AI discovery
+The client deployment publishes `robots.txt`, `sitemap.xml`, and `llms.txt` from `public/`. The sitemap contains only public client pages; private and transactional screens are excluded. After deploying to `cargo.tembera.app`, submit `https://cargo.tembera.app/sitemap.xml` in Google Search Console and verify the domain property. Keep `VITE_PUBLIC_SITE_URL` set to the canonical client origin when deploying.

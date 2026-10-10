@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /account
+Disallow: /admin
+Disallow: /cargo-point-operator
+Disallow: /driver
+Disallow: /send
+Disallow: /shipments
+Disallow: /track/*
+
+Sitemap: https://cargo.tembera.nyxarith.com/sitemap.xml

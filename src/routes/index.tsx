@@ -9,27 +9,56 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/")({
   head: () => {
     const canonicalUrl = absoluteSiteUrl("/");
+    const organizationId = `${canonicalUrl}#organization`;
     return {
       meta: [
         { title: "Tembera Cargo — Send anything across Rwanda" },
         {
           name: "description",
           content:
-            "Send, track and receive cargo anywhere in Rwanda. Get a clear price and follow your delivery.",
+            "Send parcels anywhere in Rwanda with Tembera Cargo. Arrange pickup or drop-off, get a delivery price, and track your shipment.",
         },
         { property: "og:title", content: "Tembera Cargo — Send anything across Rwanda" },
         {
           property: "og:description",
-          content: "From your door to theirs, Tembera Cargo finds the way.",
+          content:
+            "Send parcels anywhere in Rwanda. Arrange pickup or drop-off, get a delivery price, and track your shipment.",
         },
         { name: "twitter:title", content: "Tembera Cargo — Send anything across Rwanda" },
         {
           name: "twitter:description",
-          content: "From your door to theirs, Tembera Cargo finds the way.",
+          content:
+            "Send parcels anywhere in Rwanda. Arrange pickup or drop-off, get a delivery price, and track your shipment.",
         },
         ...(canonicalUrl ? [{ property: "og:url", content: canonicalUrl }] : []),
       ],
       links: canonicalUrl ? [{ rel: "canonical", href: canonicalUrl }] : [],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "Organization",
+                "@id": organizationId,
+                name: "Tembera Cargo",
+                url: canonicalUrl,
+                logo: absoluteSiteUrl("/tembera-logo.jpg"),
+              },
+              {
+                "@type": "WebSite",
+                "@id": `${canonicalUrl}#website`,
+                name: "Tembera Cargo",
+                url: canonicalUrl,
+                description: "Send, track and receive cargo anywhere in Rwanda with Tembera Cargo.",
+                publisher: { "@id": organizationId },
+                inLanguage: "en-RW",
+              },
+            ],
+          }),
+        },
+      ],
     };
   },
   component: Home,
