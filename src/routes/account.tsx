@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { ClientShell } from "@/apps/client/ClientShell";
 import { ApiError } from "@/packages/api/client";
-import { authApi } from "@/packages/api/services";
+import { authApi, notificationPreferencesQuery, notificationsApi } from "@/packages/api/services";
 import { useI18n } from "@/packages/i18n";
 import { OtpSignIn, useToken } from "@/packages/ui/auth";
 import { Button, Card, ErrorState, LanguageSwitcher, Skeleton } from "@/packages/ui";
@@ -15,6 +15,7 @@ export const Route = createFileRoute("/account")({
       { name: "description", content: "Manage your Tembera Cargo account, language and sign-in." },
       { property: "og:title", content: "Account — Tembera Cargo" },
       { property: "og:description", content: "Your Tembera Cargo account." },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: Account,
@@ -22,8 +23,16 @@ export const Route = createFileRoute("/account")({
 
 function Profile({ onSignOut }: { onSignOut: () => Promise<void> }) {
   const { t } = useI18n();
+  const qc = useQueryClient();
   const q = useQuery({ queryKey: ["me", "client"], queryFn: () => authApi.me("client") });
   const signOut = useMutation({ mutationFn: onSignOut });
+  const preferences = useQuery(notificationPreferencesQuery("client"));
+  const savePreferences = useMutation({
+    mutationFn: (enabled: boolean) => notificationsApi.setPreferences("client", enabled),
+    onSuccess: (data) => {
+      qc.setQueryData(["notifications", "preferences", "client"], data);
+    },
+  });
   return (
     <Card className="space-y-4">
       {q.isPending ? (
@@ -39,6 +48,29 @@ function Profile({ onSignOut }: { onSignOut: () => Promise<void> }) {
       <div className="flex items-center justify-between">
         <span className="text-sm text-muted-foreground">Language</span>
         <LanguageSwitcher />
+      </div>
+      <div className="space-y-2 border-t border-border pt-4">
+        <label className="flex items-center justify-between gap-3 text-sm">
+          <span>Status updates by SMS</span>
+          <input
+            type="checkbox"
+            checked={preferences.data?.smsStatusUpdatesEnabled ?? false}
+            disabled={preferences.isPending || preferences.isError || savePreferences.isPending}
+            onChange={(event) => savePreferences.mutate(event.target.checked)}
+            aria-label="Enable shipment status updates by SMS"
+          />
+        </label>
+        <p className="text-xs text-muted-foreground">
+          Delivery verification messages are sent separately and are required for shipment handoff.
+        </p>
+        {preferences.error && (
+          <ErrorState error={preferences.error} onRetry={() => preferences.refetch()} />
+        )}
+        {savePreferences.error && (
+          <p role="alert" className="text-sm text-destructive">
+            {savePreferences.error.message}
+          </p>
+        )}
       </div>
       <Button variant="outline" block loading={signOut.isPending} onClick={() => signOut.mutate()}>
         {t("common.signOut")}

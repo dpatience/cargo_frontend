@@ -7,4 +7,4 @@ export const config = {
 
 export const isApiConfigured = () => config.apiBaseUrl.length > 0;
 
-export type AppArea = "client" | "driver" | "admin";
+export type AppArea = "client" | "driver" | "admin" | "cargo_point_operator";

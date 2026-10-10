@@ -94,9 +94,18 @@ export const Shipment = z.object({
   destinationSource: z.literal("google").optional(),
   recipientName: z.string().optional(),
   recipientPhone: z.string().optional(),
+  deliveryCode: z
+    .string()
+    .regex(/^[0-9]{6}$/)
+    .optional(),
+  packageCount: z.number().int().positive().optional(),
+  senderFulfillment: z.enum(["station_dropoff", "home_pickup"]).optional(),
+  receiverFulfillment: z.enum(["station_collection", "address_delivery"]).optional(),
   price: Money.optional(),
   createdAt: z.string(),
   eta: z.string().nullable().optional(),
+  statusUpdatedAt: z.string().datetime({ offset: true }).optional(),
+  freshnessSeconds: z.number().int().nonnegative().optional(),
   events: z.array(TrackingEvent).default([]),
   paymentUrl: z.string().nullable().optional(),
 });
@@ -114,6 +123,8 @@ export const PublicTracking = z
     eta: z.string().nullable().optional(),
     price: Money.optional(),
     createdAt: z.string(),
+    statusUpdatedAt: z.string().datetime({ offset: true }).optional(),
+    freshnessSeconds: z.number().int().nonnegative().optional(),
     events: z.array(TrackingEvent).default([]),
   })
   .strict();
@@ -139,6 +150,41 @@ export const DriverJob = z.object({
   scheduledFor: z.string().nullable().optional(),
 });
 export type DriverJob = z.infer<typeof DriverJob>;
+export const DispatchShipment = z.object({
+  id: z.string(),
+  trackingCode: z.string(),
+  status: z.string(),
+  senderFulfillment: z.enum(["station_dropoff", "home_pickup"]),
+  receiverFulfillment: z.enum(["station_collection", "address_delivery"]),
+  originCargoPointId: z.string().nullable(),
+  destinationCargoPointId: z.string().nullable(),
+});
+export const DispatchDriver = z.object({
+  id: z.string(),
+  name: z.string().nullable(),
+  phone: z.string().nullable(),
+});
+
+export const CargoPoint = z.object({
+  id: z.string(),
+  code: z.string(),
+  name: z.string(),
+  address: z.string(),
+  district: z.string(),
+  province: z.string(),
+  contactName: z.string().nullable().optional(),
+  contactPhone: z.string().nullable().optional(),
+  capacity: z
+    .object({
+      maxItems: z.number().int().positive(),
+      maxWeightKg: z.number().positive(),
+      maxVolumeM3: z.number().positive(),
+    })
+    .optional(),
+  isActive: z.boolean().optional(),
+  updatedAt: z.string().datetime({ offset: true }).optional(),
+});
+export type CargoPoint = z.infer<typeof CargoPoint>;
 
 export const AdminMetric = z.object({
   key: z.string(),
@@ -175,6 +221,37 @@ export const TariffVersion = z.object({
   updatedAt: z.string().datetime({ offset: true }),
 });
 export type TariffVersion = z.infer<typeof TariffVersion>;
+export const PricingAuditEvent = z.object({
+  id: z.string(),
+  action: z.string(),
+  subjectId: z.string(),
+  metadata: z.record(z.string(), z.unknown()),
+  occurredAt: z.string().datetime({ offset: true }),
+});
+export const OperationsException = z.object({
+  id: z.string(),
+  shipmentId: z.string(),
+  trackingCode: z.string(),
+  category: z.enum(["custody", "delivery", "customer_support", "pricing", "other"]),
+  description: z.string(),
+  status: z.enum(["open", "resolved"]),
+  resolution: z.string().nullable().optional(),
+  createdAt: z.string().datetime({ offset: true }),
+  resolvedAt: z.string().datetime({ offset: true }).nullable().optional(),
+});
+export const FailedNotification = z.object({
+  id: z.string(),
+  trackingCode: z.string(),
+  kind: z.enum(["delivery_code", "status_update"]),
+  status: z.literal("failed"),
+  attempts: z.number().int(),
+  lastError: z.string().nullable(),
+  eventStatus: z.string(),
+  updatedAt: z.string().datetime({ offset: true }),
+});
+export const NotificationPreference = z.object({
+  smsStatusUpdatesEnabled: z.boolean(),
+});
 
 export const VisionReview = z.object({
   id: z.string(),

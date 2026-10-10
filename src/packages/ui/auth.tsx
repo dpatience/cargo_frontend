@@ -58,15 +58,33 @@ export function OtpSignIn({
   const [phone, setPhone] = useState("+250");
   const [code, setCode] = useState("");
   const [reqId, setReqId] = useState<string | null>(null);
+  const [deliveryUnconfirmed, setDeliveryUnconfirmed] = useState(false);
   const req = useMutation({
     mutationFn: () => authApi.requestOtp(area, phone),
-    onSuccess: (r) => setReqId(r.requestId),
+    onSuccess: (r) => {
+      setReqId(r.requestId);
+      setDeliveryUnconfirmed(false);
+    },
+    onError: (error: unknown) => {
+      if (
+        error instanceof ApiError &&
+        error.details !== null &&
+        typeof error.details === "object" &&
+        "deliveryUnconfirmed" in error.details &&
+        error.details.deliveryUnconfirmed === true &&
+        "requestId" in error.details &&
+        typeof error.details.requestId === "string"
+      ) {
+        setReqId(error.details.requestId);
+        setDeliveryUnconfirmed(true);
+      }
+    },
   });
   const ver = useMutation({
     mutationFn: () => authApi.verifyOtp(area, reqId!, code),
     onSuccess: onDone,
   });
-  const err = req.error ?? ver.error;
+  const err = ver.error ?? (deliveryUnconfirmed ? null : req.error);
   return (
     <Card className="mx-auto w-full max-w-sm space-y-4">
       {title && <h2 className="text-xl font-bold">{title}</h2>}
@@ -114,6 +132,16 @@ export function OtpSignIn({
           </Button>
         </form>
       )}
+      {reqId &&
+        (deliveryUnconfirmed ? (
+          <p role="status" className="text-sm text-muted-foreground">
+            {t("auth.deliveryUnconfirmed")}
+          </p>
+        ) : (
+          <p role="status" className="text-sm text-success">
+            {t("auth.codeSent")}
+          </p>
+        ))}
       {err &&
         (err instanceof ApiError && err.kind === "unconfigured" ? (
           <ErrorState error={err} />

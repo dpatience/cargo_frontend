@@ -15,6 +15,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { I18nProvider } from "../packages/i18n";
 import { appBasePath, areaOf, resolveAppTarget } from "../packages/config/app-target";
+import { absoluteSiteUrl } from "../packages/config/seo";
 
 function NotFoundComponent() {
   return (
@@ -84,24 +85,49 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       throw redirect({ href: appBasePath[target], replace: true });
     }
   },
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
-      { name: "theme-color", content: "#0f1530" },
-      { title: "Tembera Cargo" },
-      { name: "description", content: "Send, track and receive cargo across Rwanda." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Sora:wght@600;700&display=swap" },
-      { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
-    ],
-  }),
+  head: () => {
+    const socialImage = absoluteSiteUrl("/tembera-logo.jpg");
+    return {
+      meta: [
+        { charSet: "utf-8" },
+        { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
+        { name: "theme-color", content: "#0f1530" },
+        { title: "Tembera Cargo" },
+        { name: "description", content: "Send, track and receive cargo across Rwanda." },
+        { name: "application-name", content: "Tembera Cargo" },
+        { property: "og:site_name", content: "Tembera Cargo" },
+        { property: "og:type", content: "website" },
+        ...(socialImage
+          ? [
+              { property: "og:image", content: socialImage },
+              { property: "og:image:type", content: "image/jpeg" },
+              { property: "og:image:width", content: "1200" },
+              { property: "og:image:height", content: "741" },
+              { name: "twitter:image", content: socialImage },
+              { name: "twitter:image:alt", content: "Tembera — Rwandan smartness in transport" },
+            ]
+          : []),
+        { property: "og:image:alt", content: "Tembera — Rwandan smartness in transport" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: "Tembera Cargo" },
+        { name: "twitter:description", content: "Send, track and receive cargo across Rwanda." },
+      ],
+      links: [
+        { rel: "preconnect", href: "https://fonts.googleapis.com" },
+        { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+        {
+          rel: "stylesheet",
+          href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Sora:wght@600;700&display=swap",
+        },
+        { rel: "stylesheet", href: appCss },
+        { rel: "icon", href: "/favicon.ico", sizes: "any" },
+        { rel: "icon", href: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
+        { rel: "icon", href: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
+        { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
+        { rel: "manifest", href: "/manifest.json" },
+      ],
+    };
+  },
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,

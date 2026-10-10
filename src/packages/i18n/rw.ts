@@ -13,6 +13,8 @@ export const rw: Partial<Dict> = {
   "home.track": "Kurikirana Imizigo",
   "home.receive": "Kwakira Imizigo",
   "home.mine": "Ibyo Nohereje",
+  "home.shortcuts": "Ibikorwa by'ingenzi",
+  "home.shortcutsHint": "Hitamo icyo ushaka gukora",
   "track.title": "Kurikirana imizigo yawe",
   "track.placeholder": "Andika kode yo gukurikirana",
   "track.go": "Kurikirana",
@@ -50,8 +52,12 @@ export const rw: Partial<Dict> = {
   "common.signIn": "Injira",
   "common.signOut": "Sohoka",
   "common.phone": "Nimero ya telefoni",
+  "common.code": "Kode yo kwemeza",
   "common.sendCode": "Ohereza kode",
   "common.verify": "Emeza",
+  "auth.codeSent": "Kode yo kwemeza yoherejwe. Andika kode wakiriye muri SMS.",
+  "auth.deliveryUnconfirmed":
+    "Ntitwashoboye kwemeza ko SMS yageze. Niba wayakiriye, andika kode hano.",
   "state.offline.title": "Nta interineti",
   "state.empty.shipments": "Nta mizigo uraohereza.",
 };

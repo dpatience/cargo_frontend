@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, type FormEvent } from "react";
-import { adminApi, adminPricingQuery } from "@/packages/api/services";
+import { adminApi, adminPricingAuditQuery, adminPricingQuery } from "@/packages/api/services";
+import { formatDate } from "@/packages/i18n";
 import type { TariffVersion } from "@/packages/types";
 import { Button, Card, EmptyState, ErrorState, Field, Input, LoadingList } from "@/packages/ui";
 
@@ -17,12 +18,12 @@ type TariffDraft = {
 };
 
 const emptyDraft: TariffDraft = {
-  name: "",
-  baseFeeRwf: "",
-  perKgRwf: "",
-  perKmRwf: "",
+  name: "Unapproved placeholder",
+  baseFeeRwf: "0",
+  perKgRwf: "0",
+  perKmRwf: "0",
   fragileSurchargeRwf: "0",
-  sizeRatesRwf: "",
+  sizeRatesRwf: '{\n  "small": 0,\n  "medium": 0,\n  "large": 0,\n  "xlarge": 0\n}',
 };
 
 function parseSizeRates(value: string): Record<string, number> {
@@ -107,6 +108,7 @@ function Rate({ label, value }: { label: string; value: number }) {
 function Pricing() {
   const queryClient = useQueryClient();
   const query = useQuery(adminPricingQuery());
+  const audit = useQuery(adminPricingAuditQuery());
   const [draft, setDraft] = useState(emptyDraft);
   const [formError, setFormError] = useState<string | null>(null);
   const create = useMutation({
@@ -161,6 +163,10 @@ function Pricing() {
         <p className="text-sm text-muted-foreground">
           Tariffs are versioned and audited. Creating a draft does not enable quotes; only activate
           a tariff after the cargo policy and rates have been approved.
+        </p>
+        <p className="text-sm font-medium text-warning">
+          New form values are zero-rate placeholders, not approved customer prices. Replace them
+          with institution-approved fees in a new tariff version before enabling quotes.
         </p>
       </header>
 
@@ -235,6 +241,33 @@ function Pricing() {
           ))}
         </div>
       )}
+      <section className="space-y-3">
+        <h2 className="text-lg font-semibold">Pricing change history</h2>
+        {audit.isPending ? (
+          <LoadingList />
+        ) : audit.error ? (
+          <ErrorState error={audit.error} onRetry={() => audit.refetch()} />
+        ) : audit.data.items.length === 0 ? (
+          <EmptyState title="No pricing changes recorded" />
+        ) : (
+          <Card className="space-y-3">
+            {audit.data.items.map((event) => (
+              <div
+                key={event.id}
+                className="flex flex-wrap justify-between gap-2 border-b border-border pb-3 last:border-0"
+              >
+                <div>
+                  <p className="font-medium">{event.action.replaceAll(".", " ")}</p>
+                  <p className="text-xs text-muted-foreground">Tariff {event.subjectId}</p>
+                </div>
+                <time className="text-sm text-muted-foreground">
+                  {formatDate(event.occurredAt)}
+                </time>
+              </div>
+            ))}
+          </Card>
+        )}
+      </section>
     </div>
   );
 }

@@ -5,17 +5,23 @@ import type { AppArea } from "../config/env";
 import {
   AdminDashboard,
   CargoAnalysis,
+  CargoPoint,
   DriverJob,
+  DispatchDriver,
+  DispatchShipment,
   Location,
+  FailedNotification,
+  NotificationPreference,
+  OperationsException,
   Ok,
   OtpRequested,
   Paginated,
   PublicTracking,
+  PricingAuditEvent,
   Quote,
   Session,
   Shipment,
   TariffVersion,
-  VisionReview,
 } from "../types";
 
 // ---------- Auth ----------
@@ -72,6 +78,13 @@ export const locationsQuery = (q: string) =>
     refetchOnWindowFocus: false,
   });
 
+export const cargoPointsQuery = () =>
+  queryOptions({
+    queryKey: ["cargo-points"],
+    queryFn: () => apiRequest("/cargo-points", z.array(CargoPoint)),
+    staleTime: 60_000,
+  });
+
 // ---------- Cargo vision ----------
 export const visionApi = {
   analyze: (images: Blob[], referenceObject?: string) => {
@@ -109,6 +122,12 @@ export type CreateShipmentBody = {
   optionId: string;
   recipient: { name: string; phone: string; notes?: string | undefined };
   sender?: { name?: string; phone?: string };
+  packageCount: number;
+  dimensionsCm: { length: number; width: number; height: number };
+  senderFulfillment: "station_dropoff" | "home_pickup";
+  receiverFulfillment: "station_collection" | "address_delivery";
+  originCargoPointId?: string;
+  destinationCargoPointId?: string;
 };
 export const shipmentsApi = {
   create: (body: CreateShipmentBody, idempotencyKey: string) =>
@@ -145,31 +164,54 @@ export const driverJobQuery = (id: string) =>
     queryFn: () => apiRequest(`/driver/jobs/${id}`, DriverJob, { area: "driver" }),
   });
 export const driverApi = {
-  confirmHandoff: (jobId: string, code: string) =>
-    apiRequest(`/driver/jobs/${jobId}/handoff`, Ok, {
+  scanTag: (
+    jobId: string,
+    trackingCode: string,
+    deliveryCode?: string,
+    idempotencyKey = crypto.randomUUID(),
+  ) =>
+    apiRequest(`/driver/jobs/${jobId}/tag-scan`, Ok, {
       method: "POST",
-      body: { code },
+      body: { trackingCode, deliveryCode },
+      headers: { "Idempotency-Key": idempotencyKey },
       area: "driver",
     }),
-  submitProof: (
-    jobId: string,
-    data: { photo?: Blob | undefined; recipientCode: string; recipientName: string },
-  ) => {
-    const fd = new FormData();
-    if (data.photo) fd.append("photo", data.photo, "pod.jpg");
-    fd.append("recipientCode", data.recipientCode);
-    fd.append("recipientName", data.recipientName);
-    return apiRequest(`/driver/jobs/${jobId}/proof-of-delivery`, Ok, {
-      method: "POST",
-      formData: fd,
-      area: "driver",
-    });
-  },
   sendLocation: (lat: number, lng: number, accuracy?: number) =>
     apiRequest("/driver/location", Ok, {
       method: "POST",
       body: { lat, lng, accuracy, at: new Date().toISOString() },
       area: "driver",
+    }),
+};
+
+export const dispatchApi = {
+  queue: () =>
+    apiRequest("/admin/dispatch/shipments", z.array(DispatchShipment), { area: "admin" }),
+  drivers: () => apiRequest("/admin/dispatch/drivers", z.array(DispatchDriver), { area: "admin" }),
+  assign: (
+    body: {
+      shipmentId: string;
+      driverId: string;
+      cargoPointId?: string;
+      type: "pickup" | "handoff" | "delivery";
+    },
+    idempotencyKey = crypto.randomUUID(),
+  ) =>
+    apiRequest("/admin/dispatch/jobs", DriverJob, {
+      method: "POST",
+      body,
+      headers: { "Idempotency-Key": idempotencyKey },
+      area: "admin",
+    }),
+  scanAtStation: (
+    body: { trackingCode: string; action: "receive" | "release"; deliveryCode?: string },
+    idempotencyKey = crypto.randomUUID(),
+  ) =>
+    apiRequest("/cargo-point-operator/scans", Ok, {
+      method: "POST",
+      body,
+      headers: { "Idempotency-Key": idempotencyKey },
+      area: "cargo_point_operator",
     }),
 };
 
@@ -190,13 +232,73 @@ export const adminPricingQuery = () =>
     queryKey: ["admin", "pricing", "tariffs"],
     queryFn: () => apiRequest("/admin/pricing/tariffs", z.array(TariffVersion), { area: "admin" }),
   });
-export const adminVisionQuery = () =>
+export const adminPricingAuditQuery = (page = 1) =>
   queryOptions({
-    queryKey: ["admin", "vision"],
+    queryKey: ["admin", "pricing", "audit", page],
     queryFn: () =>
-      apiRequest("/admin/cargo-vision/reviews", z.array(VisionReview), { area: "admin" }),
+      apiRequest("/admin/pricing/audit", Paginated(PricingAuditEvent), {
+        area: "admin",
+        query: { page },
+      }),
+  });
+export const adminExceptionsQuery = (status: "open" | "resolved" = "open", page = 1) =>
+  queryOptions({
+    queryKey: ["admin", "operations", "exceptions", status, page],
+    queryFn: () =>
+      apiRequest("/admin/operations/exceptions", Paginated(OperationsException), {
+        area: "admin",
+        query: { status, page },
+      }),
+  });
+export const adminFailedNotificationsQuery = (page = 1) =>
+  queryOptions({
+    queryKey: ["admin", "notifications", "failed", page],
+    queryFn: () =>
+      apiRequest("/admin/notifications/failed", Paginated(FailedNotification), {
+        area: "admin",
+        query: { page },
+      }),
+  });
+export const notificationPreferencesQuery = (area: AppArea) =>
+  queryOptions({
+    queryKey: ["notifications", "preferences", area],
+    queryFn: () => apiRequest("/notifications/preferences", NotificationPreference, { area }),
+  });
+export const notificationsApi = {
+  setPreferences: (area: AppArea, enabled: boolean) =>
+    apiRequest("/notifications/preferences", NotificationPreference, {
+      method: "PUT",
+      body: { smsStatusUpdatesEnabled: enabled },
+      area,
+    }),
+};
+export const adminCargoPointsQuery = () =>
+  queryOptions({
+    queryKey: ["admin", "cargo-points"],
+    queryFn: () => apiRequest("/admin/cargo-points", z.array(CargoPoint), { area: "admin" }),
   });
 export const adminApi = {
+  openException: (body: { shipmentId: string; category: string; description: string }) =>
+    apiRequest("/admin/operations/exceptions", OperationsException, {
+      method: "POST",
+      body,
+      area: "admin",
+    }),
+  correctShipment: (
+    id: string,
+    body: { status: string; reason: string; currentCargoPointId?: string },
+  ) =>
+    apiRequest(`/admin/operations/exceptions/${encodeURIComponent(id)}/correct`, Ok, {
+      method: "POST",
+      body,
+      area: "admin",
+    }),
+  resolveException: (id: string, resolution: string) =>
+    apiRequest(`/admin/operations/exceptions/${encodeURIComponent(id)}/resolve`, Ok, {
+      method: "POST",
+      body: { resolution },
+      area: "admin",
+    }),
   createTariff: (body: {
     name: string;
     baseFeeRwf: number;
@@ -216,8 +318,44 @@ export const adminApi = {
       body: {},
       area: "admin",
     }),
-  resolveVision: (
+  createCargoPoint: (body: {
+    code: string;
+    name: string;
+    address: string;
+    district: string;
+    province: string;
+    contactName?: string;
+    contactPhone?: string;
+    capacity: { maxItems: number; maxWeightKg: number; maxVolumeM3: number };
+    isActive: boolean;
+  }) =>
+    apiRequest("/admin/cargo-points", CargoPoint, {
+      method: "POST",
+      body,
+      area: "admin",
+    }),
+  updateCargoPoint: (
     id: string,
-    body: { decision: "approve" | "correct"; corrections?: Record<string, unknown> },
-  ) => apiRequest(`/admin/cargo-vision/reviews/${id}`, Ok, { method: "POST", body, area: "admin" }),
+    body: {
+      name?: string;
+      address?: string;
+      district?: string;
+      province?: string;
+      contactName?: string;
+      contactPhone?: string;
+      capacity?: { maxItems: number; maxWeightKg: number; maxVolumeM3: number };
+      isActive?: boolean;
+    },
+  ) =>
+    apiRequest(`/admin/cargo-points/${encodeURIComponent(id)}`, CargoPoint, {
+      method: "PATCH",
+      body,
+      area: "admin",
+    }),
+  provisionCargoPointOperator: (id: string, phone: string) =>
+    apiRequest(`/admin/cargo-points/${encodeURIComponent(id)}/operators`, Session.shape.user, {
+      method: "POST",
+      body: { phone },
+      area: "admin",
+    }),
 };

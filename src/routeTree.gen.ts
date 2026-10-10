@@ -12,14 +12,19 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as CargoPointOperatorRouteImport } from './routes/cargo-point-operator'
 import { Route as DriverRouteImport } from './routes/driver'
 import { Route as ReceiveRouteImport } from './routes/receive'
 import { Route as SendRouteImport } from './routes/send'
 import { Route as ShipmentsRouteImport } from './routes/shipments'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminCargoPointsRouteImport } from './routes/admin.cargo-points'
+import { Route as AdminDispatchRouteImport } from './routes/admin.dispatch'
+import { Route as AdminExceptionsRouteImport } from './routes/admin.exceptions'
 import { Route as AdminPricingRouteImport } from './routes/admin.pricing'
 import { Route as AdminShipmentsRouteImport } from './routes/admin.shipments'
 import { Route as AdminVisionRouteImport } from './routes/admin.vision'
+import { Route as CargoPointOperatorIndexRouteImport } from './routes/cargo-point-operator.index'
 import { Route as DriverIndexRouteImport } from './routes/driver.index'
 import { Route as TrackIndexRouteImport } from './routes/track.index'
 import { Route as TrackCodeRouteImport } from './routes/track.$code'
@@ -38,6 +43,11 @@ const AccountRoute = AccountRouteImport.update({
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CargoPointOperatorRoute = CargoPointOperatorRouteImport.update({
+  id: '/cargo-point-operator',
+  path: '/cargo-point-operator',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DriverRoute = DriverRouteImport.update({
@@ -65,6 +75,21 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminCargoPointsRoute = AdminCargoPointsRouteImport.update({
+  id: '/cargo-points',
+  path: '/cargo-points',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminDispatchRoute = AdminDispatchRouteImport.update({
+  id: '/dispatch',
+  path: '/dispatch',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminExceptionsRoute = AdminExceptionsRouteImport.update({
+  id: '/exceptions',
+  path: '/exceptions',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminPricingRoute = AdminPricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
@@ -79,6 +104,11 @@ const AdminVisionRoute = AdminVisionRouteImport.update({
   id: '/vision',
   path: '/vision',
   getParentRoute: () => AdminRoute,
+} as any)
+const CargoPointOperatorIndexRoute = CargoPointOperatorIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CargoPointOperatorRoute,
 } as any)
 const DriverIndexRoute = DriverIndexRouteImport.update({
   id: '/',
@@ -105,15 +135,20 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
   '/admin': typeof AdminRouteWithChildren
+  '/cargo-point-operator': typeof CargoPointOperatorRouteWithChildren
   '/driver': typeof DriverRouteWithChildren
   '/receive': typeof ReceiveRoute
   '/send': typeof SendRoute
   '/shipments': typeof ShipmentsRoute
+  '/admin/cargo-points': typeof AdminCargoPointsRoute
+  '/admin/dispatch': typeof AdminDispatchRoute
+  '/admin/exceptions': typeof AdminExceptionsRoute
   '/admin/pricing': typeof AdminPricingRoute
   '/admin/shipments': typeof AdminShipmentsRoute
   '/admin/vision': typeof AdminVisionRoute
   '/track/$code': typeof TrackCodeRoute
   '/admin/': typeof AdminIndexRoute
+  '/cargo-point-operator/': typeof CargoPointOperatorIndexRoute
   '/driver/': typeof DriverIndexRoute
   '/track/': typeof TrackIndexRoute
   '/driver/jobs/$id': typeof DriverJobsIdRoute
@@ -124,11 +159,15 @@ export interface FileRoutesByTo {
   '/receive': typeof ReceiveRoute
   '/send': typeof SendRoute
   '/shipments': typeof ShipmentsRoute
+  '/admin/cargo-points': typeof AdminCargoPointsRoute
+  '/admin/dispatch': typeof AdminDispatchRoute
+  '/admin/exceptions': typeof AdminExceptionsRoute
   '/admin/pricing': typeof AdminPricingRoute
   '/admin/shipments': typeof AdminShipmentsRoute
   '/admin/vision': typeof AdminVisionRoute
   '/track/$code': typeof TrackCodeRoute
   '/admin': typeof AdminIndexRoute
+  '/cargo-point-operator': typeof CargoPointOperatorIndexRoute
   '/driver': typeof DriverIndexRoute
   '/track': typeof TrackIndexRoute
   '/driver/jobs/$id': typeof DriverJobsIdRoute
@@ -138,15 +177,20 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
   '/admin': typeof AdminRouteWithChildren
+  '/cargo-point-operator': typeof CargoPointOperatorRouteWithChildren
   '/driver': typeof DriverRouteWithChildren
   '/receive': typeof ReceiveRoute
   '/send': typeof SendRoute
   '/shipments': typeof ShipmentsRoute
+  '/admin/cargo-points': typeof AdminCargoPointsRoute
+  '/admin/dispatch': typeof AdminDispatchRoute
+  '/admin/exceptions': typeof AdminExceptionsRoute
   '/admin/pricing': typeof AdminPricingRoute
   '/admin/shipments': typeof AdminShipmentsRoute
   '/admin/vision': typeof AdminVisionRoute
   '/track/$code': typeof TrackCodeRoute
   '/admin/': typeof AdminIndexRoute
+  '/cargo-point-operator/': typeof CargoPointOperatorIndexRoute
   '/driver/': typeof DriverIndexRoute
   '/track/': typeof TrackIndexRoute
   '/driver/jobs/$id': typeof DriverJobsIdRoute
@@ -157,15 +201,20 @@ export interface FileRouteTypes {
     | '/'
     | '/account'
     | '/admin'
+    | '/cargo-point-operator'
     | '/driver'
     | '/receive'
     | '/send'
     | '/shipments'
+    | '/admin/cargo-points'
+    | '/admin/dispatch'
+    | '/admin/exceptions'
     | '/admin/pricing'
     | '/admin/shipments'
     | '/admin/vision'
     | '/track/$code'
     | '/admin/'
+    | '/cargo-point-operator/'
     | '/driver/'
     | '/track/'
     | '/driver/jobs/$id'
@@ -176,11 +225,15 @@ export interface FileRouteTypes {
     | '/receive'
     | '/send'
     | '/shipments'
+    | '/admin/cargo-points'
+    | '/admin/dispatch'
+    | '/admin/exceptions'
     | '/admin/pricing'
     | '/admin/shipments'
     | '/admin/vision'
     | '/track/$code'
     | '/admin'
+    | '/cargo-point-operator'
     | '/driver'
     | '/track'
     | '/driver/jobs/$id'
@@ -189,15 +242,20 @@ export interface FileRouteTypes {
     | '/'
     | '/account'
     | '/admin'
+    | '/cargo-point-operator'
     | '/driver'
     | '/receive'
     | '/send'
     | '/shipments'
+    | '/admin/cargo-points'
+    | '/admin/dispatch'
+    | '/admin/exceptions'
     | '/admin/pricing'
     | '/admin/shipments'
     | '/admin/vision'
     | '/track/$code'
     | '/admin/'
+    | '/cargo-point-operator/'
     | '/driver/'
     | '/track/'
     | '/driver/jobs/$id'
@@ -207,6 +265,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AccountRoute: typeof AccountRoute
   AdminRoute: typeof AdminRouteWithChildren
+  CargoPointOperatorRoute: typeof CargoPointOperatorRouteWithChildren
   DriverRoute: typeof DriverRouteWithChildren
   ReceiveRoute: typeof ReceiveRoute
   SendRoute: typeof SendRoute
@@ -236,6 +295,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cargo-point-operator': {
+      id: '/cargo-point-operator'
+      path: '/cargo-point-operator'
+      fullPath: '/cargo-point-operator'
+      preLoaderRoute: typeof CargoPointOperatorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/driver': {
@@ -273,6 +339,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/cargo-points': {
+      id: '/admin/cargo-points'
+      path: '/cargo-points'
+      fullPath: '/admin/cargo-points'
+      preLoaderRoute: typeof AdminCargoPointsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/dispatch': {
+      id: '/admin/dispatch'
+      path: '/dispatch'
+      fullPath: '/admin/dispatch'
+      preLoaderRoute: typeof AdminDispatchRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/exceptions': {
+      id: '/admin/exceptions'
+      path: '/exceptions'
+      fullPath: '/admin/exceptions'
+      preLoaderRoute: typeof AdminExceptionsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/pricing': {
       id: '/admin/pricing'
       path: '/pricing'
@@ -293,6 +380,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/vision'
       preLoaderRoute: typeof AdminVisionRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/cargo-point-operator/': {
+      id: '/cargo-point-operator/'
+      path: '/'
+      fullPath: '/cargo-point-operator/'
+      preLoaderRoute: typeof CargoPointOperatorIndexRouteImport
+      parentRoute: typeof CargoPointOperatorRoute
     }
     '/driver/': {
       id: '/driver/'
@@ -326,6 +420,9 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminCargoPointsRoute: typeof AdminCargoPointsRoute
+  AdminDispatchRoute: typeof AdminDispatchRoute
+  AdminExceptionsRoute: typeof AdminExceptionsRoute
   AdminPricingRoute: typeof AdminPricingRoute
   AdminShipmentsRoute: typeof AdminShipmentsRoute
   AdminVisionRoute: typeof AdminVisionRoute
@@ -333,6 +430,9 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminCargoPointsRoute: AdminCargoPointsRoute,
+  AdminDispatchRoute: AdminDispatchRoute,
+  AdminExceptionsRoute: AdminExceptionsRoute,
   AdminPricingRoute: AdminPricingRoute,
   AdminShipmentsRoute: AdminShipmentsRoute,
   AdminVisionRoute: AdminVisionRoute,
@@ -340,6 +440,17 @@ const AdminRouteChildren: AdminRouteChildren = {
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
+interface CargoPointOperatorRouteChildren {
+  CargoPointOperatorIndexRoute: typeof CargoPointOperatorIndexRoute
+}
+
+const CargoPointOperatorRouteChildren: CargoPointOperatorRouteChildren = {
+  CargoPointOperatorIndexRoute: CargoPointOperatorIndexRoute,
+}
+
+const CargoPointOperatorRouteWithChildren =
+  CargoPointOperatorRoute._addFileChildren(CargoPointOperatorRouteChildren)
 
 interface DriverRouteChildren {
   DriverIndexRoute: typeof DriverIndexRoute
@@ -358,6 +469,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AccountRoute: AccountRoute,
   AdminRoute: AdminRouteWithChildren,
+  CargoPointOperatorRoute: CargoPointOperatorRouteWithChildren,
   DriverRoute: DriverRouteWithChildren,
   ReceiveRoute: ReceiveRoute,
   SendRoute: SendRoute,

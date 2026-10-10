@@ -1,12 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Camera, Check, ChevronLeft, PencilLine, Share2 } from "lucide-react";
+import { Check, ChevronLeft, Share2 } from "lucide-react";
 import { ClientShell } from "@/apps/client/ClientShell";
-import { CameraCapture } from "@/apps/client/CameraCapture";
 import { LocationPicker } from "@/apps/client/LocationPicker";
-import { quotesApi, shipmentsApi, visionApi, type QuoteRequest } from "@/packages/api/services";
-import type { CargoAnalysis, Location, Quote, QuoteOption, Shipment } from "@/packages/types";
+import {
+  cargoPointsQuery,
+  quotesApi,
+  shipmentsApi,
+  type QuoteRequest,
+} from "@/packages/api/services";
+import type { CargoPoint, Location, Quote, QuoteOption, Shipment } from "@/packages/types";
 import { formatRWF, useI18n } from "@/packages/i18n";
 import { OtpSignIn, useToken } from "@/packages/ui/auth";
 import { Button, buttonVariants, Card, ErrorState, Field, Input, StatusPill } from "@/packages/ui";
@@ -18,10 +22,11 @@ export const Route = createFileRoute("/send")({
       { title: "Send cargo — Tembera Cargo" },
       {
         name: "description",
-        content: "Tell us where, snap your cargo, compare delivery options and pay in RWF.",
+        content: "Enter cargo details, compare delivery options and pay in RWF.",
       },
       { property: "og:title", content: "Send cargo — Tembera Cargo" },
       { property: "og:description", content: "Send anything across Rwanda in a few taps." },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: Send,
@@ -33,11 +38,10 @@ const steps: Exclude<Step, "done">[] = ["route", "cargo", "price", "recipient", 
 function Send() {
   const { t } = useI18n();
   const auth = useToken("client");
+  const points = useQuery(cargoPointsQuery());
   const [step, setStep] = useState<Step>("route");
   const [from, setFrom] = useState<Location | null>(null);
   const [to, setTo] = useState<Location | null>(null);
-  const [mode, setMode] = useState<"camera" | "manual" | null>(null);
-  const [analysis, setAnalysis] = useState<CargoAnalysis | null>(null);
   const [manual, setManual] = useState({
     category: "",
     weightKg: "",
@@ -48,34 +52,35 @@ function Send() {
   const [quote, setQuote] = useState<Quote | null>(null);
   const [option, setOption] = useState<QuoteOption | null>(null);
   const [recipient, setRecipient] = useState({ name: "", phone: "+250", notes: "" });
+  const [senderFulfillment, setSenderFulfillment] = useState<"home_pickup" | "station_dropoff">(
+    "home_pickup",
+  );
+  const [receiverFulfillment, setReceiverFulfillment] = useState<
+    "address_delivery" | "station_collection"
+  >("address_delivery");
+  const [originCargoPointId, setOriginCargoPointId] = useState("");
+  const [destinationCargoPointId, setDestinationCargoPointId] = useState("");
+  const [measurements, setMeasurements] = useState({
+    packageCount: "1",
+    length: "",
+    width: "",
+    height: "",
+  });
   const [shipment, setShipment] = useState<Shipment | null>(null);
   const [idempotencyKey, setIdempotencyKey] = useState<string | null>(null);
 
-  const analyze = useMutation({
-    mutationFn: (imgs: Blob[]) => visionApi.analyze(imgs),
-    onSuccess: setAnalysis,
-  });
   const getQuote = useMutation({
     mutationFn: () => {
       const body: QuoteRequest = {
         originId: from!.id,
         destinationId: to!.id,
-        manual:
-          mode === "camera" && analysis
-            ? {
-                category: analysis.category,
-                weightKg: analysis.estimatedWeightKg ?? undefined,
-                sizeClass: analysis.sizeClass,
-                fragile: analysis.fragile,
-                description: analysis.description,
-              }
-            : {
-                category: manual.category,
-                weightKg: manual.weightKg ? Number(manual.weightKg) : undefined,
-                sizeClass: manual.sizeClass || undefined,
-                fragile: manual.fragile,
-                description: manual.description || undefined,
-              },
+        manual: {
+          category: manual.category,
+          weightKg: manual.weightKg ? Number(manual.weightKg) : undefined,
+          sizeClass: manual.sizeClass || undefined,
+          fragile: manual.fragile,
+          description: manual.description || undefined,
+        },
       };
       return quotesApi.create(body);
     },
@@ -98,6 +103,18 @@ function Send() {
             phone: recipient.phone,
             notes: recipient.notes || undefined,
           },
+          packageCount: Number(measurements.packageCount),
+          dimensionsCm: {
+            length: Number(measurements.length),
+            width: Number(measurements.width),
+            height: Number(measurements.height),
+          },
+          senderFulfillment,
+          receiverFulfillment,
+          originCargoPointId:
+            senderFulfillment === "station_dropoff" ? originCargoPointId : undefined,
+          destinationCargoPointId:
+            receiverFulfillment === "station_collection" ? destinationCargoPointId : undefined,
         },
         key,
       );
@@ -153,196 +170,69 @@ function Send() {
         )}
 
         {step === "cargo" && (
-          <div className="space-y-4">
-            {!mode && (
-              <>
-                <p className="font-medium">{t("send.cargoHow")}</p>
-                <button
-                  onClick={() => setMode("camera")}
-                  className="flex w-full items-center gap-4 rounded-2xl bg-brand p-5 text-left text-primary-foreground shadow-cta"
-                >
-                  <Camera className="size-8" />
-                  <span>
-                    <span className="block text-lg font-bold">{t("send.useCamera")}</span>
-                    <span className="text-sm opacity-85">{t("send.useCameraHint")}</span>
-                  </span>
-                </button>
-                <button
-                  onClick={() => setMode("manual")}
-                  className="flex w-full items-center gap-4 rounded-2xl border border-border bg-card p-5 text-left"
-                >
-                  <PencilLine className="size-8 text-accent" />
-                  <span>
-                    <span className="block text-lg font-bold">{t("send.manual")}</span>
-                    <span className="text-sm text-muted-foreground">{t("send.manualHint")}</span>
-                  </span>
-                </button>
-              </>
-            )}
-            {mode === "camera" && !analysis && (
-              <Card className="space-y-3">
-                <h2 className="text-lg font-semibold">{t("camera.title")}</h2>
-                <CameraCapture busy={analyze.isPending} onSubmit={(imgs) => analyze.mutate(imgs)} />
-                {analyze.error && <ErrorState error={analyze.error} />}
-                <Button variant="ghost" block onClick={() => setMode("manual")}>
-                  {t("send.manual")}
-                </Button>
-              </Card>
-            )}
-            {mode === "camera" && analysis && (
-              <Card className="space-y-3">
-                <h2 className="text-lg font-semibold">{t("camera.result")}</h2>
-                <dl className="grid grid-cols-2 gap-3 text-sm">
-                  <div>
-                    <dt className="text-muted-foreground">{t("send.category")}</dt>
-                    <dd className="font-semibold">{analysis.category}</dd>
-                  </div>
-                  {analysis.estimatedWeightKg != null && (
-                    <div>
-                      <dt className="text-muted-foreground">{t("send.weight")}</dt>
-                      <dd className="font-semibold">~{analysis.estimatedWeightKg} kg</dd>
-                    </div>
-                  )}
-                  {analysis.sizeClass && (
-                    <div>
-                      <dt className="text-muted-foreground">{t("send.size")}</dt>
-                      <dd className="font-semibold">{analysis.sizeClass}</dd>
-                    </div>
-                  )}
-                  {analysis.dimensionsCm && (
-                    <div>
-                      <dt className="text-muted-foreground">cm</dt>
-                      <dd className="font-semibold">
-                        {analysis.dimensionsCm.length}×{analysis.dimensionsCm.width}×
-                        {analysis.dimensionsCm.height}
-                      </dd>
-                    </div>
-                  )}
-                </dl>
-                {analysis.fragile && <StatusPill tone="warning">{t("send.fragile")}</StatusPill>}
-                {(analysis.confidence < 0.7 || analysis.needsReview) && (
-                  <p className="rounded-xl bg-warning/15 p-3 text-sm text-warning">
-                    {t("camera.lowConfidence")}
-                  </p>
-                )}
-                {analysis.warnings.map((w) => (
-                  <p key={w} className="text-sm text-muted-foreground">
-                    • {w}
-                  </p>
-                ))}
-                <div className="grid grid-cols-2 gap-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setAnalysis(null);
-                      setMode("manual");
-                      setManual((m) => ({
-                        ...m,
-                        category: analysis.category,
-                        weightKg: String(analysis.estimatedWeightKg ?? ""),
-                        sizeClass: analysis.sizeClass ?? "",
-                        fragile: analysis.fragile ?? false,
-                      }));
-                    }}
+          <Card>
+            <form
+              className="space-y-4"
+              onSubmit={(e) => {
+                e.preventDefault();
+                getQuote.mutate();
+              }}
+            >
+              <Field label={t("send.category")}>
+                <Input
+                  value={manual.category}
+                  onChange={(e) => setManual({ ...manual, category: e.target.value })}
+                  required
+                />
+              </Field>
+              <div className="grid grid-cols-2 gap-3">
+                <Field label={t("send.weight")}>
+                  <Input
+                    type="number"
+                    inputMode="decimal"
+                    min="0.1"
+                    step="0.1"
+                    required
+                    value={manual.weightKg}
+                    onChange={(e) => setManual({ ...manual, weightKg: e.target.value })}
+                  />
+                </Field>
+                <Field label={t("send.size")}>
+                  <select
+                    required
+                    value={manual.sizeClass}
+                    onChange={(e) => setManual({ ...manual, sizeClass: e.target.value })}
+                    className="h-12 w-full rounded-xl border border-input bg-surface px-3"
                   >
-                    {t("send.manual")}
-                  </Button>
-                  <Button
-                    variant="success"
-                    loading={getQuote.isPending}
-                    onClick={() => {
-                      setManual((current) => ({
-                        ...current,
-                        category: analysis.category,
-                        weightKg: String(analysis.estimatedWeightKg ?? current.weightKg),
-                        sizeClass: analysis.sizeClass ?? current.sizeClass,
-                        fragile: analysis.fragile ?? current.fragile,
-                      }));
-
-                      if (
-                        !(analysis.estimatedWeightKg && analysis.estimatedWeightKg > 0) ||
-                        !analysis.sizeClass
-                      ) {
-                        setMode("manual");
-                      } else {
-                        getQuote.mutate();
-                      }
-                    }}
-                  >
-                    {t("camera.accept")}
-                  </Button>
-                </div>
-                {getQuote.error && (
-                  <ErrorState error={getQuote.error} onRetry={() => getQuote.mutate()} />
-                )}
-              </Card>
-            )}
-            {mode === "manual" && (
-              <Card>
-                <form
-                  className="space-y-4"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    getQuote.mutate();
-                  }}
-                >
-                  <Field label={t("send.category")}>
-                    <Input
-                      value={manual.category}
-                      onChange={(e) => setManual({ ...manual, category: e.target.value })}
-                      required
-                    />
-                  </Field>
-                  <div className="grid grid-cols-2 gap-3">
-                    <Field label={t("send.weight")}>
-                      <Input
-                        type="number"
-                        inputMode="decimal"
-                        min="0.1"
-                        step="0.1"
-                        required
-                        value={manual.weightKg}
-                        onChange={(e) => setManual({ ...manual, weightKg: e.target.value })}
-                      />
-                    </Field>
-                    <Field label={t("send.size")}>
-                      <select
-                        required
-                        value={manual.sizeClass}
-                        onChange={(e) => setManual({ ...manual, sizeClass: e.target.value })}
-                        className="h-12 w-full rounded-xl border border-input bg-surface px-3"
-                      >
-                        <option value="">—</option>
-                        <option value="small">S</option>
-                        <option value="medium">M</option>
-                        <option value="large">L</option>
-                        <option value="xlarge">XL</option>
-                      </select>
-                    </Field>
-                  </div>
-                  <Field label={t("send.description")}>
-                    <Input
-                      value={manual.description}
-                      onChange={(e) => setManual({ ...manual, description: e.target.value })}
-                    />
-                  </Field>
-                  <label className="flex items-center gap-3">
-                    <input
-                      type="checkbox"
-                      className="size-5 accent-[var(--accent)]"
-                      checked={manual.fragile}
-                      onChange={(e) => setManual({ ...manual, fragile: e.target.checked })}
-                    />
-                    {t("send.fragile")}
-                  </label>
-                  <Button block size="lg" loading={getQuote.isPending}>
-                    {t("send.getPrices")}
-                  </Button>
-                  {getQuote.error && <ErrorState error={getQuote.error} />}
-                </form>
-              </Card>
-            )}
-          </div>
+                    <option value="">—</option>
+                    <option value="small">S</option>
+                    <option value="medium">M</option>
+                    <option value="large">L</option>
+                    <option value="xlarge">XL</option>
+                  </select>
+                </Field>
+              </div>
+              <Field label={t("send.description")}>
+                <Input
+                  value={manual.description}
+                  onChange={(e) => setManual({ ...manual, description: e.target.value })}
+                />
+              </Field>
+              <label className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  className="size-5 accent-[var(--accent)]"
+                  checked={manual.fragile}
+                  onChange={(e) => setManual({ ...manual, fragile: e.target.checked })}
+                />
+                {t("send.fragile")}
+              </label>
+              <Button block size="lg" loading={getQuote.isPending}>
+                {t("send.getPrices")}
+              </Button>
+              {getQuote.error && <ErrorState error={getQuote.error} />}
+            </form>
+          </Card>
         )}
 
         {step === "price" && quote && (
@@ -434,6 +324,92 @@ function Send() {
                   onChange={(e) => setRecipient({ ...recipient, notes: e.target.value })}
                 />
               </Field>
+              <Field label="Sender handoff">
+                <select
+                  value={senderFulfillment}
+                  onChange={(e) => setSenderFulfillment(e.target.value as typeof senderFulfillment)}
+                  className="h-12 w-full rounded-xl border border-input bg-surface px-3"
+                >
+                  <option value="home_pickup">Home pickup</option>
+                  <option value="station_dropoff">Drop off at a cargo point</option>
+                </select>
+              </Field>
+              {senderFulfillment === "station_dropoff" && (
+                <CargoPointSelect
+                  label="Origin cargo point"
+                  points={points.data ?? []}
+                  loading={points.isPending}
+                  value={originCargoPointId}
+                  onChange={setOriginCargoPointId}
+                />
+              )}
+              <Field label="Receiver handoff">
+                <select
+                  value={receiverFulfillment}
+                  onChange={(e) =>
+                    setReceiverFulfillment(e.target.value as typeof receiverFulfillment)
+                  }
+                  className="h-12 w-full rounded-xl border border-input bg-surface px-3"
+                >
+                  <option value="address_delivery">Deliver to address</option>
+                  <option value="station_collection">Collect at a cargo point</option>
+                </select>
+              </Field>
+              {receiverFulfillment === "station_collection" && (
+                <CargoPointSelect
+                  label="Destination cargo point"
+                  points={points.data ?? []}
+                  loading={points.isPending}
+                  value={destinationCargoPointId}
+                  onChange={setDestinationCargoPointId}
+                />
+              )}
+              <h3 className="font-semibold">Cargo measurements for station capacity</h3>
+              <Field label="Number of items">
+                <Input
+                  type="number"
+                  min="1"
+                  max="1000"
+                  step="1"
+                  required
+                  value={measurements.packageCount}
+                  onChange={(e) =>
+                    setMeasurements({ ...measurements, packageCount: e.target.value })
+                  }
+                />
+              </Field>
+              <div className="grid grid-cols-3 gap-2">
+                <Field label="Length (cm)">
+                  <Input
+                    type="number"
+                    min="0.1"
+                    step="0.1"
+                    required
+                    value={measurements.length}
+                    onChange={(e) => setMeasurements({ ...measurements, length: e.target.value })}
+                  />
+                </Field>
+                <Field label="Width (cm)">
+                  <Input
+                    type="number"
+                    min="0.1"
+                    step="0.1"
+                    required
+                    value={measurements.width}
+                    onChange={(e) => setMeasurements({ ...measurements, width: e.target.value })}
+                  />
+                </Field>
+                <Field label="Height (cm)">
+                  <Input
+                    type="number"
+                    min="0.1"
+                    step="0.1"
+                    required
+                    value={measurements.height}
+                    onChange={(e) => setMeasurements({ ...measurements, height: e.target.value })}
+                  />
+                </Field>
+              </div>
               <Button block size="lg">
                 {t("common.next")}
               </Button>
@@ -447,7 +423,27 @@ function Send() {
               <h2 className="text-lg font-semibold">{t("send.review")}</h2>
               <Row k={t("send.from")} v={from?.name} />
               <Row k={t("send.to")} v={to?.name} />
-              <Row k={t("send.category")} v={analysis?.category ?? manual.category} />
+              <Row
+                k="Sender handoff"
+                v={
+                  senderFulfillment === "home_pickup"
+                    ? "Home pickup"
+                    : points.data?.find((point) => point.id === originCargoPointId)?.name
+                }
+              />
+              <Row
+                k="Receiver handoff"
+                v={
+                  receiverFulfillment === "address_delivery"
+                    ? "Address delivery"
+                    : points.data?.find((point) => point.id === destinationCargoPointId)?.name
+                }
+              />
+              <Row
+                k="Cargo items"
+                v={`${measurements.packageCount} · ${measurements.length} × ${measurements.width} × ${measurements.height} cm`}
+              />
+              <Row k={t("send.category")} v={manual.category} />
               <Row k={t("send.recipientName")} v={`${recipient.name} · ${recipient.phone}`} />
               <Row k={option.label} v={formatRWF(option.price.amount)} strong />
             </Card>
@@ -487,6 +483,17 @@ function Send() {
                 {shipment.trackingCode}
               </p>
             </div>
+            {shipment.deliveryCode && (
+              <div className="rounded-xl border border-warning/40 bg-warning/10 p-4">
+                <p className="text-sm font-semibold">Receiver delivery code</p>
+                <p className="font-display text-3xl font-bold tracking-widest">
+                  {shipment.deliveryCode}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Share only with the receiver. They will also receive it by SMS.
+                </p>
+              </div>
+            )}
             {shipment.paymentUrl && (
               <a
                 href={shipment.paymentUrl}
@@ -519,6 +526,39 @@ function Send() {
         )}
       </div>
     </ClientShell>
+  );
+}
+
+function CargoPointSelect({
+  label,
+  points,
+  loading,
+  value,
+  onChange,
+}: {
+  label: string;
+  points: CargoPoint[];
+  loading: boolean;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <Field label={label}>
+      <select
+        required
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        disabled={loading || points.length === 0}
+        className="h-12 w-full rounded-xl border border-input bg-surface px-3"
+      >
+        <option value="">Choose an active cargo point</option>
+        {points.map((point) => (
+          <option key={point.id} value={point.id}>
+            {point.name} · {point.district}
+          </option>
+        ))}
+      </select>
+    </Field>
   );
 }
 

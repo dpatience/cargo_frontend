@@ -23,6 +23,7 @@ export const Route = createFileRoute("/shipments")({
       },
       { property: "og:title", content: "My shipments — Tembera Cargo" },
       { property: "og:description", content: "All your Tembera Cargo shipments in one place." },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: Shipments,

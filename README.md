@@ -24,11 +24,23 @@ src/routes            route entry points per app
 ## Setup
 Copy `.env.example` → `.env` and set `VITE_API_BASE_URL`. Without it every screen shows "Service not connected" — no mock data is ever shown. Endpoints: see `api.md`.
 
+Use Node.js/npm or Bun; Bun is optional. In PowerShell, run the commands from the
+`cargo_frontend` directory (the one containing `package.json`):
+
+```powershell
+cd "C:\Users\Patience\E-go\Tembera Cargo\cargo_frontend"
+npm run dev:client
+```
+
+If dependencies have not been installed yet, run `npm install` in that directory
+first. The Vite modes used by the per-app scripts select the app without
+platform-specific environment-variable syntax.
+
 ## Running each app on its own port
 ```
-bun run dev:client   # http://localhost:3000
-bun run dev:driver   # http://localhost:3001  (opens /driver)
-bun run dev:admin    # http://localhost:3002  (opens /admin)
+npm run dev:client   # http://localhost:3000 (or: bun run dev:client)
+npm run dev:driver   # http://localhost:3001 (or: bun run dev:driver)
+npm run dev:admin    # http://localhost:3002 (or: bun run dev:admin)
 ```
 `VITE_APP` pins a server to one app; any path from another app redirects to that app's home.
 

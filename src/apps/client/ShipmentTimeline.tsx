@@ -31,6 +31,11 @@ export function ShipmentView({ s }: { s: Shipment }) {
             </span>
           )}
           {s.price && <span>{formatRWF(s.price.amount)}</span>}
+          {s.statusUpdatedAt && (
+            <span>
+              Last status update: <b className="text-foreground">{formatDate(s.statusUpdatedAt)}</b>
+            </span>
+          )}
         </div>
       </Card>
       {s.events.length > 0 && (

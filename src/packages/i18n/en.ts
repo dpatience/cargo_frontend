@@ -11,6 +11,8 @@ export const en = {
   "home.track": "Track Cargo",
   "home.receive": "Receive Cargo",
   "home.mine": "My Shipments",
+  "home.shortcuts": "Your cargo, at a glance",
+  "home.shortcutsHint": "Pick up where you need to",
   "track.title": "Track your cargo",
   "track.placeholder": "Enter tracking code",
   "track.go": "Track",
@@ -56,7 +58,8 @@ export const en = {
   "camera.addAngle": "Add another angle",
   "camera.analyze": "Analyze cargo",
   "camera.analyzing": "Analyzing your cargo…",
-  "camera.denied": "Camera access was blocked. You can upload a photo or describe the cargo instead.",
+  "camera.denied":
+    "Camera access was blocked. You can upload a photo or describe the cargo instead.",
   "camera.upload": "Upload a photo",
   "camera.result": "Here's what we see",
   "camera.lowConfidence": "We're not fully sure. Please check the details or describe it yourself.",
@@ -72,8 +75,12 @@ export const en = {
   "common.sendCode": "Send code",
   "common.verify": "Verify",
   "common.save": "Save",
+  "auth.codeSent": "Verification code sent. Enter the code from your SMS.",
+  "auth.deliveryUnconfirmed":
+    "We couldn't confirm SMS delivery. If you received the code, enter it here.",
   "state.unconfigured.title": "Service not connected",
-  "state.unconfigured.body": "Tembera Cargo isn't connected to its service yet. Please check back soon.",
+  "state.unconfigured.body":
+    "Tembera Cargo isn't connected to its service yet. Please check back soon.",
   "state.offline.title": "You're offline",
   "state.offline.body": "Check your connection. We'll keep what you've entered.",
   "state.error.title": "Something went wrong",

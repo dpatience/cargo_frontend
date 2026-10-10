@@ -3,7 +3,8 @@ import { getRequestHost } from "@tanstack/react-start/server";
 
 /**
  * Which app this deployment serves.
- * - VITE_APP=client|driver|admin pins it (used by the per-port dev scripts).
+ * - VITE_APP=client|driver|admin pins it.
+ * - Vite's client|driver|admin mode selects an app for the per-port dev scripts.
  * - Otherwise the hostname decides: driver.* → driver, admin.* → admin,
  *   anything on VITE_CLIENT_HOST → client.
  * - Anywhere else (Lovable preview, localhost:8080) → "all" so every app stays reachable.
@@ -19,6 +20,8 @@ const getHost = createIsomorphicFn()
 export function resolveAppTarget(): AppTarget {
   const pinned = import.meta.env["VITE_APP"] as string | undefined;
   if (pinned === "client" || pinned === "driver" || pinned === "admin") return pinned;
+  const mode = import.meta.env.MODE;
+  if (mode === "client" || mode === "driver" || mode === "admin") return mode;
   const host = (getHost() ?? "").split(":")[0]!.toLowerCase();
   if (host.startsWith("driver.")) return "driver";
   if (host.startsWith("admin.")) return "admin";
