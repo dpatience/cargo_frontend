@@ -4,7 +4,7 @@ import { apiRequest } from "./client";
 import type { AppArea } from "../config/env";
 import {
   AdminDashboard, CargoAnalysis, DriverJob, Location, Ok, OtpRequested, Paginated,
-  PricingRule, Quote, Session, Shipment, VisionReview,
+  PricingRule, PublicTracking, Quote, Session, Shipment, VisionReview,
 } from "../types";
 
 // ---------- Auth ----------
@@ -51,7 +51,7 @@ export const myShipmentsQuery = () => queryOptions({
 });
 export const trackingQuery = (code: string) => queryOptions({
   queryKey: ["tracking", code],
-  queryFn: () => apiRequest(`/tracking/${encodeURIComponent(code)}`, Shipment),
+  queryFn: () => apiRequest(`/tracking/${encodeURIComponent(code)}`, PublicTracking),
   refetchInterval: 30_000,
   retry: (n, e) => n < 2 && (e as { kind?: string }).kind !== "not_found",
 });

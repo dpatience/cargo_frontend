@@ -13,9 +13,9 @@ export const Location = z.object({
 });
 export type Location = z.infer<typeof Location>;
 
-export const Session = z.object({ token: z.string(), user: z.object({ id: z.string(), name: z.string().nullable().optional(), phone: z.string().optional(), email: z.string().optional(), roles: z.array(z.string()).default([]) }) });
+export const Session = z.object({ token: z.string(), expiresInSeconds: z.number().int().positive(), user: z.object({ id: z.string(), name: z.string().nullable().optional(), phone: z.string().optional(), email: z.string().optional(), roles: z.array(z.string()).default([]) }) });
 export type Session = z.infer<typeof Session>;
-export const OtpRequested = z.object({ requestId: z.string(), expiresInSeconds: z.number().optional() });
+export const OtpRequested = z.object({ requestId: z.string(), expiresInSeconds: z.number().int().positive() });
 
 export const CargoAnalysis = z.object({
   analysisId: z.string(),
@@ -42,7 +42,7 @@ export const QuoteOption = z.object({
   route: z.array(z.object({ label: z.string(), mode: z.string().optional() })).default([]),
   recommended: z.boolean().optional(),
 });
-export const Quote = z.object({ quoteId: z.string(), expiresAt: z.string().optional(), options: z.array(QuoteOption) });
+export const Quote = z.object({ quoteId: z.string(), expiresAt: z.string().datetime({ offset: true }), options: z.array(QuoteOption) });
 export type Quote = z.infer<typeof Quote>;
 export type QuoteOption = z.infer<typeof QuoteOption>;
 
@@ -64,6 +64,19 @@ export const Shipment = z.object({
   paymentUrl: z.string().nullable().optional(),
 });
 export type Shipment = z.infer<typeof Shipment>;
+export const PublicTracking = z.object({
+  id: z.string(),
+  trackingCode: z.string(),
+  status: ShipmentStatus,
+  statusLabel: z.string().optional(),
+  origin: z.string(),
+  destination: z.string(),
+  eta: z.string().nullable().optional(),
+  price: Money.optional(),
+  createdAt: z.string(),
+  events: z.array(TrackingEvent).default([]),
+}).strict();
+export type PublicTracking = z.infer<typeof PublicTracking>;
 export const Paginated = <T extends z.ZodTypeAny>(item: T) => z.object({ items: z.array(item), total: z.number(), page: z.number().default(1), pageSize: z.number().default(20) });
 
 export const DriverJob = z.object({
