@@ -117,12 +117,31 @@ export function cargoLandingHead(locale: CargoLocale) {
             },
             {
               "@type": "WebSite",
-              "@id": `${canonical}#website`,
+              "@id": `${absoluteSiteUrl("/")}#website`,
               name: "Tembera Cargo",
               url: canonical,
               description: copy.description,
               publisher: { "@id": organizationId },
               inLanguage: language,
+              potentialAction: {
+                "@type": "SearchAction",
+                target: {
+                  "@type": "EntryPoint",
+                  urlTemplate: `${absoluteSiteUrl("/track")}?code={search_term_string}`,
+                },
+                "query-input": "required name=search_term_string",
+              },
+            },
+            {
+              "@type": "SoftwareApplication",
+              "@id": `${canonical}#application`,
+              name: "Tembera Cargo",
+              applicationCategory: "BusinessApplication",
+              operatingSystem: "Web",
+              image: absoluteSiteUrl("/tembera-logo.jpg"),
+              url: canonical,
+              inLanguage: language,
+              publisher: { "@id": organizationId },
             },
             {
               "@type": "Service",
@@ -132,6 +151,26 @@ export function cargoLandingHead(locale: CargoLocale) {
               description: copy.summary,
               areaServed: { "@type": "Country", name: "Rwanda" },
               provider: { "@id": organizationId },
+              hasOfferCatalog: {
+                "@type": "OfferCatalog",
+                name:
+                  locale === "en" ? "Shipment fulfillment options" : "Uburyo bwo gutanga imizigo",
+                itemListElement: [
+                  { "@type": "Offer", name: locale === "en" ? "Home pickup" : "Gufatira mu rugo" },
+                  {
+                    "@type": "Offer",
+                    name: locale === "en" ? "Station drop-off" : "Gushyira kuri sitasiyo",
+                  },
+                  {
+                    "@type": "Offer",
+                    name: locale === "en" ? "Address delivery" : "Kugeza ku aderesi",
+                  },
+                  {
+                    "@type": "Offer",
+                    name: locale === "en" ? "Station collection" : "Gufatira kuri sitasiyo",
+                  },
+                ],
+              },
             },
             {
               "@type": "FAQPage",

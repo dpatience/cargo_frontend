@@ -1,0 +1,17 @@
+name: SEO validation
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  localized-seo-pages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install --frozen-lockfile
+      - run: bun run test -- src/seo.test.ts
+      - run: bun run build

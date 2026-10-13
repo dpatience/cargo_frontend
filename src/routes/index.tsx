@@ -184,9 +184,89 @@ export function Home() {
             {lang === "rw" ? "Gukurikirana bisi za Tembera Kigali" : "Tembera Kigali bus tracking"}
           </a>
           <a href="https://nyxarith.com/" className="underline underline-offset-4">
-            {lang === "rw" ? "Nyxarith, ikigo gikora Tembera" : "Nyxarith, the company behind Tembera"}
+            {lang === "rw"
+              ? "Nyxarith, ikigo gikora Tembera"
+              : "Nyxarith, the company behind Tembera"}
           </a>
         </nav>
+
+        <section aria-labelledby="cargo-guides-title" className="space-y-4">
+          <h2 id="cargo-guides-title" className="font-display text-2xl font-semibold">
+            {lang === "rw"
+              ? "Inama n'amakuru kuri Tembera Cargo"
+              : "Tembera Cargo guides and information"}
+          </h2>
+          <nav
+            aria-label={lang === "rw" ? "Inama za Cargo" : "Cargo guides"}
+            className="flex flex-wrap gap-4 text-sm"
+          >
+            <a href={`/${lang}/cargo`} className="underline underline-offset-4">
+              {lang === "rw" ? "Gutwara imizigo mu Rwanda" : "Cargo delivery across Rwanda"}
+            </a>
+            <a href={`/${lang}/how-it-works`} className="underline underline-offset-4">
+              {lang === "rw" ? "Uko ikora" : "How it works"}
+            </a>
+            <a href={`/${lang}/pricing`} className="underline underline-offset-4">
+              {lang === "rw" ? "Ibiciro n'igiciro cy'imizigo" : "Pricing and shipment quotes"}
+            </a>
+            <a href={`/${lang}/safety-and-trust`} className="underline underline-offset-4">
+              {lang === "rw" ? "Uko imizigo yizewe" : "Safety and trust"}
+            </a>
+            <a href={`/${lang}/coverage`} className="underline underline-offset-4">
+              {lang === "rw" ? "Aho dukorera" : "Coverage"}
+            </a>
+            <a href={`/${lang}/how-to-send-a-package`} className="underline underline-offset-4">
+              {lang === "rw" ? "Uko wohereza imizigo" : "How to send a package"}
+            </a>
+            <a href={`/${lang}/track-a-package`} className="underline underline-offset-4">
+              {lang === "rw" ? "Uko ukurikirana imizigo" : "How to track a package"}
+            </a>
+            <a
+              href={`/${lang}/guides/cargo-vs-courier-vs-bus`}
+              className="underline underline-offset-4"
+            >
+              {lang === "rw"
+                ? "Gereranya uburyo bwo kohereza"
+                : "Compare cargo, courier and bus parcels"}
+            </a>
+            <a href={`/${lang}/for-small-businesses`} className="underline underline-offset-4">
+              {lang === "rw" ? "Ku bucuruzi buto" : "For small businesses"}
+            </a>
+            <a href={`/${lang}/for-online-sellers`} className="underline underline-offset-4">
+              {lang === "rw" ? "Ku bacuruza kuri interineti" : "For online sellers"}
+            </a>
+            <a
+              href={`/${lang}/for-farmers-and-cooperatives`}
+              className="underline underline-offset-4"
+            >
+              {lang === "rw" ? "Ku bahinzi na koperative" : "For farmers and cooperatives"}
+            </a>
+            <a href={`/${lang}/for-students`} className="underline underline-offset-4">
+              {lang === "rw" ? "Ku banyeshuri" : "For students"}
+            </a>
+            <a href={`/${lang}/shipping-fragile-items`} className="underline underline-offset-4">
+              {lang === "rw" ? "Kohereza ibicuruzwa bimeneka" : "Shipping fragile items"}
+            </a>
+            <a href={`/${lang}/about-nyxarith`} className="underline underline-offset-4">
+              {lang === "rw" ? "Ibyerekeye Nyxarith" : "About Nyxarith"}
+            </a>
+            <a href={`/${lang}/contact`} className="underline underline-offset-4">
+              {lang === "rw" ? "Uko wavugana natwe" : "Contact"}
+            </a>
+            <a href={`/${lang}/cargo/kigali-to-musanze`} className="underline underline-offset-4">
+              Kigali to Musanze
+            </a>
+            <a href={`/${lang}/cargo/kigali-to-huye`} className="underline underline-offset-4">
+              Kigali to Huye
+            </a>
+            <a href={`/${lang}/cargo/kigali-to-rubavu`} className="underline underline-offset-4">
+              Kigali to Rubavu
+            </a>
+            <a href={`/${lang}/cargo/kigali-to-rusizi`} className="underline underline-offset-4">
+              Kigali to Rusizi
+            </a>
+          </nav>
+        </section>
 
         <section aria-label="Cargo shortcuts">
           <div className="mb-3 flex items-center justify-between">

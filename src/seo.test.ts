@@ -2,6 +2,12 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { cargoLandingCopy, cargoLandingHead } from "@/packages/config/seo";
+import {
+  cargoSeoPageHead,
+  cargoSeoPages,
+  cargoSeoSitemapEntries,
+} from "@/packages/config/seo-pages";
+import { buildCargoSitemap } from "../vite.seo-sitemap";
 
 describe("localized cargo landing SEO", () => {
   it.each(["en", "rw"] as const)(
@@ -62,6 +68,100 @@ describe("localized cargo landing SEO", () => {
       );
     },
   );
+});
+
+describe("Cargo content pages and structured data", () => {
+  it("provides localized metadata, visible-answer FAQs and breadcrumbs for every content page", () => {
+    for (const page of cargoSeoPages) {
+      for (const locale of ["en", "rw"] as const) {
+        const content = page[locale];
+        const head = cargoSeoPageHead(locale, page.slug, content);
+        const schemaScript = head.scripts[0];
+        if (!schemaScript) throw new Error(`Missing schema on ${locale}/${page.slug}`);
+        const schema = JSON.parse(schemaScript.children) as {
+          "@graph": Array<{
+            "@type": string;
+            mainEntity?: Array<{ name: string; acceptedAnswer: { text: string } }>;
+            itemListElement?: Array<{ position: number }>;
+            step?: Array<{ name: string; text: string }>;
+            potentialAction?: { "@type": string; target: { urlTemplate: string } };
+            logo?: string;
+            image?: string;
+          }>;
+        };
+        const graph = schema["@graph"];
+        const faq = graph.find((entity) => entity["@type"] === "FAQPage");
+        const breadcrumb = graph.find((entity) => entity["@type"] === "BreadcrumbList");
+        const howTo = graph.find((entity) => entity["@type"] === "HowTo");
+        const organization = graph.find((entity) => entity["@type"] === "Organization");
+        const application = graph.find((entity) => entity["@type"] === "SoftwareApplication");
+        const robots = head.meta.find((meta) => "name" in meta && meta.name === "robots");
+
+        expect(organization?.logo).toBeUndefined();
+        expect(application?.image).toBe("https://cargo.tembera.nyxarith.com/tembera-logo.jpg");
+        expect(content.title.length).toBeLessThanOrEqual(60);
+        expect(content.description.length).toBeLessThanOrEqual(155);
+        expect(head.links.some((link) => link.rel === "canonical")).toBe(true);
+        expect(head.links.filter((link) => link.rel === "alternate")).toHaveLength(3);
+        expect(faq?.mainEntity).toEqual(
+          content.faqs.map(({ question, answer }) => ({
+            "@type": "Question",
+            name: question,
+            acceptedAnswer: { "@type": "Answer", text: answer },
+          })),
+        );
+        expect(breadcrumb?.itemListElement?.map((item) => item.position)).toEqual(
+          page.slug === "cargo" ? [1] : [1, 2, 3],
+        );
+        expect(howTo?.step).toEqual(
+          content.steps?.map((step, index) => ({
+            "@type": "HowToStep",
+            position: index + 1,
+            name: step.name,
+            text: step.text,
+          })),
+        );
+        expect(robots && "content" in robots ? robots.content : "").toBe(
+          content.noIndex ? "noindex,nofollow" : "index,follow,max-image-preview:large",
+        );
+        expect(JSON.stringify(graph)).not.toContain("AggregateRating");
+      }
+    }
+  });
+
+  it("publishes a bilingual sitemap for useful pages and excludes the unapproved privacy draft", () => {
+    const entries = cargoSeoSitemapEntries("2026-10-13");
+    const sitemap = buildCargoSitemap();
+
+    expect(entries.length).toBeGreaterThan(40);
+    expect(sitemap).toContain("https://cargo.tembera.nyxarith.com/en/cargo/kigali-to-musanze");
+    expect(sitemap).toContain("https://cargo.tembera.nyxarith.com/rw/cargo/musanze-to-kigali");
+    expect(sitemap).toContain('hreflang="en"');
+    expect(sitemap).toContain('hreflang="rw"');
+    expect(sitemap).toContain('hreflang="x-default"');
+    expect(sitemap).toContain("<lastmod>");
+    expect(sitemap).not.toContain("/privacy");
+  });
+
+  it("connects the website search action to the functional shipment tracker", () => {
+    const head = cargoSeoPageHead(
+      "en",
+      "cargo",
+      cargoSeoPages.find((page) => page.slug === "cargo")!.en,
+    );
+    const schema = JSON.parse(head.scripts[0]!.children) as {
+      "@graph": Array<{
+        "@type": string;
+        potentialAction?: { "@type": string; target: { urlTemplate: string } };
+      }>;
+    };
+    const website = schema["@graph"].find((entity) => entity["@type"] === "WebSite");
+
+    expect(website?.potentialAction?.["@type"]).toBe("SearchAction");
+    expect(website?.potentialAction?.target.urlTemplate).toBe(
+      "https://cargo.tembera.nyxarith.com/track?code={search_term_string}",
+    );
+  });
 });
 
 describe("public crawl directives", () => {

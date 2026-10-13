@@ -28,7 +28,9 @@ import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as CargoPointOperatorIndexRouteImport } from './routes/cargo-point-operator.index'
 import { Route as DriverIndexRouteImport } from './routes/driver.index'
 import { Route as EnIndexRouteImport } from './routes/en.index'
+import { Route as EnSplatRouteImport } from './routes/en.$'
 import { Route as RwIndexRouteImport } from './routes/rw.index'
+import { Route as RwSplatRouteImport } from './routes/rw.$'
 import { Route as TrackIndexRouteImport } from './routes/track.index'
 import { Route as TrackCodeRouteImport } from './routes/track.$code'
 import { Route as DriverJobsIdRouteImport } from './routes/driver.jobs.$id'
@@ -128,9 +130,19 @@ const EnIndexRoute = EnIndexRouteImport.update({
   path: '/en/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EnSplatRoute = EnSplatRouteImport.update({
+  id: '/en/$',
+  path: '/en/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RwIndexRoute = RwIndexRouteImport.update({
   id: '/rw/',
   path: '/rw/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RwSplatRoute = RwSplatRouteImport.update({
+  id: '/rw/$',
+  path: '/rw/$',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TrackIndexRoute = TrackIndexRouteImport.update({
@@ -164,6 +176,8 @@ export interface FileRoutesByFullPath {
   '/admin/pricing': typeof AdminPricingRoute
   '/admin/shipments': typeof AdminShipmentsRoute
   '/admin/vision': typeof AdminVisionRoute
+  '/en/$': typeof EnSplatRoute
+  '/rw/$': typeof RwSplatRoute
   '/track/$code': typeof TrackCodeRoute
   '/admin/': typeof AdminIndexRoute
   '/app/': typeof AppIndexRoute
@@ -186,6 +200,8 @@ export interface FileRoutesByTo {
   '/admin/pricing': typeof AdminPricingRoute
   '/admin/shipments': typeof AdminShipmentsRoute
   '/admin/vision': typeof AdminVisionRoute
+  '/en/$': typeof EnSplatRoute
+  '/rw/$': typeof RwSplatRoute
   '/track/$code': typeof TrackCodeRoute
   '/admin': typeof AdminIndexRoute
   '/app': typeof AppIndexRoute
@@ -212,6 +228,8 @@ export interface FileRoutesById {
   '/admin/pricing': typeof AdminPricingRoute
   '/admin/shipments': typeof AdminShipmentsRoute
   '/admin/vision': typeof AdminVisionRoute
+  '/en/$': typeof EnSplatRoute
+  '/rw/$': typeof RwSplatRoute
   '/track/$code': typeof TrackCodeRoute
   '/admin/': typeof AdminIndexRoute
   '/app/': typeof AppIndexRoute
@@ -239,6 +257,8 @@ export interface FileRouteTypes {
     | '/admin/pricing'
     | '/admin/shipments'
     | '/admin/vision'
+    | '/en/$'
+    | '/rw/$'
     | '/track/$code'
     | '/admin/'
     | '/app/'
@@ -261,6 +281,8 @@ export interface FileRouteTypes {
     | '/admin/pricing'
     | '/admin/shipments'
     | '/admin/vision'
+    | '/en/$'
+    | '/rw/$'
     | '/track/$code'
     | '/admin'
     | '/app'
@@ -286,6 +308,8 @@ export interface FileRouteTypes {
     | '/admin/pricing'
     | '/admin/shipments'
     | '/admin/vision'
+    | '/en/$'
+    | '/rw/$'
     | '/track/$code'
     | '/admin/'
     | '/app/'
@@ -306,6 +330,8 @@ export interface RootRouteChildren {
   ReceiveRoute: typeof ReceiveRoute
   SendRoute: typeof SendRoute
   ShipmentsRoute: typeof ShipmentsRoute
+  EnSplatRoute: typeof EnSplatRoute
+  RwSplatRoute: typeof RwSplatRoute
   TrackCodeRoute: typeof TrackCodeRoute
   AppIndexRoute: typeof AppIndexRoute
   EnIndexRoute: typeof EnIndexRoute
@@ -448,11 +474,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EnIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/en/$': {
+      id: '/en/$'
+      path: '/en/$'
+      fullPath: '/en/$'
+      preLoaderRoute: typeof EnSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/rw/': {
       id: '/rw/'
       path: '/rw'
       fullPath: '/rw/'
       preLoaderRoute: typeof RwIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rw/$': {
+      id: '/rw/$'
+      path: '/rw/$'
+      fullPath: '/rw/$'
+      preLoaderRoute: typeof RwSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/track/': {
@@ -534,6 +574,8 @@ const rootRouteChildren: RootRouteChildren = {
   ReceiveRoute: ReceiveRoute,
   SendRoute: SendRoute,
   ShipmentsRoute: ShipmentsRoute,
+  EnSplatRoute: EnSplatRoute,
+  RwSplatRoute: RwSplatRoute,
   TrackCodeRoute: TrackCodeRoute,
   AppIndexRoute: AppIndexRoute,
   EnIndexRoute: EnIndexRoute,

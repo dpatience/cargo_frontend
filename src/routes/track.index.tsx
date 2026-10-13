@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ClientShell } from "@/apps/client/ClientShell";
 import { useI18n } from "@/packages/i18n";
 import { absoluteSiteUrl } from "@/packages/config/seo";
@@ -35,6 +35,10 @@ export function TrackCodeForm({
   const { t } = useI18n();
   const nav = useNavigate();
   const [code, setCode] = useState("");
+  useEffect(() => {
+    const queryCode = new URLSearchParams(window.location.search).get("code");
+    if (queryCode) setCode(queryCode.trim().toUpperCase());
+  }, []);
   return (
     <Card className="mx-auto max-w-lg space-y-4">
       <h1 className="text-2xl font-bold">{t(titleKey)}</h1>
