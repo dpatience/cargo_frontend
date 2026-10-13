@@ -24,8 +24,11 @@ import { Route as AdminExceptionsRouteImport } from './routes/admin.exceptions'
 import { Route as AdminPricingRouteImport } from './routes/admin.pricing'
 import { Route as AdminShipmentsRouteImport } from './routes/admin.shipments'
 import { Route as AdminVisionRouteImport } from './routes/admin.vision'
+import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as CargoPointOperatorIndexRouteImport } from './routes/cargo-point-operator.index'
 import { Route as DriverIndexRouteImport } from './routes/driver.index'
+import { Route as EnIndexRouteImport } from './routes/en.index'
+import { Route as RwIndexRouteImport } from './routes/rw.index'
 import { Route as TrackIndexRouteImport } from './routes/track.index'
 import { Route as TrackCodeRouteImport } from './routes/track.$code'
 import { Route as DriverJobsIdRouteImport } from './routes/driver.jobs.$id'
@@ -105,6 +108,11 @@ const AdminVisionRoute = AdminVisionRouteImport.update({
   path: '/vision',
   getParentRoute: () => AdminRoute,
 } as any)
+const AppIndexRoute = AppIndexRouteImport.update({
+  id: '/app/',
+  path: '/app/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CargoPointOperatorIndexRoute = CargoPointOperatorIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -114,6 +122,16 @@ const DriverIndexRoute = DriverIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => DriverRoute,
+} as any)
+const EnIndexRoute = EnIndexRouteImport.update({
+  id: '/en/',
+  path: '/en/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RwIndexRoute = RwIndexRouteImport.update({
+  id: '/rw/',
+  path: '/rw/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const TrackIndexRoute = TrackIndexRouteImport.update({
   id: '/track/',
@@ -148,8 +166,11 @@ export interface FileRoutesByFullPath {
   '/admin/vision': typeof AdminVisionRoute
   '/track/$code': typeof TrackCodeRoute
   '/admin/': typeof AdminIndexRoute
+  '/app/': typeof AppIndexRoute
   '/cargo-point-operator/': typeof CargoPointOperatorIndexRoute
   '/driver/': typeof DriverIndexRoute
+  '/en/': typeof EnIndexRoute
+  '/rw/': typeof RwIndexRoute
   '/track/': typeof TrackIndexRoute
   '/driver/jobs/$id': typeof DriverJobsIdRoute
 }
@@ -167,8 +188,11 @@ export interface FileRoutesByTo {
   '/admin/vision': typeof AdminVisionRoute
   '/track/$code': typeof TrackCodeRoute
   '/admin': typeof AdminIndexRoute
+  '/app': typeof AppIndexRoute
   '/cargo-point-operator': typeof CargoPointOperatorIndexRoute
   '/driver': typeof DriverIndexRoute
+  '/en': typeof EnIndexRoute
+  '/rw': typeof RwIndexRoute
   '/track': typeof TrackIndexRoute
   '/driver/jobs/$id': typeof DriverJobsIdRoute
 }
@@ -190,8 +214,11 @@ export interface FileRoutesById {
   '/admin/vision': typeof AdminVisionRoute
   '/track/$code': typeof TrackCodeRoute
   '/admin/': typeof AdminIndexRoute
+  '/app/': typeof AppIndexRoute
   '/cargo-point-operator/': typeof CargoPointOperatorIndexRoute
   '/driver/': typeof DriverIndexRoute
+  '/en/': typeof EnIndexRoute
+  '/rw/': typeof RwIndexRoute
   '/track/': typeof TrackIndexRoute
   '/driver/jobs/$id': typeof DriverJobsIdRoute
 }
@@ -214,8 +241,11 @@ export interface FileRouteTypes {
     | '/admin/vision'
     | '/track/$code'
     | '/admin/'
+    | '/app/'
     | '/cargo-point-operator/'
     | '/driver/'
+    | '/en/'
+    | '/rw/'
     | '/track/'
     | '/driver/jobs/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -233,8 +263,11 @@ export interface FileRouteTypes {
     | '/admin/vision'
     | '/track/$code'
     | '/admin'
+    | '/app'
     | '/cargo-point-operator'
     | '/driver'
+    | '/en'
+    | '/rw'
     | '/track'
     | '/driver/jobs/$id'
   id:
@@ -255,8 +288,11 @@ export interface FileRouteTypes {
     | '/admin/vision'
     | '/track/$code'
     | '/admin/'
+    | '/app/'
     | '/cargo-point-operator/'
     | '/driver/'
+    | '/en/'
+    | '/rw/'
     | '/track/'
     | '/driver/jobs/$id'
   fileRoutesById: FileRoutesById
@@ -271,6 +307,9 @@ export interface RootRouteChildren {
   SendRoute: typeof SendRoute
   ShipmentsRoute: typeof ShipmentsRoute
   TrackCodeRoute: typeof TrackCodeRoute
+  AppIndexRoute: typeof AppIndexRoute
+  EnIndexRoute: typeof EnIndexRoute
+  RwIndexRoute: typeof RwIndexRoute
   TrackIndexRoute: typeof TrackIndexRoute
 }
 
@@ -381,6 +420,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminVisionRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/app/': {
+      id: '/app/'
+      path: '/app'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/cargo-point-operator/': {
       id: '/cargo-point-operator/'
       path: '/'
@@ -394,6 +440,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/driver/'
       preLoaderRoute: typeof DriverIndexRouteImport
       parentRoute: typeof DriverRoute
+    }
+    '/en/': {
+      id: '/en/'
+      path: '/en'
+      fullPath: '/en/'
+      preLoaderRoute: typeof EnIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rw/': {
+      id: '/rw/'
+      path: '/rw'
+      fullPath: '/rw/'
+      preLoaderRoute: typeof RwIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/track/': {
       id: '/track/'
@@ -475,6 +535,9 @@ const rootRouteChildren: RootRouteChildren = {
   SendRoute: SendRoute,
   ShipmentsRoute: ShipmentsRoute,
   TrackCodeRoute: TrackCodeRoute,
+  AppIndexRoute: AppIndexRoute,
+  EnIndexRoute: EnIndexRoute,
+  RwIndexRoute: RwIndexRoute,
   TrackIndexRoute: TrackIndexRoute,
 }
 export const routeTree = rootRouteImport

@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
   redirect,
@@ -26,14 +27,26 @@ function NotFoundComponent() {
         <p className="mt-2 text-sm text-muted-foreground">
           The page you're looking for doesn't exist or has been moved.
         </p>
-        <div className="mt-6">
+        <nav aria-label="Helpful links" className="mt-6 flex flex-wrap justify-center gap-4">
           <Link
-            to="/"
+            to="/en"
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
-            Go home
+            Tembera Cargo home
           </Link>
-        </div>
+          <Link
+            to="/rw"
+            className="inline-flex items-center justify-center rounded-md border border-input px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+          >
+            Urupapuro rw'ibanze
+          </Link>
+          <Link
+            to="/app"
+            className="inline-flex items-center justify-center rounded-md border border-input px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+          >
+            Open the cargo app
+          </Link>
+        </nav>
       </div>
     </div>
   );
@@ -86,7 +99,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     }
   },
   head: () => {
-    const socialImage = absoluteSiteUrl("/tembera-logo.jpg");
+    const socialImage = absoluteSiteUrl("/og-image.jpg");
     return {
       meta: [
         { charSet: "utf-8" },
@@ -102,7 +115,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
               { property: "og:image", content: socialImage },
               { property: "og:image:type", content: "image/jpeg" },
               { property: "og:image:width", content: "1200" },
-              { property: "og:image:height", content: "741" },
+              { property: "og:image:height", content: "630" },
               { name: "twitter:image", content: socialImage },
               { name: "twitter:image:alt", content: "Tembera — Rwandan smartness in transport" },
             ]
@@ -135,8 +148,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: ReactNode }) {
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const locale = pathname.startsWith("/rw") ? "rw" : "en";
   return (
-    <html lang="en">
+    <html lang={locale}>
       <head>
         <HeadContent />
       </head>
@@ -150,10 +165,13 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const locale = pathname.startsWith("/rw") ? "rw" : "en";
+  const localeLocked = pathname.startsWith("/en") || pathname.startsWith("/rw");
 
   return (
     <QueryClientProvider client={queryClient}>
-      <I18nProvider>
+      <I18nProvider initialLang={locale} localeLocked={localeLocked}>
         <Outlet />
       </I18nProvider>
     </QueryClientProvider>

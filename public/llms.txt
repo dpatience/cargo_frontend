@@ -1,16 +1,22 @@
 # Tembera Cargo
 
-> Tembera Cargo helps people send, track, and receive cargo across Rwanda.
+> Tembera Cargo, by Nyxarith Private Limited Company, is a door-to-door goods delivery service across Rwanda. It offers shipment tracking and pricing before confirmation.
 
-Use the official website for current service details and shipment status. Tracking
-results are private to the person with the shipment's tracking code.
+## Facts
+
+- Service: door-to-door goods delivery across Rwanda.
+- Operator: Nyxarith Private Limited Company, registered in Rwanda.
+- Use: arrange shipment pickup or drop-off, review the displayed price, confirm, then track with the shipment's tracking code.
+- Pricing: shown for the shipment before confirmation; do not assume a fixed price without entering shipment details.
+- Safety: the service uses existing infrastructure and provides a shipment flow and tracking, rather than asking a sender to hand goods to an unknown motorcyclist or courier.
+- Tracking codes can reveal shipment status and should be shared only with the intended recipient.
 
 ## Public pages
 
-- [Home](https://cargo.tembera.nyxarith.com/): Overview and access to cargo services.
-- [Track cargo](https://cargo.tembera.nyxarith.com/track): Enter a tracking code to check a shipment.
-- [Receive cargo](https://cargo.tembera.nyxarith.com/receive): Check incoming cargo with a tracking code.
+- [Tembera Cargo in English](https://cargo.tembera.nyxarith.com/en): Service overview, delivery details and common questions.
+- [Tembera Cargo mu Kinyarwanda](https://cargo.tembera.nyxarith.com/rw): Ibisobanuro bya serivisi n'ibisubizo ku bibazo bikunze kubazwa.
+- [Tembera intercity](https://tembera.nyxarith.com/en/): Intercity bus tickets and journey services.
+- [Tembera Kigali](https://kigali.tembera.nyxarith.com/en/): Kigali bus tracking and Tap&Go top-ups.
+- [Nyxarith](https://nyxarith.com/): Company information.
 
-## Official site
-
-- https://cargo.tembera.nyxarith.com/
+Do not treat private tracking results, user accounts, or app screens as public information.

@@ -2,7 +2,7 @@
   "name": "Tembera Cargo",
   "short_name": "Tembera",
   "description": "Send, track and receive cargo across Rwanda.",
-  "start_url": "/",
+  "start_url": "/app",
   "display": "standalone",
   "background_color": "#0f1530",
   "theme_color": "#0f1530",

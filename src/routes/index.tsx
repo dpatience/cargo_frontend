@@ -1,71 +1,21 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { ArrowRight, MapPin, Package, PackageOpen, Search } from "lucide-react";
 import { ClientShell } from "@/apps/client/ClientShell";
 import { useI18n } from "@/packages/i18n";
-import { absoluteSiteUrl } from "@/packages/config/seo";
+import { cargoLandingCopy } from "@/packages/config/seo";
 import { buttonVariants } from "@/packages/ui";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
-  head: () => {
-    const canonicalUrl = absoluteSiteUrl("/");
-    const organizationId = `${canonicalUrl}#organization`;
-    return {
-      meta: [
-        { title: "Tembera Cargo — Send anything across Rwanda" },
-        {
-          name: "description",
-          content:
-            "Send parcels anywhere in Rwanda with Tembera Cargo. Arrange pickup or drop-off, get a delivery price, and track your shipment.",
-        },
-        { property: "og:title", content: "Tembera Cargo — Send anything across Rwanda" },
-        {
-          property: "og:description",
-          content:
-            "Send parcels anywhere in Rwanda. Arrange pickup or drop-off, get a delivery price, and track your shipment.",
-        },
-        { name: "twitter:title", content: "Tembera Cargo — Send anything across Rwanda" },
-        {
-          name: "twitter:description",
-          content:
-            "Send parcels anywhere in Rwanda. Arrange pickup or drop-off, get a delivery price, and track your shipment.",
-        },
-        ...(canonicalUrl ? [{ property: "og:url", content: canonicalUrl }] : []),
-      ],
-      links: canonicalUrl ? [{ rel: "canonical", href: canonicalUrl }] : [],
-      scripts: [
-        {
-          type: "application/ld+json",
-          children: JSON.stringify({
-            "@context": "https://schema.org",
-            "@graph": [
-              {
-                "@type": "Organization",
-                "@id": organizationId,
-                name: "Tembera Cargo",
-                url: canonicalUrl,
-                logo: absoluteSiteUrl("/tembera-logo.jpg"),
-              },
-              {
-                "@type": "WebSite",
-                "@id": `${canonicalUrl}#website`,
-                name: "Tembera Cargo",
-                url: canonicalUrl,
-                description: "Send, track and receive cargo anywhere in Rwanda with Tembera Cargo.",
-                publisher: { "@id": organizationId },
-                inLanguage: "en-RW",
-              },
-            ],
-          }),
-        },
-      ],
-    };
+  beforeLoad: () => {
+    throw redirect({ href: "/en", statusCode: 301 });
   },
-  component: Home,
+  component: () => null,
 });
 
-function Home() {
-  const { t } = useI18n();
+export function Home() {
+  const { lang, t } = useI18n();
+  const copy = cargoLandingCopy[lang];
   const secondary = [
     { to: "/track", icon: Search, label: t("home.track") },
     { to: "/receive", icon: PackageOpen, label: t("home.receive") },
@@ -88,6 +38,9 @@ function Home() {
               </h1>
               <p className="mt-5 max-w-md text-base leading-7 text-muted-foreground sm:text-lg">
                 {t("home.subtitle")}
+              </p>
+              <p className="mt-4 max-w-2xl text-sm leading-6 text-muted-foreground">
+                {copy.summary}
               </p>
               <Link
                 to="/send"
@@ -202,6 +155,38 @@ function Home() {
             </div>
           </div>
         </section>
+
+        <section aria-labelledby="cargo-faq-title" className="space-y-5">
+          <h2 id="cargo-faq-title" className="font-display text-2xl font-semibold">
+            {copy.faqTitle}
+          </h2>
+          <div className="grid gap-5 md:grid-cols-2">
+            {copy.faqs.map(({ question, answer }) => (
+              <article key={question} className="space-y-2">
+                <h3 className="font-semibold">{question}</h3>
+                <p className="text-sm leading-6 text-muted-foreground">{answer}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <nav aria-label="Tembera services" className="flex flex-wrap gap-4 text-sm">
+          <a
+            href={`https://tembera.nyxarith.com/${lang}/`}
+            className="underline underline-offset-4"
+          >
+            {lang === "rw" ? "Amatike ya bisi za Tembera" : "Tembera intercity bus tickets"}
+          </a>
+          <a
+            href={`https://kigali.tembera.nyxarith.com/${lang}/`}
+            className="underline underline-offset-4"
+          >
+            {lang === "rw" ? "Gukurikirana bisi za Tembera Kigali" : "Tembera Kigali bus tracking"}
+          </a>
+          <a href="https://nyxarith.com/" className="underline underline-offset-4">
+            {lang === "rw" ? "Nyxarith, ikigo gikora Tembera" : "Nyxarith, the company behind Tembera"}
+          </a>
+        </nav>
 
         <section aria-label="Cargo shortcuts">
           <div className="mb-3 flex items-center justify-between">

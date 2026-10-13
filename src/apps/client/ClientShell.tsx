@@ -16,7 +16,7 @@ export function ClientShell({ children }: { children: ReactNode }) {
   const { t } = useI18n();
   const [low, setLow] = useLowData();
   const nav = [
-    { to: "/", icon: Home, label: t("brand.name").split(" ")[0] },
+    { to: "/app", icon: Home, label: t("brand.name").split(" ")[0] },
     { to: "/track", icon: Search, label: t("nav.track") },
     { to: "/shipments", icon: Package, label: t("nav.shipments") },
     { to: "/account", icon: User, label: t("nav.account") },
@@ -26,7 +26,7 @@ export function ClientShell({ children }: { children: ReactNode }) {
       <OfflineBanner />
       <header className="sticky top-0 z-20 border-b border-border bg-background/90 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-5xl items-center justify-between gap-3 px-4">
-          <Link to="/" aria-label={t("brand.name")}><Logo /></Link>
+          <Link to="/app" aria-label={t("brand.name")}><Logo /></Link>
           <nav className="hidden items-center gap-1 md:flex">
             {nav.slice(1).map((n) => (
               <Link key={n.to} to={n.to} className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground" activeProps={{ className: "text-foreground bg-secondary" }}>{n.label}</Link>
@@ -43,7 +43,7 @@ export function ClientShell({ children }: { children: ReactNode }) {
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 pb-28 pt-6 md:pb-12">{children}</main>
       <nav className="fixed inset-x-0 bottom-0 z-20 grid grid-cols-4 border-t border-border bg-background/95 backdrop-blur md:hidden">
         {nav.map((n) => (
-          <Link key={n.to} to={n.to} activeOptions={{ exact: n.to === "/" }} className="flex flex-col items-center gap-1 py-2.5 text-xs text-muted-foreground" activeProps={{ className: "text-accent" }}>
+          <Link key={n.to} to={n.to} activeOptions={{ exact: n.to === "/app" }} className="flex flex-col items-center gap-1 py-2.5 text-xs text-muted-foreground" activeProps={{ className: "text-accent" }}>
             <n.icon className="size-5" />{n.label}
           </Link>
         ))}

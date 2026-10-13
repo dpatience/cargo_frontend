@@ -4,8 +4,30 @@ Disallow: /account
 Disallow: /admin
 Disallow: /cargo-point-operator
 Disallow: /driver
+Disallow: /app
+Disallow: /receive
 Disallow: /send
 Disallow: /shipments
-Disallow: /track/*
+Disallow: /track
 
 Sitemap: https://cargo.tembera.nyxarith.com/sitemap.xml
+
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Claude-SearchBot
+User-agent: PerplexityBot
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+User-agent: CCBot
+Allow: /
+Disallow: /account
+Disallow: /admin
+Disallow: /cargo-point-operator
+Disallow: /driver
+Disallow: /app
+Disallow: /receive
+Disallow: /send
+Disallow: /shipments
+Disallow: /track

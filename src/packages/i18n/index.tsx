@@ -10,14 +10,30 @@ const Ctx = createContext<{ lang: Lang; setLang: (l: Lang) => void; t: (k: Key, 
   lang: "en", setLang: () => {}, t: (k) => en[k],
 });
 
-export function I18nProvider({ children }: { children: ReactNode }) {
-  const [lang, setLangState] = useState<Lang>("en");
+export function I18nProvider({
+  children,
+  initialLang = "en",
+  localeLocked = false,
+}: {
+  children: ReactNode;
+  initialLang?: Lang;
+  localeLocked?: boolean;
+}) {
+  const [lang, setLangState] = useState<Lang>(initialLang);
   useEffect(() => {
+    if (localeLocked) return;
     const s = localStorage.getItem("tembera-cargo:lang");
     if (s === "rw" || s === "en") setLangState(s);
-  }, []);
+  }, [localeLocked]);
   useEffect(() => { document.documentElement.lang = lang; }, [lang]);
-  const setLang = (l: Lang) => { setLangState(l); localStorage.setItem("tembera-cargo:lang", l); };
+  const setLang = (l: Lang) => {
+    if (localeLocked) {
+      window.location.assign(`/${l}`);
+      return;
+    }
+    setLangState(l);
+    localStorage.setItem("tembera-cargo:lang", l);
+  };
   const t = useCallback((k: Key, vars?: Record<string, string | number>) => {
     let s = dicts[lang][k] ?? en[k];
     if (vars) for (const [n, v] of Object.entries(vars)) s = s.replace(`{${n}}`, String(v));
