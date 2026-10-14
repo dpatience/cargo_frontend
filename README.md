@@ -50,4 +50,6 @@ The public client app is served at `cargo.tembera.nyxarith.com`. Configure any p
 ## Search and AI discovery
 The client deployment publishes `robots.txt`, `sitemap.xml`, and `llms.txt` from `public/`. The sitemap contains only the public English and Kinyarwanda landing pages; private and transactional screens are excluded. Submit `https://cargo.tembera.nyxarith.com/sitemap.xml` in Google Search Console and Bing Webmaster Tools.
 
+Cloudflare Web Analytics is loaded only on the localized, indexable public Cargo pages. Its beacon has SPA tracking disabled; the customer app, shipment tracking, quote, payment and account routes are excluded. No form values or custom events are collected. Disable automatic whole-site Web Analytics injection in Cloudflare for this hostname so it does not bypass the public-page-only integration.
+
 The new Kinyarwanda landing-page copy and FAQs need review by a native speaker before publication.

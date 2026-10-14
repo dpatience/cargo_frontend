@@ -2,6 +2,7 @@ import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import {
   ArrowRight,
   BookOpen,
+  ChevronDown,
   ExternalLink,
   MapPin,
   Package,
@@ -10,6 +11,7 @@ import {
   Users,
 } from "lucide-react";
 import { ClientShell } from "@/apps/client/ClientShell";
+import { CloudflareWebAnalytics } from "@/components/CloudflareWebAnalytics";
 import { useI18n } from "@/packages/i18n";
 import { cargoLandingCopy } from "@/packages/config/seo";
 import { buttonVariants } from "@/packages/ui";
@@ -128,6 +130,7 @@ export function Home() {
 
   return (
     <ClientShell>
+      <CloudflareWebAnalytics />
       <div className="space-y-8 md:space-y-10">
         <section className="relative isolate overflow-hidden rounded-[2rem] border border-white/10 bg-surface shadow-card">
           <div className="pointer-events-none absolute inset-0 -z-10 bg-glow opacity-90" />
@@ -296,15 +299,18 @@ export function Home() {
               {copy.faqTitle}
             </h2>
           </div>
-          <div className="grid gap-3 md:grid-cols-2">
+          <div className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card px-5">
             {copy.faqs.map(({ question, answer }) => (
-              <article
-                key={question}
-                className="rounded-2xl border border-border bg-card p-5 shadow-card"
-              >
-                <h3 className="font-semibold leading-6">{question}</h3>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">{answer}</p>
-              </article>
+              <details key={question} className="group py-4">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold leading-6 marker:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                  <h3>{question}</h3>
+                  <ChevronDown
+                    aria-hidden="true"
+                    className="size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180"
+                  />
+                </summary>
+                <p className="max-w-3xl pt-3 text-sm leading-6 text-muted-foreground">{answer}</p>
+              </details>
             ))}
           </div>
         </section>
@@ -322,17 +328,23 @@ export function Home() {
           </div>
           <div className="grid gap-3 lg:grid-cols-3">
             {guideGroups.map(({ title, icon: Icon, links }) => (
-              <section
+              <details
                 key={title}
-                className="rounded-2xl border border-border bg-card p-5 shadow-card"
+                className="group rounded-2xl border border-border bg-card p-5 shadow-card"
               >
-                <h3 className="mb-3 flex items-center gap-2 font-display font-semibold">
-                  <span className="grid size-8 place-items-center rounded-lg bg-accent/10 text-accent">
-                    <Icon className="size-4" />
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 font-display font-semibold marker:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                  <span className="flex items-center gap-2">
+                    <span className="grid size-8 place-items-center rounded-lg bg-accent/10 text-accent">
+                      <Icon className="size-4" />
+                    </span>
+                    <h3>{title}</h3>
                   </span>
-                  {title}
-                </h3>
-                <nav aria-label={title} className="flex flex-col divide-y divide-border">
+                  <ChevronDown
+                    aria-hidden="true"
+                    className="size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180"
+                  />
+                </summary>
+                <nav aria-label={title} className="mt-3 flex flex-col divide-y divide-border">
                   {links.map(({ href, label }) => (
                     <a
                       key={href}
@@ -344,7 +356,7 @@ export function Home() {
                     </a>
                   ))}
                 </nav>
-              </section>
+              </details>
             ))}
           </div>
         </section>

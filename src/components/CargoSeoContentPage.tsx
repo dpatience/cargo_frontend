@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ClientShell } from "@/apps/client/ClientShell";
+import { CloudflareWebAnalytics } from "@/components/CloudflareWebAnalytics";
 import type { CargoLocale } from "@/packages/config/seo";
 import type { CargoSeoPageContent } from "@/packages/config/seo-pages";
 
@@ -23,6 +24,7 @@ export function CargoSeoContentPage({
 
   return (
     <ClientShell>
+      <CloudflareWebAnalytics enabled={!page.noIndex} />
       <article className="mx-auto max-w-3xl space-y-8">
         <nav aria-label={locale === "en" ? "Breadcrumb" : "Aho uri"} className="text-sm">
           <Link to={root} className="underline underline-offset-4">
