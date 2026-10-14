@@ -98,7 +98,7 @@ export function Card({
   );
 }
 
-export function Logo({ suffix }: { suffix?: string }) {
+export function Logo({ suffix, compact = false }: { suffix?: string; compact?: boolean }) {
   return (
     <span className="flex items-center gap-2 font-display text-lg font-bold">
       <img
@@ -109,7 +109,7 @@ export function Logo({ suffix }: { suffix?: string }) {
         className="size-10 rounded-xl bg-white object-contain"
       />
       <span>Tembera</span>
-      <span className="text-accent">Cargo</span>
+      <span className={cn("text-accent", compact && "hidden sm:inline")}>Cargo</span>
       {suffix && (
         <span className="rounded-md bg-secondary px-2 py-0.5 text-xs font-medium text-muted-foreground">
           {suffix}

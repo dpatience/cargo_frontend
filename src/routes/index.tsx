@@ -132,10 +132,27 @@ export function Home() {
     <ClientShell>
       <CloudflareWebAnalytics />
       <div className="space-y-8 md:space-y-10">
-        <section className="relative isolate overflow-hidden rounded-[2rem] border border-white/10 bg-surface shadow-card">
+        <section className="relative isolate overflow-hidden rounded-[2rem] border border-border bg-surface shadow-card">
           <div className="pointer-events-none absolute inset-0 -z-10 bg-glow opacity-90" />
           <div className="grid min-h-[28rem] items-center lg:grid-cols-[1.05fr_0.95fr]">
             <div className="px-6 pb-8 pt-9 sm:px-10 sm:pb-10 sm:pt-12 lg:px-12 lg:py-14">
+              <Link
+                to="/send"
+                className={cn(
+                  buttonVariants({ variant: "hero", size: "xl" }),
+                  "group mb-8 w-full justify-between gap-6 rounded-2xl px-5 shadow-cta sm:w-auto sm:min-w-72",
+                )}
+              >
+                <span className="text-left">
+                  <span className="block">{t("home.send")}</span>
+                  <span className="mt-0.5 block text-sm font-medium opacity-80">
+                    {t("home.sendHint")}
+                  </span>
+                </span>
+                <span className="grid size-10 shrink-0 place-items-center rounded-full bg-white/15 transition-transform duration-200 group-hover:translate-x-1">
+                  <ArrowRight className="size-5" />
+                </span>
+              </Link>
               <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-accent">
                 <MapPin className="size-3.5" />
                 Rwanda
@@ -149,27 +166,10 @@ export function Home() {
               <p className="mt-4 max-w-2xl text-sm leading-6 text-muted-foreground">
                 {copy.summary}
               </p>
-              <Link
-                to="/send"
-                className={cn(
-                  buttonVariants({ variant: "hero", size: "xl" }),
-                  "group mt-8 w-full justify-between gap-6 rounded-2xl px-5 shadow-cta sm:w-auto sm:min-w-72",
-                )}
-              >
-                <span className="text-left">
-                  <span className="block">{t("home.send")}</span>
-                  <span className="mt-0.5 block text-sm font-medium opacity-80">
-                    {t("home.sendHint")}
-                  </span>
-                </span>
-                <span className="grid size-10 shrink-0 place-items-center rounded-full bg-white/15 transition-transform duration-200 group-hover:translate-x-1">
-                  <ArrowRight className="size-5" />
-                </span>
-              </Link>
             </div>
 
             <div
-              className="relative mx-4 mb-5 flex min-h-64 items-center justify-center overflow-hidden rounded-[1.5rem] border border-white/10 bg-background/40 sm:mx-8 sm:mb-8 lg:mx-7 lg:my-7 lg:min-h-[24rem]"
+              className="relative mx-4 mb-5 flex min-h-64 items-center justify-center overflow-hidden rounded-[1.5rem] border border-border/80 bg-background/40 sm:mx-8 sm:mb-8 lg:mx-7 lg:my-7 lg:min-h-[24rem]"
               aria-hidden="true"
             >
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,oklch(0.62_0.19_258_/_18%),transparent_58%)]" />
@@ -254,7 +254,7 @@ export function Home() {
                   </linearGradient>
                 </defs>
               </svg>
-              <div className="absolute bottom-4 left-4 rounded-xl border border-white/10 bg-background/75 px-3 py-2 text-xs font-semibold text-muted-foreground shadow-card backdrop-blur sm:bottom-5 sm:left-5">
+              <div className="absolute bottom-4 left-4 rounded-xl border border-border bg-card/90 px-3 py-2 text-xs font-semibold text-muted-foreground shadow-card backdrop-blur sm:bottom-5 sm:left-5">
                 {t("home.send")}
                 <span className="ml-2 text-accent">↗</span>
               </div>

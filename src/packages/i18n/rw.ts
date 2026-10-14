@@ -2,10 +2,13 @@ import type { Dict } from "./en";
 
 // Kinyarwanda. Missing keys fall back to English — have a native speaker review before launch.
 export const rw: Partial<Dict> = {
+  "nav.home": "Ahabanza",
   "nav.send": "Ohereza",
   "nav.track": "Kurikirana",
   "nav.shipments": "Ibyo nohereje",
   "nav.account": "Konti",
+  "theme.switchToLight": "Hindura ujye mu buryo bw'urumuri",
+  "theme.switchToDark": "Hindura ujye mu buryo bw'ijoro",
   "home.title": "Ohereza ikintu icyo ari cyo cyose mu Rwanda.",
   "home.subtitle": "Kuva ku muryango wawe kugeza ku wabo, Tembera Cargo ishaka inzira.",
   "home.send": "Ohereza Imizigo",

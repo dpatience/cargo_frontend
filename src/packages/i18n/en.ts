@@ -1,5 +1,6 @@
 export const en = {
   "brand.name": "Tembera Cargo",
+  "nav.home": "Home",
   "nav.send": "Send",
   "nav.track": "Track",
   "nav.shipments": "My shipments",
@@ -58,7 +59,8 @@ export const en = {
   "camera.addAngle": "Add another angle",
   "camera.analyze": "Analyze cargo",
   "camera.analyzing": "Analyzing your cargo…",
-  "camera.denied": "Camera access was blocked. You can upload a photo or describe the cargo instead.",
+  "camera.denied":
+    "Camera access was blocked. You can upload a photo or describe the cargo instead.",
   "camera.upload": "Upload a photo",
   "camera.result": "Here's what we see",
   "camera.lowConfidence": "We're not fully sure. Please check the details or describe it yourself.",
@@ -78,7 +80,8 @@ export const en = {
   "auth.deliveryUnconfirmed":
     "We couldn't confirm SMS delivery. If you received the code, enter it here.",
   "state.unconfigured.title": "Service not connected",
-  "state.unconfigured.body": "Tembera Cargo isn't connected to its service yet. Please check back soon.",
+  "state.unconfigured.body":
+    "Tembera Cargo isn't connected to its service yet. Please check back soon.",
   "state.offline.title": "You're offline",
   "state.offline.body": "Check your connection. We'll keep what you've entered.",
   "state.error.title": "Something went wrong",
@@ -86,5 +89,7 @@ export const en = {
   "state.signInNeeded": "Sign in to see your shipments.",
   "lowdata.on": "Data saver on",
   "lowdata.off": "Data saver",
+  "theme.switchToLight": "Switch to light mode",
+  "theme.switchToDark": "Switch to dark mode",
 } as const;
 export type Dict = { [K in keyof typeof en]: string };
