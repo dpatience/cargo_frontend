@@ -132,6 +132,8 @@ describe("Cargo content pages and structured data", () => {
   it("publishes a bilingual sitemap for useful pages and excludes the unapproved privacy draft", () => {
     const entries = cargoSeoSitemapEntries("2026-10-13");
     const sitemap = buildCargoSitemap();
+    const help = cargoSeoPages.find((page) => page.slug === "help");
+    const facts = cargoSeoPages.find((page) => page.slug === "about-nyxarith");
 
     expect(entries.length).toBeGreaterThan(40);
     expect(sitemap).toContain("https://cargo.tembera.nyxarith.com/en/cargo/kigali-to-musanze");
@@ -140,7 +142,14 @@ describe("Cargo content pages and structured data", () => {
     expect(sitemap).toContain('hreflang="rw"');
     expect(sitemap).toContain('hreflang="x-default"');
     expect(sitemap).toContain("<lastmod>");
+    expect(sitemap).toContain("https://cargo.tembera.nyxarith.com/en/help");
+    expect(sitemap).toContain("https://cargo.tembera.nyxarith.com/rw/help");
     expect(sitemap).not.toContain("/privacy");
+    expect(help?.en.faqs).toHaveLength(18);
+    expect(help?.rw.faqs).toHaveLength(18);
+    expect(facts?.en.sections.flatMap((section) => section.paragraphs).join(" ")).toContain(
+      "Last updated: 14 October 2026",
+    );
   });
 
   it("connects the website search action to the functional shipment tracker", () => {
@@ -195,6 +204,17 @@ describe("public crawl directives", () => {
     ]) {
       expect(robots).toContain(`Disallow: ${path}`);
     }
+  });
+
+  it("publishes full machine-readable service facts and links the localized help center", () => {
+    const summary = readPublicFile("llms.txt");
+    const fullFacts = readPublicFile("llms-full.txt");
+
+    expect(summary).toContain("https://cargo.tembera.nyxarith.com/en/help");
+    expect(summary).toContain("https://cargo.tembera.nyxarith.com/rw/help");
+    expect(fullFacts).toContain("Nyxarith Private Limited Company");
+    expect(fullFacts).toContain("shipment-specific quote");
+    expect(fullFacts).toContain("Share it only with the intended recipient");
   });
 
   it("lists only public localized pages with lastmod and language alternates", () => {

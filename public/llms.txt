@@ -15,6 +15,9 @@
 
 - [Tembera Cargo in English](https://cargo.tembera.nyxarith.com/en): Service overview, delivery details and common questions.
 - [Tembera Cargo mu Kinyarwanda](https://cargo.tembera.nyxarith.com/rw): Ibisobanuro bya serivisi n'ibisubizo ku bibazo bikunze kubazwa.
+- [Tembera Cargo help and FAQs](https://cargo.tembera.nyxarith.com/en/help): Shipment, pricing and tracking answers.
+- [Ubufasha bwa Tembera Cargo](https://cargo.tembera.nyxarith.com/rw/help): Ibisubizo ku kohereza no gukurikirana imizigo.
+- [About Nyxarith and Tembera Cargo](https://cargo.tembera.nyxarith.com/en/about-nyxarith): Verified company and service facts.
 - [Tembera intercity](https://tembera.nyxarith.com/en/): Intercity bus tickets and journey services.
 - [Tembera Kigali](https://kigali.tembera.nyxarith.com/en/): Kigali bus tracking and Tap&Go top-ups.
 - [Nyxarith](https://nyxarith.com/): Company information.

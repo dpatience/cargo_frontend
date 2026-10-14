@@ -250,6 +250,9 @@ export function Home() {
             <a href={`/${lang}/about-nyxarith`} className="underline underline-offset-4">
               {lang === "rw" ? "Ibyerekeye Nyxarith" : "About Nyxarith"}
             </a>
+            <a href={`/${lang}/help`} className="underline underline-offset-4">
+              {lang === "rw" ? "Ubufasha n'ibibazo" : "Help and FAQs"}
+            </a>
             <a href={`/${lang}/contact`} className="underline underline-offset-4">
               {lang === "rw" ? "Uko wavugana natwe" : "Contact"}
             </a>

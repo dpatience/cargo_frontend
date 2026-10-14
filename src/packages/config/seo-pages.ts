@@ -1,4 +1,5 @@
 import { absoluteSiteUrl, type CargoLocale } from "./seo";
+import { cargoHelpPage } from "./seo-help-pages";
 
 export type CargoSeoPageContent = {
   title: string;
@@ -729,6 +730,7 @@ const corePages: Record<CargoLocale, Record<string, CargoSeoPageContent>> = {
           heading: "Company facts",
           paragraphs: [
             "Company: Nyxarith Private Limited Company. Country of registration: Rwanda. Product: Tembera Cargo, a goods-delivery service. The public company website provides more information about Nyxarith.",
+            "The company founding date, registered office address and public support contacts have not been verified for this page and are intentionally not stated. Last updated: 14 October 2026.",
           ],
         },
       ],
@@ -1432,6 +1434,7 @@ const corePages: Record<CargoLocale, Record<string, CargoSeoPageContent>> = {
           heading: "Amakuru y'ikigo",
           paragraphs: [
             "Ikigo: Nyxarith Private Limited Company. Igihugu cy'iyandikwa: u Rwanda. Igicuruzwa: Tembera Cargo, serivisi yo gutwara ibicuruzwa. Sura urubuga rwa Nyxarith kugira ngo umenye ibindi.",
+            "Itariki ikigo cyatangiriyeho, aderesi y'ibiro n'amakuru yo kugihamagara ntibiragenzurwa kuri uru rupapuro, bityo ntibivugwa. Iheruka kuvugururwa: 14 Ukwakira 2026.",
           ],
         },
       ],
@@ -1531,6 +1534,12 @@ for (const locale of ["en", "rw"] as const) {
     }
   }
 }
+
+cargoSeoPages.push({
+  slug: "help",
+  en: cargoHelpPage.en,
+  rw: cargoHelpPage.rw,
+});
 
 for (const [cityA, cityB] of cityPairs) {
   const directions = [

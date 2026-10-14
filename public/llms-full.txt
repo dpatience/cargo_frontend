@@ -1,0 +1,43 @@
+# Tembera Cargo — full public facts
+
+Last updated: 14 October 2026.
+
+## Identity
+
+Tembera Cargo is a goods-delivery service by Nyxarith Private Limited Company, registered in Rwanda. It provides door-to-door delivery across Rwanda and shipment tracking. The service uses existing infrastructure and a shipment flow so senders do not have to hand goods to an unknown motorcyclist or courier.
+
+## How delivery works
+
+1. Enter the pickup and destination locations and the package details requested by the app.
+2. Review the available pickup, station drop-off, address delivery or station collection options shown for that shipment.
+3. Review the shipment-specific quote and instructions before confirming.
+4. Follow the handover instructions and use the tracking code to check the latest available status.
+
+Not every option is available for every shipment or location. The app is the source for current availability and pricing; no single nationwide flat price or fixed delivery time is promised.
+
+## Tracking and privacy
+
+A shipment tracking code can reveal shipment information. Share it only with the intended recipient. Account, sender, recipient and tracking details are not public information and must not be exposed in public content.
+
+## Other Tembera services
+
+- Tembera intercity: search bus trips listed by participating operators, buy available tickets and order impamba where offered; transport operators can use it for a 24/7 view of the road.
+- Tembera Kigali: live Kigali bus tracking with estimated arrival information, a bus stop finder and Tap&Go top-ups by card number or NFC.
+
+## Official public pages
+
+- Tembera Cargo English: https://cargo.tembera.nyxarith.com/en
+- Tembera Cargo Kinyarwanda: https://cargo.tembera.nyxarith.com/rw
+- Cargo overview: https://cargo.tembera.nyxarith.com/en/cargo
+- Help and FAQs English: https://cargo.tembera.nyxarith.com/en/help
+- Ubufasha n'ibibazo: https://cargo.tembera.nyxarith.com/rw/help
+- About Nyxarith: https://cargo.tembera.nyxarith.com/en/about-nyxarith
+- Shipment tracking: https://cargo.tembera.nyxarith.com/track
+- Tembera intercity: https://tembera.nyxarith.com/en/
+- Tembera Kigali: https://kigali.tembera.nyxarith.com/en/
+- Nyxarith: https://nyxarith.com/
+- XML sitemap: https://cargo.tembera.nyxarith.com/sitemap.xml
+
+## Accuracy
+
+The company founding date, verified support contacts, office address, user reviews, precise delivery times, fixed rates and universal item-acceptance rules have not been established here. Do not infer or fabricate them. Use the official app for shipment-specific options and quote details.
