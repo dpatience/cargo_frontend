@@ -1,5 +1,14 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import { ArrowRight, MapPin, Package, PackageOpen, Search } from "lucide-react";
+import {
+  ArrowRight,
+  BookOpen,
+  ExternalLink,
+  MapPin,
+  Package,
+  PackageOpen,
+  Search,
+  Users,
+} from "lucide-react";
 import { ClientShell } from "@/apps/client/ClientShell";
 import { useI18n } from "@/packages/i18n";
 import { cargoLandingCopy } from "@/packages/config/seo";
@@ -17,9 +26,104 @@ export function Home() {
   const { lang, t } = useI18n();
   const copy = cargoLandingCopy[lang];
   const secondary = [
-    { to: "/track", icon: Search, label: t("home.track") },
-    { to: "/receive", icon: PackageOpen, label: t("home.receive") },
-    { to: "/shipments", icon: Package, label: t("home.mine") },
+    {
+      to: "/track",
+      icon: Search,
+      label: t("home.track"),
+      description:
+        lang === "rw" ? "Reba amakuru aheruka ku rugendo" : "See the latest shipment updates",
+    },
+    {
+      to: "/receive",
+      icon: PackageOpen,
+      label: t("home.receive"),
+      description: lang === "rw" ? "Reba aho imizigo yawe igeze" : "Check a delivery sent to you",
+    },
+    {
+      to: "/shipments",
+      icon: Package,
+      label: t("home.mine"),
+      description: lang === "rw" ? "Reba imizigo wohereje" : "View the cargo you have sent",
+    },
+  ] as const;
+  const guideGroups = [
+    {
+      title: lang === "rw" ? "Menya uko serivisi ikora" : "Learn about cargo delivery",
+      icon: BookOpen,
+      links: [
+        {
+          href: `/${lang}/cargo`,
+          label: lang === "rw" ? "Gutwara imizigo mu Rwanda" : "Cargo delivery across Rwanda",
+        },
+        { href: `/${lang}/how-it-works`, label: lang === "rw" ? "Uko ikora" : "How it works" },
+        { href: `/${lang}/pricing`, label: lang === "rw" ? "Ibiciro" : "Pricing and quotes" },
+        {
+          href: `/${lang}/safety-and-trust`,
+          label: lang === "rw" ? "Umutekano n'icyizere" : "Safety and trust",
+        },
+        { href: `/${lang}/coverage`, label: lang === "rw" ? "Aho dukorera" : "Coverage" },
+        {
+          href: `/${lang}/how-to-send-a-package`,
+          label: lang === "rw" ? "Uko wohereza imizigo" : "How to send a package",
+        },
+        {
+          href: `/${lang}/track-a-package`,
+          label: lang === "rw" ? "Uko ukurikirana imizigo" : "How to track a package",
+        },
+        {
+          href: `/${lang}/guides/cargo-vs-courier-vs-bus`,
+          label: lang === "rw" ? "Gereranya uburyo bwo kohereza" : "Compare delivery options",
+        },
+      ],
+    },
+    {
+      title: lang === "rw" ? "Ku bohereza imizigo bose" : "Guides for every sender",
+      icon: Users,
+      links: [
+        {
+          href: `/${lang}/for-small-businesses`,
+          label: lang === "rw" ? "Ku bucuruzi buto" : "For small businesses",
+        },
+        {
+          href: `/${lang}/for-online-sellers`,
+          label: lang === "rw" ? "Ku bacuruza kuri interineti" : "For online sellers",
+        },
+        {
+          href: `/${lang}/for-farmers-and-cooperatives`,
+          label: lang === "rw" ? "Ku bahinzi na koperative" : "For farmers and cooperatives",
+        },
+        { href: `/${lang}/for-students`, label: lang === "rw" ? "Ku banyeshuri" : "For students" },
+        {
+          href: `/${lang}/shipping-fragile-items`,
+          label: lang === "rw" ? "Kohereza ibicuruzwa bimeneka" : "Shipping fragile items",
+        },
+      ],
+    },
+    {
+      title: lang === "rw" ? "Inzira zikunze gukoreshwa" : "Popular cargo routes",
+      icon: MapPin,
+      links: [
+        { href: `/${lang}/cargo/kigali-to-musanze`, label: "Kigali to Musanze" },
+        { href: `/${lang}/cargo/kigali-to-huye`, label: "Kigali to Huye" },
+        { href: `/${lang}/cargo/kigali-to-rubavu`, label: "Kigali to Rubavu" },
+        { href: `/${lang}/cargo/kigali-to-rusizi`, label: "Kigali to Rusizi" },
+      ],
+    },
+  ] as const;
+  const serviceLinks = [
+    {
+      href: `https://tembera.nyxarith.com/${lang}/`,
+      label: lang === "rw" ? "Amatike ya bisi za Tembera" : "Tembera intercity bus tickets",
+    },
+    {
+      href: `https://kigali.tembera.nyxarith.com/${lang}/`,
+      label: lang === "rw" ? "Gukurikirana bisi za Tembera Kigali" : "Tembera Kigali bus tracking",
+    },
+    {
+      href: "https://nyxarith.com/",
+      label:
+        lang === "rw" ? "Nyxarith, ikigo gikora Tembera" : "Nyxarith, the company behind Tembera",
+    },
   ] as const;
 
   return (
@@ -156,144 +260,142 @@ export function Home() {
           </div>
         </section>
 
-        <section aria-labelledby="cargo-faq-title" className="space-y-5">
-          <h2 id="cargo-faq-title" className="font-display text-2xl font-semibold">
-            {copy.faqTitle}
-          </h2>
-          <div className="grid gap-5 md:grid-cols-2">
-            {copy.faqs.map(({ question, answer }) => (
-              <article key={question} className="space-y-2">
-                <h3 className="font-semibold">{question}</h3>
-                <p className="text-sm leading-6 text-muted-foreground">{answer}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <nav aria-label="Tembera services" className="flex flex-wrap gap-4 text-sm">
-          <a
-            href={`https://tembera.nyxarith.com/${lang}/`}
-            className="underline underline-offset-4"
-          >
-            {lang === "rw" ? "Amatike ya bisi za Tembera" : "Tembera intercity bus tickets"}
-          </a>
-          <a
-            href={`https://kigali.tembera.nyxarith.com/${lang}/`}
-            className="underline underline-offset-4"
-          >
-            {lang === "rw" ? "Gukurikirana bisi za Tembera Kigali" : "Tembera Kigali bus tracking"}
-          </a>
-          <a href="https://nyxarith.com/" className="underline underline-offset-4">
-            {lang === "rw"
-              ? "Nyxarith, ikigo gikora Tembera"
-              : "Nyxarith, the company behind Tembera"}
-          </a>
-        </nav>
-
-        <section aria-labelledby="cargo-guides-title" className="space-y-4">
-          <h2 id="cargo-guides-title" className="font-display text-2xl font-semibold">
-            {lang === "rw"
-              ? "Inama n'amakuru kuri Tembera Cargo"
-              : "Tembera Cargo guides and information"}
-          </h2>
-          <nav
-            aria-label={lang === "rw" ? "Inama za Cargo" : "Cargo guides"}
-            className="flex flex-wrap gap-4 text-sm"
-          >
-            <a href={`/${lang}/cargo`} className="underline underline-offset-4">
-              {lang === "rw" ? "Gutwara imizigo mu Rwanda" : "Cargo delivery across Rwanda"}
-            </a>
-            <a href={`/${lang}/how-it-works`} className="underline underline-offset-4">
-              {lang === "rw" ? "Uko ikora" : "How it works"}
-            </a>
-            <a href={`/${lang}/pricing`} className="underline underline-offset-4">
-              {lang === "rw" ? "Ibiciro n'igiciro cy'imizigo" : "Pricing and shipment quotes"}
-            </a>
-            <a href={`/${lang}/safety-and-trust`} className="underline underline-offset-4">
-              {lang === "rw" ? "Uko imizigo yizewe" : "Safety and trust"}
-            </a>
-            <a href={`/${lang}/coverage`} className="underline underline-offset-4">
-              {lang === "rw" ? "Aho dukorera" : "Coverage"}
-            </a>
-            <a href={`/${lang}/how-to-send-a-package`} className="underline underline-offset-4">
-              {lang === "rw" ? "Uko wohereza imizigo" : "How to send a package"}
-            </a>
-            <a href={`/${lang}/track-a-package`} className="underline underline-offset-4">
-              {lang === "rw" ? "Uko ukurikirana imizigo" : "How to track a package"}
-            </a>
-            <a
-              href={`/${lang}/guides/cargo-vs-courier-vs-bus`}
-              className="underline underline-offset-4"
-            >
-              {lang === "rw"
-                ? "Gereranya uburyo bwo kohereza"
-                : "Compare cargo, courier and bus parcels"}
-            </a>
-            <a href={`/${lang}/for-small-businesses`} className="underline underline-offset-4">
-              {lang === "rw" ? "Ku bucuruzi buto" : "For small businesses"}
-            </a>
-            <a href={`/${lang}/for-online-sellers`} className="underline underline-offset-4">
-              {lang === "rw" ? "Ku bacuruza kuri interineti" : "For online sellers"}
-            </a>
-            <a
-              href={`/${lang}/for-farmers-and-cooperatives`}
-              className="underline underline-offset-4"
-            >
-              {lang === "rw" ? "Ku bahinzi na koperative" : "For farmers and cooperatives"}
-            </a>
-            <a href={`/${lang}/for-students`} className="underline underline-offset-4">
-              {lang === "rw" ? "Ku banyeshuri" : "For students"}
-            </a>
-            <a href={`/${lang}/shipping-fragile-items`} className="underline underline-offset-4">
-              {lang === "rw" ? "Kohereza ibicuruzwa bimeneka" : "Shipping fragile items"}
-            </a>
-            <a href={`/${lang}/about-nyxarith`} className="underline underline-offset-4">
-              {lang === "rw" ? "Ibyerekeye Nyxarith" : "About Nyxarith"}
-            </a>
-            <a href={`/${lang}/help`} className="underline underline-offset-4">
-              {lang === "rw" ? "Ubufasha n'ibibazo" : "Help and FAQs"}
-            </a>
-            <a href={`/${lang}/contact`} className="underline underline-offset-4">
-              {lang === "rw" ? "Uko wavugana natwe" : "Contact"}
-            </a>
-            <a href={`/${lang}/cargo/kigali-to-musanze`} className="underline underline-offset-4">
-              Kigali to Musanze
-            </a>
-            <a href={`/${lang}/cargo/kigali-to-huye`} className="underline underline-offset-4">
-              Kigali to Huye
-            </a>
-            <a href={`/${lang}/cargo/kigali-to-rubavu`} className="underline underline-offset-4">
-              Kigali to Rubavu
-            </a>
-            <a href={`/${lang}/cargo/kigali-to-rusizi`} className="underline underline-offset-4">
-              Kigali to Rusizi
-            </a>
-          </nav>
-        </section>
-
         <section aria-label="Cargo shortcuts">
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="font-display text-lg font-semibold">{t("home.shortcuts")}</h2>
-            <span className="text-xs font-medium text-muted-foreground">
-              {t("home.shortcutsHint")}
-            </span>
+          <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+            <h2 className="font-display text-2xl font-semibold">{t("home.shortcuts")}</h2>
+            <span className="text-sm text-muted-foreground">{t("home.shortcutsHint")}</span>
           </div>
-          <div className="grid gap-3 sm:grid-cols-3">
-            {secondary.map(({ to, icon: Icon, label }) => (
+          <div className="grid gap-3 md:grid-cols-3">
+            {secondary.map(({ to, icon: Icon, label, description }) => (
               <Link
                 key={to}
                 to={to}
-                className="group flex min-h-24 items-center gap-4 rounded-2xl border border-border bg-card p-4 shadow-card transition duration-200 hover:-translate-y-0.5 hover:border-accent/40 hover:bg-secondary/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="group flex min-h-32 items-center gap-4 rounded-2xl border border-border bg-card p-5 shadow-card transition duration-200 hover:-translate-y-0.5 hover:border-accent/40 hover:bg-secondary/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-accent/10 text-accent transition-colors group-hover:bg-accent group-hover:text-accent-foreground">
                   <Icon className="size-5" />
                 </span>
-                <span className="min-w-0 flex-1 font-semibold">{label}</span>
+                <span className="min-w-0 flex-1">
+                  <span className="block font-semibold">{label}</span>
+                  <span className="mt-1 block text-sm leading-5 text-muted-foreground">
+                    {description}
+                  </span>
+                </span>
                 <ArrowRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-accent" />
               </Link>
             ))}
           </div>
         </section>
+
+        <section aria-labelledby="cargo-faq-title" className="space-y-4">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.12em] text-accent">
+              {lang === "rw" ? "Ubufasha" : "Good to know"}
+            </p>
+            <h2 id="cargo-faq-title" className="mt-1 font-display text-2xl font-semibold">
+              {copy.faqTitle}
+            </h2>
+          </div>
+          <div className="grid gap-3 md:grid-cols-2">
+            {copy.faqs.map(({ question, answer }) => (
+              <article
+                key={question}
+                className="rounded-2xl border border-border bg-card p-5 shadow-card"
+              >
+                <h3 className="font-semibold leading-6">{question}</h3>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">{answer}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section aria-labelledby="cargo-guides-title" className="space-y-4">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.12em] text-accent">
+              {lang === "rw" ? "Ubufasha n'amakuru" : "Explore"}
+            </p>
+            <h2 id="cargo-guides-title" className="mt-1 font-display text-2xl font-semibold">
+              {lang === "rw"
+                ? "Inama n'amakuru kuri Tembera Cargo"
+                : "Tembera Cargo guides and information"}
+            </h2>
+          </div>
+          <div className="grid gap-3 lg:grid-cols-3">
+            {guideGroups.map(({ title, icon: Icon, links }) => (
+              <section
+                key={title}
+                className="rounded-2xl border border-border bg-card p-5 shadow-card"
+              >
+                <h3 className="mb-3 flex items-center gap-2 font-display font-semibold">
+                  <span className="grid size-8 place-items-center rounded-lg bg-accent/10 text-accent">
+                    <Icon className="size-4" />
+                  </span>
+                  {title}
+                </h3>
+                <nav aria-label={title} className="flex flex-col divide-y divide-border">
+                  {links.map(({ href, label }) => (
+                    <a
+                      key={href}
+                      href={href}
+                      className="group flex items-center justify-between gap-3 py-2.5 text-sm text-muted-foreground transition-colors hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
+                      <span>{label}</span>
+                      <ArrowRight className="size-3.5 shrink-0 transition-transform group-hover:translate-x-0.5" />
+                    </a>
+                  ))}
+                </nav>
+              </section>
+            ))}
+          </div>
+        </section>
+
+        <footer className="rounded-2xl border border-border bg-surface p-5 sm:p-6">
+          <div className="mb-4">
+            <h2 className="font-display text-lg font-semibold">
+              {lang === "rw" ? "Serivisi za Tembera" : "More from Tembera"}
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {lang === "rw"
+                ? "Reba izindi serivisi n'ubufasha."
+                : "Explore our other services or get in touch."}
+            </p>
+          </div>
+          <nav aria-label="Tembera services" className="grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
+            {serviceLinks.map(({ href, label }) => (
+              <a
+                key={href}
+                href={href}
+                className="flex min-h-12 items-center justify-between gap-3 rounded-xl border border-border bg-card px-4 py-3 text-sm font-medium transition-colors hover:border-accent/40 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <span>{label}</span>
+                <ExternalLink className="size-3.5 shrink-0" />
+              </a>
+            ))}
+            {[
+              {
+                href: `/${lang}/about-nyxarith`,
+                label: lang === "rw" ? "Ibyerekeye Nyxarith" : "About Nyxarith",
+              },
+              {
+                href: `/${lang}/help`,
+                label: lang === "rw" ? "Ubufasha n'ibibazo" : "Help and FAQs",
+              },
+              {
+                href: `/${lang}/contact`,
+                label: lang === "rw" ? "Uko wavugana natwe" : "Contact",
+              },
+            ].map(({ href, label }) => (
+              <a
+                key={href}
+                href={href}
+                className="flex min-h-12 items-center justify-between gap-3 rounded-xl border border-border bg-card px-4 py-3 text-sm font-medium transition-colors hover:border-accent/40 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <span>{label}</span>
+                <ArrowRight className="size-3.5 shrink-0" />
+              </a>
+            ))}
+          </nav>
+        </footer>
       </div>
     </ClientShell>
   );
