@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Check, ChevronLeft, Phone } from "lucide-react";
+import { useI18n } from "@/packages/i18n";
 import { driverApi, driverJobQuery } from "@/packages/api/services";
 import {
   Button,
@@ -17,6 +18,7 @@ import {
 export const Route = createFileRoute("/driver/jobs/$id")({ component: JobPage });
 
 function JobPage() {
+  const { t } = useI18n();
   const { id } = Route.useParams();
   const qc = useQueryClient();
   const q = useQuery(driverJobQuery(id));
@@ -47,9 +49,32 @@ function JobPage() {
       <Card className="space-y-2">
         <div className="flex items-center gap-2">
           <StatusPill>{job.type}</StatusPill>
-          <span className="text-sm text-muted-foreground">{job.trackingCode} · {job.status}</span>
+          <span className="text-sm text-muted-foreground">
+            {job.trackingCode} · {job.status}
+          </span>
         </div>
         <p className="text-xl font-bold">{job.address}</p>
+        {job.directions && <p className="text-sm text-muted-foreground">{job.directions}</p>}
+        {job.latitude != null && job.longitude != null && (
+          <div className="space-y-2 rounded-xl border border-border p-3">
+            <p className="text-sm font-medium">
+              {job.latitude}, {job.longitude}
+              {job.accuracyM != null &&
+                ` · ${t("driver.locationAccuracy", { accuracy: Math.round(job.accuracyM) })}`}
+            </p>
+            <a
+              className={buttonVariants({ variant: "primary", block: true })}
+              href={
+                job.navigationUrl ??
+                `https://www.google.com/maps/dir/?api=1&destination=${job.latitude},${job.longitude}&travelmode=driving`
+              }
+              target="_blank"
+              rel="noreferrer"
+            >
+              {t("driver.navigate")}
+            </a>
+          </div>
+        )}
         {job.cargoSummary && <p className="text-muted-foreground">{job.cargoSummary}</p>}
         {job.contactPhone && (
           <a

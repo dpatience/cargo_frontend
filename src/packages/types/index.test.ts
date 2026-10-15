@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { Location, PublicTracking, Quote, Session } from "./index";
+import { Location, LocationConfirmation, PublicTracking, Quote, Session } from "./index";
 
 describe("frontend API contract schemas", () => {
   it("requires an access-token lifetime in session responses", () => {
@@ -60,5 +60,26 @@ describe("frontend API contract schemas", () => {
 
     expect(Location.safeParse(location).success).toBe(true);
     expect(Location.safeParse({ ...location, source: "cargo" }).success).toBe(false);
+  });
+
+  it("supports pending and confirmed recipient location links", () => {
+    const expiresAt = "2026-10-10T12:00:00Z";
+    expect(LocationConfirmation.safeParse({ status: "pending", expiresAt }).success).toBe(true);
+    expect(
+      LocationConfirmation.safeParse({
+        status: "confirmed",
+        expiresAt,
+        lat: -1.953,
+        lng: 30.07,
+        label: "Receiver gate",
+      }).success,
+    ).toBe(true);
+    expect(
+      LocationConfirmation.safeParse({
+        status: "confirmed",
+        expiresAt,
+        lat: -1.953,
+      }).success,
+    ).toBe(false);
   });
 });

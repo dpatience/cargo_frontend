@@ -10,6 +10,8 @@ import {
   DispatchDriver,
   DispatchShipment,
   Location,
+  LocationConfirmation,
+  LocationConfirmationCreated,
   FailedNotification,
   NotificationPreference,
   OperationsException,
@@ -101,8 +103,22 @@ export const visionApi = {
 
 // ---------- Quotes & shipments ----------
 export type QuoteRequest = {
-  originId: string;
-  destinationId: string;
+  origin: {
+    lat: number;
+    lng: number;
+    label: string;
+    directions?: string | undefined;
+    accuracyM?: number | undefined;
+  };
+  destination: {
+    lat: number;
+    lng: number;
+    label: string;
+    directions?: string | undefined;
+    accuracyM?: number | undefined;
+  };
+  recipientPhone?: string;
+  destinationConfirmationToken?: string;
   analysisId?: string;
   manual?: {
     category: string;
@@ -115,6 +131,33 @@ export type QuoteRequest = {
 export const quotesApi = {
   create: (body: QuoteRequest) =>
     apiRequest("/quotes", Quote, { method: "POST", body, area: "client" }),
+};
+export const locationConfirmationsApi = {
+  create: (recipientPhone: string) =>
+    apiRequest("/location-confirmations", LocationConfirmationCreated, {
+      method: "POST",
+      body: { recipientPhone },
+      area: "client",
+    }),
+  get: (token: string) =>
+    apiRequest("/location-confirmation", LocationConfirmation, {
+      headers: { Authorization: `Bearer ${token}` },
+    }),
+  confirm: (
+    token: string,
+    location: {
+      lat: number;
+      lng: number;
+      label: string;
+      directions?: string | undefined;
+      accuracyM?: number | undefined;
+    },
+  ) =>
+    apiRequest("/location-confirmation/confirm", LocationConfirmation, {
+      method: "POST",
+      body: { location },
+      headers: { Authorization: `Bearer ${token}` },
+    }),
 };
 
 export type CreateShipmentBody = {

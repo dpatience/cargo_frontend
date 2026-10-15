@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as CargoPointOperatorRouteImport } from './routes/cargo-point-operator'
+import { Route as ConfirmLocationRouteImport } from './routes/confirm-location'
 import { Route as DriverRouteImport } from './routes/driver'
 import { Route as ReceiveRouteImport } from './routes/receive'
 import { Route as SendRouteImport } from './routes/send'
@@ -53,6 +54,11 @@ const AdminRoute = AdminRouteImport.update({
 const CargoPointOperatorRoute = CargoPointOperatorRouteImport.update({
   id: '/cargo-point-operator',
   path: '/cargo-point-operator',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfirmLocationRoute = ConfirmLocationRouteImport.update({
+  id: '/confirm-location',
+  path: '/confirm-location',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DriverRoute = DriverRouteImport.update({
@@ -166,6 +172,7 @@ export interface FileRoutesByFullPath {
   '/account': typeof AccountRoute
   '/admin': typeof AdminRouteWithChildren
   '/cargo-point-operator': typeof CargoPointOperatorRouteWithChildren
+  '/confirm-location': typeof ConfirmLocationRoute
   '/driver': typeof DriverRouteWithChildren
   '/receive': typeof ReceiveRoute
   '/send': typeof SendRoute
@@ -191,6 +198,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
+  '/confirm-location': typeof ConfirmLocationRoute
   '/receive': typeof ReceiveRoute
   '/send': typeof SendRoute
   '/shipments': typeof ShipmentsRoute
@@ -218,6 +226,7 @@ export interface FileRoutesById {
   '/account': typeof AccountRoute
   '/admin': typeof AdminRouteWithChildren
   '/cargo-point-operator': typeof CargoPointOperatorRouteWithChildren
+  '/confirm-location': typeof ConfirmLocationRoute
   '/driver': typeof DriverRouteWithChildren
   '/receive': typeof ReceiveRoute
   '/send': typeof SendRoute
@@ -247,6 +256,7 @@ export interface FileRouteTypes {
     | '/account'
     | '/admin'
     | '/cargo-point-operator'
+    | '/confirm-location'
     | '/driver'
     | '/receive'
     | '/send'
@@ -272,6 +282,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/account'
+    | '/confirm-location'
     | '/receive'
     | '/send'
     | '/shipments'
@@ -298,6 +309,7 @@ export interface FileRouteTypes {
     | '/account'
     | '/admin'
     | '/cargo-point-operator'
+    | '/confirm-location'
     | '/driver'
     | '/receive'
     | '/send'
@@ -326,6 +338,7 @@ export interface RootRouteChildren {
   AccountRoute: typeof AccountRoute
   AdminRoute: typeof AdminRouteWithChildren
   CargoPointOperatorRoute: typeof CargoPointOperatorRouteWithChildren
+  ConfirmLocationRoute: typeof ConfirmLocationRoute
   DriverRoute: typeof DriverRouteWithChildren
   ReceiveRoute: typeof ReceiveRoute
   SendRoute: typeof SendRoute
@@ -367,6 +380,13 @@ declare module '@tanstack/react-router' {
       path: '/cargo-point-operator'
       fullPath: '/cargo-point-operator'
       preLoaderRoute: typeof CargoPointOperatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/confirm-location': {
+      id: '/confirm-location'
+      path: '/confirm-location'
+      fullPath: '/confirm-location'
+      preLoaderRoute: typeof ConfirmLocationRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/driver': {
@@ -570,6 +590,7 @@ const rootRouteChildren: RootRouteChildren = {
   AccountRoute: AccountRoute,
   AdminRoute: AdminRouteWithChildren,
   CargoPointOperatorRoute: CargoPointOperatorRouteWithChildren,
+  ConfirmLocationRoute: ConfirmLocationRoute,
   DriverRoute: DriverRouteWithChildren,
   ReceiveRoute: ReceiveRoute,
   SendRoute: SendRoute,

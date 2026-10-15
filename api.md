@@ -26,9 +26,9 @@ in [the Phase 0 discovery record](../backend/docs/phase-0-discovery.md).
 
 ## Service metadata
 
-| Method | Path | Body | Response |
-|---|---|---|---|
-| GET | /meta | — | `{ service: "tembera-cargo", apiVersion: "v1", countryCode: "RW", currency: "RWF", timeZone: "Africa/Kigali" }` |
+| Method | Path  | Body | Response                                                                                                        |
+| ------ | ----- | ---- | --------------------------------------------------------------------------------------------------------------- |
+| GET    | /meta | —    | `{ service: "tembera-cargo", apiVersion: "v1", countryCode: "RW", currency: "RWF", timeZone: "Africa/Kigali" }` |
 
 This is a versioned foundation/diagnostic endpoint, not an indication that a
 service area, route, cargo category, or delivery schedule is active.
@@ -40,16 +40,16 @@ refresh return `expiresInSeconds: 900`; the refresh credential is not returned
 in JSON. `/auth/me` returns the user object directly:
 `{ id, name?, phone?, email?, roles[] }`.
 
-| Method | Path | Body | Response |
-|---|---|---|---|
-| POST | /auth/otp/request | `{ phone, app: "client"\|"driver" }` | `{ requestId, expiresInSeconds }` |
-| POST | /auth/otp/verify | `{ requestId, code, app }` | `Session` + refresh cookie |
-| POST | /auth/login | `{ email, password, app: "admin" }` | `Session` + refresh cookie |
-| POST | /auth/refresh | `{ app }` + refresh cookie | `Session` + rotated refresh cookie |
-| POST | /auth/logout | `{ app }` + refresh cookie | `204`; revoke refresh session and clear cookie |
-| GET | /auth/me | — | `user { id, name?, phone?, email?, roles[] }` |
-| POST | /auth/email/request | `{ email }` + bearer access token | `{ requestId, expiresInSeconds }` |
-| POST | /auth/email/verify | `{ requestId, code }` + bearer access token | updated `user` |
+| Method | Path                | Body                                        | Response                                       |
+| ------ | ------------------- | ------------------------------------------- | ---------------------------------------------- |
+| POST   | /auth/otp/request   | `{ phone, app: "client"\|"driver" }`        | `{ requestId, expiresInSeconds }`              |
+| POST   | /auth/otp/verify    | `{ requestId, code, app }`                  | `Session` + refresh cookie                     |
+| POST   | /auth/login         | `{ email, password, app: "admin" }`         | `Session` + refresh cookie                     |
+| POST   | /auth/refresh       | `{ app }` + refresh cookie                  | `Session` + rotated refresh cookie             |
+| POST   | /auth/logout        | `{ app }` + refresh cookie                  | `204`; revoke refresh session and clear cookie |
+| GET    | /auth/me            | —                                           | `user { id, name?, phone?, email?, roles[] }`  |
+| POST   | /auth/email/request | `{ email }` + bearer access token           | `{ requestId, expiresInSeconds }`              |
+| POST   | /auth/email/verify  | `{ requestId, code }` + bearer access token | updated `user`                                 |
 
 Client accounts are created only after a verified phone OTP. Driver accounts
 and administrator credentials are provisioned by Cargo; OTP is not a
@@ -79,22 +79,45 @@ configuration failures return 503 with the standard error envelope.
 
 ## Locations
 
-| Method | Path | Body | Response |
-|---|---|---|---|
-| GET | /locations/search?q= | — | `Location[] { id, name, address?, lat?, lng?, source: "google" }` |
+| Method | Path                           | Body                                                                                               | Response                                                             |
+| ------ | ------------------------------ | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| GET    | /locations/search?q=           | —                                                                                                  | `Location[] { id, name, address?, lat?, lng?, source: "google" }`    |
+| POST   | /location-confirmations        | authenticated client; `{ recipientPhone }`                                                         | `{ token, expiresAt }`                                               |
+| GET    | /location-confirmation         | bearer link token in `Authorization`; no session auth                                              | `{ status, expiresAt, lat?, lng?, label?, directions?, accuracyM? }` |
+| POST   | /location-confirmation/confirm | bearer link token in `Authorization`; `{ location: { lat, lng, label, directions?, accuracyM? } }` | confirmed location status                                            |
 
 `id` is the Google Place ID. The source is Google Places API (New) Text
 Search, filtered to Rwanda and limited to ten results. Cargo does not
-import or persist Google names, addresses, or coordinates. `address` is the
+persist Google names, addresses, or coordinates. `address` is the
 Google formatted address. The picker displays Google Maps attribution.
 Production use requires an API key restricted to the Places API and production
 server IP, billing/quota controls, and publicly accessible Cargo Terms of Use
 and Privacy Policy incorporating Google's terms. Provider search does not
 establish Cargo service coverage; Operations must approve coverage criteria.
-Later quote/shipment flows must use Place IDs and obtain current Google data
-instead of storing API content. Quote, history, and public tracking responses
-mark live Google-derived location names with source `"google"` and do not
-persist the returned names or addresses.
+For home pickup and delivery, customers may use device GPS or enter coordinates
+shared by the receiver, then add a landmark/access note. Customers can preview
+the pin in Google Maps. Places search is a shortcut, not a requirement.
+Quotes and shipment snapshots use the confirmed coordinates for Google Routes
+waypoints; Google Places content is not stored. Exact locations are returned
+only to the authenticated sender and assigned driver. Public tracking never
+includes coordinates, accuracy, or access directions.
+
+Senders can optionally request a recipient-confirmed pin before quoting. The
+client API returns a cryptographically random, single-purpose link token; only
+its SHA-256 digest is stored. The sender shares the link using the device's
+share sheet or clipboard. The token is in the URL fragment and then sent only
+in the API Authorization header, not in the URL path or query string. The
+unauthenticated link expires after 24 hours,
+allows the recipient to submit a Rwanda-bounded GPS/manual pin with a landmark,
+and returns no coordinates until confirmation. Confirmation records are deleted
+when expired. A pending request does not block the sender's own pin from being
+used as a fallback. When a confirmed link token is included with a quote, the
+server uses the confirmed pin only if the token belongs to that sender and its
+recipient phone matches the quote's recipient phone. If the recipient confirms
+after a fallback quote was created, the client discards that quote and requests
+a fresh one before shipment creation. The API also rejects shipment creation
+with a 409 conflict if the recipient confirms a pin or access details that
+differ from the quote snapshot, closing the polling race.
 
 ## Cargo vision
 
@@ -105,26 +128,42 @@ is the supported workflow; do not submit or store images.
 
 ## Quotes and shipments
 
-| Method | Path | Body | Response |
-|---|---|---|---|
-| POST | /quotes | `{ originId, destinationId, manual: { category, weightKg, sizeClass, fragile? } }` | `Quote { quoteId, expiresAt, options[]: { id, label, price, breakdown[{label,amount}], explanation?, route[{label,source?}], recommended? } }` |
-| POST | /shipments | `Idempotency-Key` header; `{ quoteId, optionId, recipient: { name, phone, notes? }, sender?: { name?, phone? } }` | `Shipment { id, trackingCode, status, statusLabel?, origin, destination, recipientName?, recipientPhone?, price?, createdAt, eta?, events[], paymentUrl? }` (payment URL is not evidence of payment) |
-| GET | /shipments | `page?`, `pageSize?` | `{ items: Shipment[], total, page, pageSize }` |
-| GET | /tracking/:code | public, no auth | `PublicTracking { id, trackingCode, status, statusLabel?, origin, destination, originSource: "google", destinationSource: "google", eta?, price?, createdAt, events[{at,status,label,location?}] }` |
+| Method | Path            | Body                                                                                                                                                                                                                       | Response                                                                                                                                                                                             |
+| ------ | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| POST   | /quotes         | `{ origin: { lat, lng, label, directions?, accuracyM? }, destination: { lat, lng, label, directions?, accuracyM? }, recipientPhone?, destinationConfirmationToken?, manual: { category, weightKg, sizeClass, fragile? } }` | `Quote { quoteId, expiresAt, options[]: { id, label, price, breakdown[{label,amount}], explanation?, route[{label,source?}], recommended? } }`                                                       |
+| POST   | /shipments      | `Idempotency-Key` header; `{ quoteId, optionId, recipient: { name, phone, notes? }, sender?: { name?, phone? } }`                                                                                                          | `Shipment { id, trackingCode, status, statusLabel?, origin, destination, recipientName?, recipientPhone?, price?, createdAt, eta?, events[], paymentUrl? }` (payment URL is not evidence of payment) |
+| GET    | /shipments      | `page?`, `pageSize?`                                                                                                                                                                                                       | `{ items: Shipment[], total, page, pageSize }`                                                                                                                                                       |
+| GET    | /tracking/:code | public, no auth                                                                                                                                                                                                            | `PublicTracking { id, trackingCode, status, statusLabel?, origin, destination, originSource: "google", destinationSource: "google", eta?, price?, createdAt, events[{at,status,label,location?}] }`  |
+
+Coordinates are constrained to Rwanda's configured operating bounds.
+Latitude/longitude are required as a pair; labels and directions are limited in
+size; GPS accuracy is recorded when available. Legacy Place-ID quotes remain
+accepted during migration, but the customer booking flow requires
+coordinates. The location snapshot is frozen into the quote and copied to the
+shipment so the booked route and price cannot drift after checkout.
 
 Quotes require manual cargo category, weight, and size class; cargo-vision
 estimates are not accepted as booking inputs without the approved policy and
 manual review. The only current quote option is `standard`. Quotes expire
 after 15 minutes and include price provenance from the active tariff and
-Google road distance; the distance itself is not persisted. The total is
+Google road distance between the selected coordinates; the distance itself is not persisted. The total is
 rounded to the nearest whole RWF. Shipment creation accepts only the quoted
 option and an unexpired, unused quote owned by the authenticated customer.
 `Idempotency-Key` is required and same-key retries with the same request return
 the original shipment; reusing it with different data returns 409.
 
+When a shipment is delivered, its precise location and directions are scheduled
+for deletion 30 days later. The supervised retention worker purges expired
+location fields at least every 15 minutes. Driver jobs include the assigned
+stop's coordinates and a Google Maps driving-directions link; drivers should
+check GPS accuracy and use the landmark/access note for the final approach.
+Unused quote pins are cleared at quote expiry, and consumed quote pins are
+cleared by the next retention pass after their shipment snapshot has been
+created.
+
 Public tracking must not return recipient/sender details, payment URLs, or
-internal evidence and responds `Cache-Control: no-store`. Location names are
-resolved live from Place IDs and marked with Google Maps attribution. No
+internal evidence and responds `Cache-Control: no-store`. Place-only legacy
+location names are resolved live from Place IDs. No
 delivery time is promised. Quote and shipment endpoints return 503 until both
 the legally reviewed cargo acceptance matrix and an approved tariff are
 configured; an active tariff alone does not enable booking.
@@ -137,18 +176,18 @@ private to authorized operations.
 
 ## Operations and notifications
 
-| Method | Path | Body | Response |
-|---|---|---|---|
-| GET | /admin/dashboard | — | `{ metrics[{key,label,value}], alerts[{id,severity,message}] }` |
-| GET | /admin/shipments?q=&status=&page=&pageSize= | — | `{ items: Shipment[], total, page, pageSize }` |
-| GET | /admin/pricing/audit?page=&pageSize= | — | `{ items[{id,action,subjectId,metadata,occurredAt}], total, page, pageSize }` |
-| GET | /admin/operations/exceptions?status=open&page=&pageSize= | — | `{ items: OperationsException[], total, page, pageSize }` |
-| POST | /admin/operations/exceptions | `{ shipmentId, category, description }` | `OperationsException` |
-| POST | /admin/operations/exceptions/:id/correct | `{ status, reason, currentCargoPointId? }` | `{ ok, shipmentId, status, exceptionId }` |
-| POST | /admin/operations/exceptions/:id/resolve | `{ resolution }` | `{ ok, id, status }` |
-| GET | /admin/notifications/failed?page=&pageSize= | — | `{ items[{id,trackingCode,kind,status,attempts,lastError,eventStatus,updatedAt}], total, page, pageSize }` |
-| GET | /notifications/preferences | — | `{ smsStatusUpdatesEnabled }` |
-| PUT | /notifications/preferences | `{ smsStatusUpdatesEnabled: boolean }` | Updated preference |
+| Method | Path                                                     | Body                                       | Response                                                                                                   |
+| ------ | -------------------------------------------------------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| GET    | /admin/dashboard                                         | —                                          | `{ metrics[{key,label,value}], alerts[{id,severity,message}] }`                                            |
+| GET    | /admin/shipments?q=&status=&page=&pageSize=              | —                                          | `{ items: Shipment[], total, page, pageSize }`                                                             |
+| GET    | /admin/pricing/audit?page=&pageSize=                     | —                                          | `{ items[{id,action,subjectId,metadata,occurredAt}], total, page, pageSize }`                              |
+| GET    | /admin/operations/exceptions?status=open&page=&pageSize= | —                                          | `{ items: OperationsException[], total, page, pageSize }`                                                  |
+| POST   | /admin/operations/exceptions                             | `{ shipmentId, category, description }`    | `OperationsException`                                                                                      |
+| POST   | /admin/operations/exceptions/:id/correct                 | `{ status, reason, currentCargoPointId? }` | `{ ok, shipmentId, status, exceptionId }`                                                                  |
+| POST   | /admin/operations/exceptions/:id/resolve                 | `{ resolution }`                           | `{ ok, id, status }`                                                                                       |
+| GET    | /admin/notifications/failed?page=&pageSize=              | —                                          | `{ items[{id,trackingCode,kind,status,attempts,lastError,eventStatus,updatedAt}], total, page, pageSize }` |
+| GET    | /notifications/preferences                               | —                                          | `{ smsStatusUpdatesEnabled }`                                                                              |
+| PUT    | /notifications/preferences                               | `{ smsStatusUpdatesEnabled: boolean }`     | Updated preference                                                                                         |
 
 Admin shipment search is bounded and paginated and may match tracking code,
 recipient name, or recipient phone. Shipment corrections require an open
@@ -182,13 +221,13 @@ driver to scan the tag; delivery additionally requires the receiver's
 delivery code. The tag code identifies a shipment and is not a custody
 authorization secret. Do not add cargo-photo capture to this workflow.
 
-| Method | Path | Body | Response |
-|---|---|---|---|
-| GET | /driver/jobs | — | `DriverJob[] { id, shipmentId, trackingCode, type: pickup\|handoff\|delivery, status, address, contactName?, contactPhone?, cargoSummary?, scheduledFor? }` |
-| GET | /driver/jobs/:id | — | `DriverJob` |
-| POST | /driver/jobs/:id/handoff | `{ code }` | `{ ok }` |
-| POST | /driver/jobs/:id/proof-of-delivery | multipart: `photo?`, `recipientCode`, `recipientName` | `{ ok }` |
-| POST | /driver/location | `{ lat, lng, accuracy?, at }` (client throttles to ≤1 request/20s) | `{ ok }` |
+| Method | Path                               | Body                                                               | Response                                                                                                                                                    |
+| ------ | ---------------------------------- | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | /driver/jobs                       | —                                                                  | `DriverJob[] { id, shipmentId, trackingCode, type: pickup\|handoff\|delivery, status, address, contactName?, contactPhone?, cargoSummary?, scheduledFor? }` |
+| GET    | /driver/jobs/:id                   | —                                                                  | `DriverJob`                                                                                                                                                 |
+| POST   | /driver/jobs/:id/handoff           | `{ code }`                                                         | `{ ok }`                                                                                                                                                    |
+| POST   | /driver/jobs/:id/proof-of-delivery | multipart: `photo?`, `recipientCode`, `recipientName`              | `{ ok }`                                                                                                                                                    |
+| POST   | /driver/location                   | `{ lat, lng, accuracy?, at }` (client throttles to ≤1 request/20s) | `{ ok }`                                                                                                                                                    |
 
 The driver API requires server-side assignment checks. A pickup job is
 created for home pickup; a station drop-off is checked in at the selected
@@ -204,17 +243,17 @@ Location retention/rate enforcement remains subject to operations approval.
 
 ## Admin
 
-| Method | Path | Body | Response |
-|---|---|---|---|
-| GET | /admin/dashboard | — | `{ metrics[{key,label,value,unit?,trend?}], alerts[{id,severity,message}] }` |
-| GET | /admin/shipments?q=&status=&page=&pageSize= | — | `{ items: Shipment[], total, page, pageSize }` |
-| GET | /admin/pricing/tariffs | — | `TariffVersion[]` |
-| POST | /admin/pricing/tariffs | `{ name, baseFeeRwf, perKgRwf, perKmRwf, sizeRatesRwf, fragileSurchargeRwf }` | New draft `TariffVersion` |
-| POST | /admin/pricing/tariffs/:id/activate | `{}` | Activated `TariffVersion`; prior active version is retired |
-| GET | /admin/cargo-points | — | `CargoPoint[]` with contacts, capacity and activation status |
-| POST | /admin/cargo-points | `{ code, name, address, district, province, contactName?, contactPhone?, capacity: { maxItems, maxWeightKg, maxVolumeM3 }, isActive? }` | New `CargoPoint` (inactive by default) |
-| PATCH | /admin/cargo-points/:id | `CargoPoint` fields to update | Updated `CargoPoint` (server audit required) |
-| GET | /cargo-points | — | Active public station list without contact or capacity data |
+| Method | Path                                        | Body                                                                                                                                    | Response                                                                     |
+| ------ | ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| GET    | /admin/dashboard                            | —                                                                                                                                       | `{ metrics[{key,label,value,unit?,trend?}], alerts[{id,severity,message}] }` |
+| GET    | /admin/shipments?q=&status=&page=&pageSize= | —                                                                                                                                       | `{ items: Shipment[], total, page, pageSize }`                               |
+| GET    | /admin/pricing/tariffs                      | —                                                                                                                                       | `TariffVersion[]`                                                            |
+| POST   | /admin/pricing/tariffs                      | `{ name, baseFeeRwf, perKgRwf, perKmRwf, sizeRatesRwf, fragileSurchargeRwf }`                                                           | New draft `TariffVersion`                                                    |
+| POST   | /admin/pricing/tariffs/:id/activate         | `{}`                                                                                                                                    | Activated `TariffVersion`; prior active version is retired                   |
+| GET    | /admin/cargo-points                         | —                                                                                                                                       | `CargoPoint[]` with contacts, capacity and activation status                 |
+| POST   | /admin/cargo-points                         | `{ code, name, address, district, province, contactName?, contactPhone?, capacity: { maxItems, maxWeightKg, maxVolumeM3 }, isActive? }` | New `CargoPoint` (inactive by default)                                       |
+| PATCH  | /admin/cargo-points/:id                     | `CargoPoint` fields to update                                                                                                           | Updated `CargoPoint` (server audit required)                                 |
+| GET    | /cargo-points                               | —                                                                                                                                       | Active public station list without contact or capacity data                  |
 
 Tariff versions are immutable once created except for the controlled
 draft→active→retired status changes. Creation and activation are audited.

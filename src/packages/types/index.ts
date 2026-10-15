@@ -10,8 +10,10 @@ export const Location = z.object({
   province: z.string().optional(),
   lat: z.number().optional(),
   lng: z.number().optional(),
+  accuracyM: z.number().nonnegative().optional(),
+  directions: z.string().optional(),
   type: z.enum(["address", "cargo_point", "landmark", "town"]).optional(),
-  source: z.literal("google"),
+  source: z.enum(["google", "pin"]),
 });
 export type Location = z.infer<typeof Location>;
 
@@ -62,7 +64,7 @@ export const QuoteOption = z.object({
       z.object({
         label: z.string(),
         mode: z.string().optional(),
-        source: z.literal("google").optional(),
+        source: z.enum(["google", "pin"]).optional(),
       }),
     )
     .default([]),
@@ -75,6 +77,27 @@ export const Quote = z.object({
 });
 export type Quote = z.infer<typeof Quote>;
 export type QuoteOption = z.infer<typeof QuoteOption>;
+export const LocationConfirmation = z.discriminatedUnion("status", [
+  z.object({
+    status: z.literal("pending"),
+    expiresAt: z.string().datetime({ offset: true }),
+  }),
+  z.object({
+    status: z.literal("confirmed"),
+    expiresAt: z.string().datetime({ offset: true }),
+    lat: z.number(),
+    lng: z.number(),
+    label: z.string(),
+    directions: z.string().nullable().optional(),
+    accuracyM: z.number().nullable().optional(),
+  }),
+]);
+export type LocationConfirmation = z.infer<typeof LocationConfirmation>;
+export const LocationConfirmationCreated = z.object({
+  token: z.string(),
+  expiresAt: z.string().datetime({ offset: true }),
+});
+export type LocationConfirmationCreated = z.infer<typeof LocationConfirmationCreated>;
 
 export const ShipmentStatus = z.string();
 export const TrackingEvent = z.object({
@@ -90,10 +113,30 @@ export const Shipment = z.object({
   statusLabel: z.string().optional(),
   origin: z.string(),
   destination: z.string(),
-  originSource: z.literal("google").optional(),
-  destinationSource: z.literal("google").optional(),
+  originSource: z.enum(["google", "pin"]).optional(),
+  destinationSource: z.enum(["google", "pin"]).optional(),
   recipientName: z.string().optional(),
   recipientPhone: z.string().optional(),
+  originLocation: z
+    .object({
+      latitude: z.number(),
+      longitude: z.number(),
+      label: z.string(),
+      directions: z.string().nullable().optional(),
+      accuracyM: z.number().nullable().optional(),
+    })
+    .nullable()
+    .optional(),
+  destinationLocation: z
+    .object({
+      latitude: z.number(),
+      longitude: z.number(),
+      label: z.string(),
+      directions: z.string().nullable().optional(),
+      accuracyM: z.number().nullable().optional(),
+    })
+    .nullable()
+    .optional(),
   deliveryCode: z
     .string()
     .regex(/^[0-9]{6}$/)
@@ -118,8 +161,8 @@ export const PublicTracking = z
     statusLabel: z.string().optional(),
     origin: z.string(),
     destination: z.string(),
-    originSource: z.literal("google"),
-    destinationSource: z.literal("google"),
+    originSource: z.enum(["google", "pin"]),
+    destinationSource: z.enum(["google", "pin"]),
     eta: z.string().nullable().optional(),
     price: Money.optional(),
     createdAt: z.string(),
@@ -144,6 +187,11 @@ export const DriverJob = z.object({
   type: z.enum(["pickup", "handoff", "delivery"]),
   status: z.string(),
   address: z.string(),
+  latitude: z.number().optional(),
+  longitude: z.number().optional(),
+  accuracyM: z.number().nonnegative().optional(),
+  directions: z.string().optional(),
+  navigationUrl: z.string().url().optional(),
   contactName: z.string().optional(),
   contactPhone: z.string().optional(),
   cargoSummary: z.string().optional(),
