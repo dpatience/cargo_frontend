@@ -6,6 +6,7 @@ import {
   cargoSeoPageHead,
   cargoSeoPages,
   cargoSeoSitemapEntries,
+  getCargoSeoPage,
 } from "@/packages/config/seo-pages";
 import { buildCargoSitemap } from "../vite.seo-sitemap";
 
@@ -167,9 +168,41 @@ describe("Cargo content pages and structured data", () => {
     const website = schema["@graph"].find((entity) => entity["@type"] === "WebSite");
 
     expect(website?.potentialAction?.["@type"]).toBe("SearchAction");
+    expect(website?.url).toBe("https://cargo.tembera.nyxarith.com/");
     expect(website?.potentialAction?.target.urlTemplate).toBe(
       "https://cargo.tembera.nyxarith.com/track?code={search_term_string}",
     );
+  });
+
+  it("keeps every Search Console reported public page indexable and in the sitemap", () => {
+    const slugs = [
+      "cargo/huye-to-kigali",
+      "cargo/kigali-to-huye",
+      "cargo/kigali-to-musanze",
+      "cargo/kigali-to-rubavu",
+      "cargo/kigali-to-rusizi",
+      "for-online-sellers",
+      "guides/cargo-vs-courier-vs-bus",
+      "safety-and-trust",
+    ];
+    const sitemap = buildCargoSitemap();
+
+    for (const slug of slugs) {
+      for (const locale of ["en", "rw"] as const) {
+        const page = getCargoSeoPage(locale, slug);
+        if (!page) throw new Error(`Missing public SEO page: ${locale}/${slug}`);
+        const head = cargoSeoPageHead(locale, slug, page);
+        const robots = head.meta.find((meta) => "name" in meta && meta.name === "robots");
+
+        expect(robots && "content" in robots ? robots.content : "").toBe(
+          "index,follow,max-image-preview:large",
+        );
+        expect(head.links.find((link) => link.rel === "canonical")?.href).toBe(
+          `https://cargo.tembera.nyxarith.com/${locale}/${slug}`,
+        );
+        expect(sitemap).toContain(`https://cargo.tembera.nyxarith.com/${locale}/${slug}`);
+      }
+    }
   });
 });
 

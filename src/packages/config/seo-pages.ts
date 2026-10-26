@@ -55,10 +55,28 @@ const cityPairs = [
 function routePage(locale: CargoLocale, from: string, to: string): CargoSeoPageContent {
   if (locale === "en") {
     return {
-      title: `Cargo delivery from ${from} to ${to} | Tembera`,
-      description: `Arrange door-to-door cargo delivery from ${from} to ${to}, review the current quote and track your shipment with Tembera Cargo.`,
+      title: `Cargo delivery from ${from} to ${to} | Tembera Cargo`,
+      description: `Arrange cargo delivery from ${from} to ${to} in Rwanda. Review a shipment-specific quote, available handover options and tracking with Tembera Cargo.`,
       heading: `Send cargo from ${from} to ${to}`,
       summary: `Tembera Cargo helps you arrange goods delivery from ${from} to ${to}. Enter the collection and destination details, add the package information, then review the available delivery options and the quote before confirming. Use the shipment tracking code to check its status. Current availability and prices are confirmed in the app.`,
+      steps: [
+        {
+          name: "Enter the route",
+          text: `Set ${from} as the origin and ${to} as the destination, using the exact collection and delivery locations.`,
+        },
+        {
+          name: "Describe the shipment",
+          text: "Provide the package and sender or recipient details requested in the form so the quote matches the shipment.",
+        },
+        {
+          name: "Review available options",
+          text: "Compare the current quote and handover choices shown for the shipment before confirming.",
+        },
+        {
+          name: "Track the shipment",
+          text: "Keep the tracking code and share it privately with the intended recipient to check the latest status.",
+        },
+      ],
       sections: [
         {
           heading: `How delivery from ${from} to ${to} works`,
@@ -79,10 +97,28 @@ function routePage(locale: CargoLocale, from: string, to: string): CargoSeoPageC
   }
 
   return {
-    title: `Kohereza imizigo kuva ${from} ujya ${to} | Tembera`,
-    description: `Teganya kohereza imizigo kuva ${from} ujya ${to}, urebe igiciro gihari kandi ukurikirane imizigo muri Tembera Cargo.`,
+    title: `Kohereza imizigo kuva ${from} ujya ${to} | Tembera Cargo`,
+    description: `Teganya kohereza imizigo kuva ${from} ujya ${to} mu Rwanda. Reba igiciro cy'iyo mizigo, uburyo bwo kuyishyikiriza n'uko wayikurikirana muri Tembera Cargo.`,
     heading: `Kohereza imizigo kuva ${from} ujya ${to}`,
     summary: `Tembera Cargo igufasha guteganya gutwara ibicuruzwa kuva ${from} ujya ${to}. Andika aho bifatirwa n'aho bijyanwa, wongere amakuru yabyo, hanyuma urebe amahitamo yo kubigeza n'igiciro mbere yo kwemeza. Kode yo gukurikirana igufasha kureba aho imizigo igeze. Amahitamo n'ibiciro by'ubu byemezwa muri porogaramu.`,
+    steps: [
+      {
+        name: "Andika inzira",
+        text: `Hitamo ${from} aho imizigo ituruka na ${to} aho ijyanwa, wandike ahantu nyaho izafatirwa n'aho izagezwa.`,
+      },
+      {
+        name: "Sobanura imizigo",
+        text: "Tanga amakuru y'ibicuruzwa n'ay'uwabitanga cyangwa uyakira asabwa kugira ngo igiciro gihure n'iyo mizigo.",
+      },
+      {
+        name: "Reba amahitamo ahari",
+        text: "Gereranya igiciro n'uburyo bwo gushyikiriza imizigo bigaragara mbere yo kwemeza.",
+      },
+      {
+        name: "Kurikirana imizigo",
+        text: "Bika kode yo gukurikirana kandi uyisangize uyakira ugenewe gusa kugira ngo arebe amakuru aheruka.",
+      },
+    ],
     sections: [
       {
         heading: `Uko gutwara imizigo kuva ${from} ujya ${to} bikorwa`,
@@ -384,10 +420,10 @@ const corePages: Record<CargoLocale, Record<string, CargoSeoPageContent>> = {
       ],
     },
     "for-online-sellers": {
-      title: "Delivery for Online Sellers in Rwanda | Tembera Cargo",
+      title: "Online Order Delivery in Rwanda | Tembera Cargo",
       description:
-        "Online sellers can arrange individual customer deliveries, review the quote and send the shipment tracking code with Tembera Cargo.",
-      heading: "A shipment flow for Rwanda's online sellers",
+        "Arrange online order delivery in Rwanda with Tembera Cargo. Review each shipment quote, compare handover options and share tracking privately.",
+      heading: "How to deliver online orders in Rwanda",
       summary:
         "Online sellers can use Tembera Cargo to submit a customer's package for delivery across Rwanda. Enter the parcel route and details, check the available handover options and quote, confirm the shipment, then share its tracking code privately with the buyer.",
       sections: [
@@ -1589,7 +1625,7 @@ export function cargoSeoPageHead(locale: CargoLocale, slug: string, page: CargoS
       "@type": "WebSite",
       "@id": `${absoluteSiteUrl("/")}#website`,
       name: "Tembera Cargo",
-      url: canonical,
+      url: absoluteSiteUrl("/"),
       description: page.description,
       publisher: { "@id": "https://nyxarith.com/#organization" },
       inLanguage: locale === "en" ? "en-RW" : "rw-RW",
