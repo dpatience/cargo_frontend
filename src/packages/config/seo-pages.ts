@@ -1606,7 +1606,8 @@ export function getCargoSeoPage(
 }
 
 export function cargoSeoPageHead(locale: CargoLocale, slug: string, page: CargoSeoPageContent) {
-  const canonical = absoluteSiteUrl(`/${locale}/${slug}`);
+  const canonicalPath = `/${locale}/${slug}`;
+  const canonical = absoluteSiteUrl(canonicalPath);
   const localeBase = absoluteSiteUrl(`/${locale}`);
   const faq = page.faqs.map(({ question, answer }) => ({
     "@type": "Question",
@@ -1754,7 +1755,7 @@ export function cargoSeoPageHead(locale: CargoLocale, slug: string, page: CargoS
       { name: "twitter:description", content: page.description },
       { name: "twitter:image", content: absoluteSiteUrl("/og-image.jpg") },
     ],
-    links: [{ rel: "canonical", href: canonical }, ...languageLinks],
+    links: [{ rel: "canonical", href: canonicalPath }, ...languageLinks],
     scripts: [
       {
         type: "application/ld+json",

@@ -1,4 +1,4 @@
-const publicSiteOrigin = "https://cargo.tembera.nyxarith.com";
+const publicSiteOrigin = "https://cargo.tembera.app";
 
 export function absoluteSiteUrl(path: string): string {
   return new URL(path, publicSiteOrigin).toString();
@@ -69,7 +69,8 @@ export const cargoLandingCopy = {
 
 export function cargoLandingHead(locale: CargoLocale) {
   const copy = cargoLandingCopy[locale];
-  const canonical = absoluteSiteUrl(`/${locale}`);
+  const canonical = `/${locale}`;
+  const canonicalUrl = absoluteSiteUrl(canonical);
   const organizationId = "https://nyxarith.com/#organization";
   const image = absoluteSiteUrl("/og-image.jpg");
   const language = locale === "rw" ? "rw-RW" : "en-RW";
@@ -83,7 +84,7 @@ export function cargoLandingHead(locale: CargoLocale) {
       { property: "og:type", content: "website" },
       { property: "og:title", content: copy.title },
       { property: "og:description", content: copy.description },
-      { property: "og:url", content: canonical },
+      { property: "og:url", content: canonicalUrl },
       { property: "og:locale", content: language },
       { property: "og:image", content: image },
       { property: "og:image:type", content: "image/jpeg" },
@@ -119,7 +120,7 @@ export function cargoLandingHead(locale: CargoLocale) {
               "@type": "WebSite",
               "@id": `${absoluteSiteUrl("/")}#website`,
               name: "Tembera Cargo",
-              url: canonical,
+              url: canonicalUrl,
               description: copy.description,
               publisher: { "@id": organizationId },
               inLanguage: language,
@@ -134,18 +135,18 @@ export function cargoLandingHead(locale: CargoLocale) {
             },
             {
               "@type": "SoftwareApplication",
-              "@id": `${canonical}#application`,
+              "@id": `${canonicalUrl}#application`,
               name: "Tembera Cargo",
               applicationCategory: "BusinessApplication",
               operatingSystem: "Web",
               image: absoluteSiteUrl("/tembera-logo.jpg"),
-              url: canonical,
+              url: canonicalUrl,
               inLanguage: language,
               publisher: { "@id": organizationId },
             },
             {
               "@type": "Service",
-              "@id": `${canonical}#service`,
+              "@id": `${canonicalUrl}#service`,
               name: "Tembera Cargo",
               serviceType: "Cargo and parcel delivery",
               description: copy.summary,
@@ -174,7 +175,7 @@ export function cargoLandingHead(locale: CargoLocale) {
             },
             {
               "@type": "FAQPage",
-              "@id": `${canonical}#faq`,
+              "@id": `${canonicalUrl}#faq`,
               inLanguage: language,
               mainEntity: copy.faqs.map(({ question, answer }) => ({
                 "@type": "Question",

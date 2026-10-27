@@ -142,13 +142,13 @@ export function CargoSeoContentPage({
           className="flex flex-wrap gap-4 border-t border-border pt-5 text-sm"
         >
           <a
-            href={`https://tembera.nyxarith.com/${locale}/`}
+            href={`https://tembera.app/${locale}/`}
             className="underline underline-offset-4"
           >
             {locale === "en" ? "Tembera intercity bus tickets" : "Amatike ya bisi za Tembera"}
           </a>
           <a
-            href={`https://kigali.tembera.nyxarith.com/${locale}/`}
+            href={`https://kigali.tembera.app/${locale}/`}
             className="underline underline-offset-4"
           >
             {locale === "en"

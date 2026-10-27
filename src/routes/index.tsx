@@ -114,11 +114,11 @@ export function Home() {
   ] as const;
   const serviceLinks = [
     {
-      href: `https://tembera.nyxarith.com/${lang}/`,
+      href: `https://tembera.app/${lang}/`,
       label: lang === "rw" ? "Amatike ya bisi za Tembera" : "Tembera intercity bus tickets",
     },
     {
-      href: `https://kigali.tembera.nyxarith.com/${lang}/`,
+      href: `https://kigali.tembera.app/${lang}/`,
       label: lang === "rw" ? "Gukurikirana bisi za Tembera Kigali" : "Tembera Kigali bus tracking",
     },
     {

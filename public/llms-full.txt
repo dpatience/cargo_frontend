@@ -26,17 +26,21 @@ A shipment tracking code can reveal shipment information. Share it only with the
 
 ## Official public pages
 
-- Tembera Cargo English: https://cargo.tembera.nyxarith.com/en
-- Tembera Cargo Kinyarwanda: https://cargo.tembera.nyxarith.com/rw
-- Cargo overview: https://cargo.tembera.nyxarith.com/en/cargo
-- Help and FAQs English: https://cargo.tembera.nyxarith.com/en/help
-- Ubufasha n'ibibazo: https://cargo.tembera.nyxarith.com/rw/help
-- About Nyxarith: https://cargo.tembera.nyxarith.com/en/about-nyxarith
-- Shipment tracking: https://cargo.tembera.nyxarith.com/track
-- Tembera intercity: https://tembera.nyxarith.com/en/
-- Tembera Kigali: https://kigali.tembera.nyxarith.com/en/
+- Tembera Cargo English: https://cargo.tembera.app/en
+- Tembera Cargo Kinyarwanda: https://cargo.tembera.app/rw
+- Tembera Cargo Nyxarith domain: https://cargo.tembera.nyxarith.com/en
+- Tembera Cargo Nyxarith root domain: https://cargo.nyxarith.com/en
+- Cargo overview: https://cargo.tembera.app/en/cargo
+- Help and FAQs English: https://cargo.tembera.app/en/help
+- Ubufasha n'ibibazo: https://cargo.tembera.app/rw/help
+- About Nyxarith: https://cargo.tembera.app/en/about-nyxarith
+- Shipment tracking: https://cargo.tembera.app/track
+- Tembera intercity: https://tembera.app/en/
+- Tembera Kigali: https://kigali.tembera.app/en/
 - Nyxarith: https://nyxarith.com/
-- XML sitemap: https://cargo.tembera.nyxarith.com/sitemap.xml
+- XML sitemap: https://cargo.tembera.app/sitemap.xml
+- Tembera Cargo Nyxarith-domain sitemap: https://cargo.tembera.nyxarith.com/sitemap-nyxarith.xml
+- Tembera Cargo root-domain sitemap: https://cargo.nyxarith.com/sitemap-cargo-nyxarith.xml
 
 ## Accuracy
 

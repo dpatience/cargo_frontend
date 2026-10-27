@@ -10,7 +10,9 @@ Disallow: /send
 Disallow: /shipments
 Disallow: /track
 
-Sitemap: https://cargo.tembera.nyxarith.com/sitemap.xml
+Sitemap: https://cargo.tembera.app/sitemap.xml
+Sitemap: https://cargo.tembera.nyxarith.com/sitemap-nyxarith.xml
+Sitemap: https://cargo.nyxarith.com/sitemap-cargo-nyxarith.xml
 
 User-agent: GPTBot
 User-agent: OAI-SearchBot

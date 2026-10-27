@@ -4,7 +4,7 @@ Three separate apps sharing one design system and API layer:
 
 | App | Path (this repo) | Target domain | Sign-in |
 |---|---|---|---|
-| Client | `/en`, `/rw`, `/app`, `/send`, `/track/:code`, `/receive`, `/shipments`, `/account` | cargo.tembera.nyxarith.com | Phone + OTP |
+| Client | `/en`, `/rw`, `/app`, `/send`, `/track/:code`, `/receive`, `/shipments`, `/account` | cargo.tembera.app; legacy alias: cargo.tembera.nyxarith.com | Phone + OTP |
 | Driver | `/driver/*` | Private app host configured per deployment | Phone + OTP |
 | Admin | `/admin/*` | Private app host configured per deployment | Email + password |
 
@@ -45,10 +45,12 @@ npm run dev:admin    # http://localhost:3002 (or: bun run dev:admin)
 `VITE_APP` pins a server to one app; any path from another app redirects to that app's home.
 
 ## Independent deployment (one project, three domains)
-The public client app is served at `cargo.tembera.nyxarith.com`. Configure any private driver or admin host separately; do not change the public client domain as part of SEO work. The hostname picks the app: `driver.*` → Driver, `admin.*` → Admin, `VITE_CLIENT_HOST` → Client. Opening the driver domain lands on `/driver`; client or admin pages there redirect back. Preview and other hosts show all apps for testing.
+The public client app is served at `cargo.tembera.app`; `cargo.tembera.nyxarith.com` and `cargo.nyxarith.com` remain production hosts. Attach all three hostnames to the same frontend project. Canonical paths resolve on the requested hostname, and each host has its own sitemap URLs listed in `robots.txt`. Configure any private driver or admin host separately. The hostname picks the app: `driver.*` → Driver, `admin.*` → Admin, `VITE_CLIENT_HOST` or any public Cargo hostname → Client. Opening the driver domain lands on `/driver`; client or admin pages there redirect back. Preview and other hosts show all apps for testing.
+
+Add both public hostnames to the backend's `ALLOWED_ORIGINS` setting so browser API requests and authentication work from either domain.
 
 ## Search and AI discovery
-The client deployment publishes `robots.txt`, `sitemap.xml`, and `llms.txt` from `public/`. The sitemap contains only the public English and Kinyarwanda landing pages; private and transactional screens are excluded. Submit `https://cargo.tembera.nyxarith.com/sitemap.xml` in Google Search Console and Bing Webmaster Tools.
+The client deployment publishes `robots.txt`, `sitemap.xml`, and `llms.txt` from `public/`. The sitemap contains only the public English and Kinyarwanda landing pages; private and transactional screens are excluded. Submit `https://cargo.tembera.app/sitemap.xml` in Google Search Console and Bing Webmaster Tools.
 
 Cloudflare Web Analytics is loaded only on the localized, indexable public Cargo pages. Its beacon has SPA tracking disabled; the customer app, shipment tracking, quote, payment and account routes are excluded. No form values or custom events are collected. Disable automatic whole-site Web Analytics injection in Cloudflare for this hostname so it does not bypass the public-page-only integration.
 

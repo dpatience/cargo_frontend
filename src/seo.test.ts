@@ -30,7 +30,7 @@ describe("localized cargo landing SEO", () => {
       expect(descriptionContent).toBeDefined();
       expect(descriptionContent).toBeTypeOf("string");
       expect(descriptionContent?.length).toBeLessThanOrEqual(155);
-      expect(serialized).toContain(`https://cargo.tembera.nyxarith.com/${locale}`);
+      expect(serialized).toContain(`https://cargo.tembera.app/${locale}`);
       expect(serialized).toContain('hrefLang":"en"');
       expect(serialized).toContain('hrefLang":"rw"');
       expect(serialized).toContain('hrefLang":"x-default"');
@@ -99,7 +99,7 @@ describe("Cargo content pages and structured data", () => {
         const robots = head.meta.find((meta) => "name" in meta && meta.name === "robots");
 
         expect(organization?.logo).toBeUndefined();
-        expect(application?.image).toBe("https://cargo.tembera.nyxarith.com/tembera-logo.jpg");
+        expect(application?.image).toBe("https://cargo.tembera.app/tembera-logo.jpg");
         expect(content.title.length).toBeLessThanOrEqual(60);
         expect(content.description.length).toBeLessThanOrEqual(155);
         expect(head.links.some((link) => link.rel === "canonical")).toBe(true);
@@ -137,14 +137,22 @@ describe("Cargo content pages and structured data", () => {
     const facts = cargoSeoPages.find((page) => page.slug === "about-nyxarith");
 
     expect(entries.length).toBeGreaterThan(40);
-    expect(sitemap).toContain("https://cargo.tembera.nyxarith.com/en/cargo/kigali-to-musanze");
-    expect(sitemap).toContain("https://cargo.tembera.nyxarith.com/rw/cargo/musanze-to-kigali");
+    expect(sitemap).toContain("https://cargo.tembera.app/en/cargo/kigali-to-musanze");
+    expect(sitemap).toContain("https://cargo.tembera.app/rw/cargo/musanze-to-kigali");
     expect(sitemap).toContain('hreflang="en"');
     expect(sitemap).toContain('hreflang="rw"');
     expect(sitemap).toContain('hreflang="x-default"');
     expect(sitemap).toContain("<lastmod>");
-    expect(sitemap).toContain("https://cargo.tembera.nyxarith.com/en/help");
-    expect(sitemap).toContain("https://cargo.tembera.nyxarith.com/rw/help");
+    expect(sitemap).toContain("https://cargo.tembera.app/en/help");
+    expect(sitemap).toContain("https://cargo.tembera.app/rw/help");
+    const legacySitemap = buildCargoSitemap(
+      process.cwd(),
+      "https://cargo.tembera.nyxarith.com",
+    );
+    const rootDomainSitemap = buildCargoSitemap(process.cwd(), "https://cargo.nyxarith.com");
+    expect(legacySitemap).toContain("https://cargo.tembera.nyxarith.com/en/help");
+    expect(rootDomainSitemap).toContain("https://cargo.nyxarith.com/en/help");
+    expect(legacySitemap).not.toContain("https://cargo.tembera.app/");
     expect(sitemap).not.toContain("/privacy");
     expect(help?.en.faqs).toHaveLength(18);
     expect(help?.rw.faqs).toHaveLength(18);
@@ -168,9 +176,9 @@ describe("Cargo content pages and structured data", () => {
     const website = schema["@graph"].find((entity) => entity["@type"] === "WebSite");
 
     expect(website?.potentialAction?.["@type"]).toBe("SearchAction");
-    expect(website?.url).toBe("https://cargo.tembera.nyxarith.com/");
+    expect(website?.url).toBe("https://cargo.tembera.app/");
     expect(website?.potentialAction?.target.urlTemplate).toBe(
-      "https://cargo.tembera.nyxarith.com/track?code={search_term_string}",
+      "https://cargo.tembera.app/track?code={search_term_string}",
     );
   });
 
@@ -198,9 +206,9 @@ describe("Cargo content pages and structured data", () => {
           "index,follow,max-image-preview:large",
         );
         expect(head.links.find((link) => link.rel === "canonical")?.href).toBe(
-          `https://cargo.tembera.nyxarith.com/${locale}/${slug}`,
+          `/${locale}/${slug}`,
         );
-        expect(sitemap).toContain(`https://cargo.tembera.nyxarith.com/${locale}/${slug}`);
+        expect(sitemap).toContain(`https://cargo.tembera.app/${locale}/${slug}`);
       }
     }
   });
@@ -213,6 +221,15 @@ describe("public crawl directives", () => {
   it("allows named AI crawlers while keeping account and transaction paths disallowed", () => {
     const robots = readPublicFile("robots.txt");
 
+    expect(robots).toContain("Sitemap: https://cargo.tembera.app/sitemap.xml");
+    expect(robots).toContain("Sitemap: https://cargo.tembera.nyxarith.com/sitemap-nyxarith.xml");
+    expect(robots).toContain("Sitemap: https://cargo.nyxarith.com/sitemap-cargo-nyxarith.xml");
+    expect(readPublicFile("sitemap-nyxarith.xml")).toContain(
+      "https://cargo.tembera.nyxarith.com/en",
+    );
+    expect(readPublicFile("sitemap-cargo-nyxarith.xml")).toContain(
+      "https://cargo.nyxarith.com/en",
+    );
     for (const crawler of [
       "GPTBot",
       "OAI-SearchBot",
@@ -243,8 +260,10 @@ describe("public crawl directives", () => {
     const summary = readPublicFile("llms.txt");
     const fullFacts = readPublicFile("llms-full.txt");
 
-    expect(summary).toContain("https://cargo.tembera.nyxarith.com/en/help");
-    expect(summary).toContain("https://cargo.tembera.nyxarith.com/rw/help");
+    expect(summary).toContain("https://cargo.tembera.app/en/help");
+    expect(summary).toContain("https://cargo.tembera.app/rw/help");
+    expect(summary).toContain("https://cargo.tembera.nyxarith.com/en");
+    expect(summary).toContain("https://cargo.nyxarith.com/en");
     expect(fullFacts).toContain("Nyxarith Private Limited Company");
     expect(fullFacts).toContain("shipment-specific quote");
     expect(fullFacts).toContain("Share it only with the intended recipient");
@@ -257,8 +276,8 @@ describe("public crawl directives", () => {
     expect(sitemap).toContain('hreflang="en"');
     expect(sitemap).toContain('hreflang="rw"');
     expect(sitemap).toContain('hreflang="x-default"');
-    expect(sitemap).toContain("https://cargo.tembera.nyxarith.com/en");
-    expect(sitemap).toContain("https://cargo.tembera.nyxarith.com/rw");
+    expect(sitemap).toContain("https://cargo.tembera.app/en");
+    expect(sitemap).toContain("https://cargo.tembera.app/rw");
     expect(sitemap).not.toContain("/track");
     expect(sitemap).not.toContain("/receive");
   });
