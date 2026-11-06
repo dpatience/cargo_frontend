@@ -113,7 +113,7 @@ export function CargoSeoContentPage({
               {locale === "en" ? "Other Kigali cargo routes" : "Izindi nzira za Kigali z'imizigo"}
             </h2>
             <div className="flex flex-wrap gap-4 text-sm">
-              {["musanze", "huye", "rubavu", "rusizi"].flatMap((city) => [
+              {["musanze", "huye", "rubavu", "rusizi", "kamembe"].flatMap((city) => [
                 <a
                   key={`kigali-${city}`}
                   href={`${root}/cargo/kigali-to-${city}`}

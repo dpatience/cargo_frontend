@@ -109,6 +109,7 @@ export function Home() {
         { href: `/${lang}/cargo/kigali-to-huye`, label: "Kigali to Huye" },
         { href: `/${lang}/cargo/kigali-to-rubavu`, label: "Kigali to Rubavu" },
         { href: `/${lang}/cargo/kigali-to-rusizi`, label: "Kigali to Rusizi" },
+        { href: `/${lang}/cargo/kigali-to-kamembe`, label: "Kigali to Kamembe" },
       ],
     },
   ] as const;

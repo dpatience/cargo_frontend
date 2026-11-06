@@ -138,6 +138,7 @@ describe("Cargo content pages and structured data", () => {
 
     expect(entries.length).toBeGreaterThan(40);
     expect(sitemap).toContain("https://cargo.tembera.app/en/cargo/kigali-to-musanze");
+    expect(sitemap).toContain("https://cargo.tembera.app/en/cargo/kigali-to-kamembe");
     expect(sitemap).toContain("https://cargo.tembera.app/rw/cargo/musanze-to-kigali");
     expect(sitemap).toContain('hreflang="en"');
     expect(sitemap).toContain('hreflang="rw"');
@@ -159,6 +160,26 @@ describe("Cargo content pages and structured data", () => {
     expect(facts?.en.sections.flatMap((section) => section.paragraphs).join(" ")).toContain(
       "Last updated: 14 October 2026",
     );
+  });
+
+  it("answers practical parcel and Kamembe questions on the relevant route pages", () => {
+    const kigaliRusizi = cargoSeoPages.find(
+      (page) => page.slug === "cargo/kigali-to-rusizi",
+    );
+    const kigaliKamembe = cargoSeoPages.find(
+      (page) => page.slug === "cargo/kigali-to-kamembe",
+    );
+
+    expect(kigaliRusizi?.en.faqs).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ question: "Can I send one parcel, such as a pair of shoes?" }),
+        expect.objectContaining({ question: "Is this the Kigali to Kamembe route?" }),
+      ]),
+    );
+    expect(kigaliRusizi?.en.sections.flatMap((section) => section.paragraphs).join(" ")).toContain(
+      "The sending form supports a single parcel",
+    );
+    expect(kigaliKamembe?.en.heading).toBe("Send cargo from Kigali to Kamembe");
   });
 
   it("connects the website search action to the functional shipment tracker", () => {

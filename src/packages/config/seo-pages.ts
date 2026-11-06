@@ -50,10 +50,27 @@ const cityPairs = [
   ["kigali", "Huye"],
   ["kigali", "Rubavu"],
   ["kigali", "Rusizi"],
+  ["kigali", "Kamembe"],
 ] as const;
 
 function routePage(locale: CargoLocale, from: string, to: string): CargoSeoPageContent {
   if (locale === "en") {
+    const practicalFaqs = [
+      {
+        question: "Can I send one parcel, such as a pair of shoes?",
+        answer:
+          "Yes, the sending form accepts a single item. Enter its category, such as clothes, its approximate weight or size and the dimensions requested, then review the shipment-specific options and quote.",
+      },
+      ...(to === "Rusizi"
+        ? [
+            {
+              question: "Is this the Kigali to Kamembe route?",
+              answer:
+                "Kamembe is in Rusizi District. Enter the exact pickup and delivery addresses in Tembera Cargo because the available option and quote depend on the locations you confirm.",
+            },
+          ]
+        : []),
+    ];
     return {
       title: `Cargo delivery from ${from} to ${to} | Tembera Cargo`,
       description: `Arrange cargo delivery from ${from} to ${to} in Rwanda. Review a shipment-specific quote, available handover options and tracking with Tembera Cargo.`,
@@ -82,6 +99,7 @@ function routePage(locale: CargoLocale, from: string, to: string): CargoSeoPageC
           heading: `How delivery from ${from} to ${to} works`,
           paragraphs: [
             `Set ${from} as the origin and ${to} as the destination in the shipment form. Tembera Cargo uses the locations and package details you provide to request a current delivery quote.`,
+            "The sending form supports a single parcel: enter what it is (for example, clothes, food or electronics), its approximate weight or size, the number of items and the dimensions requested for handover. The app uses those details to return the available options for that shipment.",
             "Choose the pickup or drop-off and delivery or collection option shown for your shipment. The available options, quoted price and any delivery estimate are shown in the flow when available; this guide does not promise a fixed schedule or rate.",
           ],
         },
@@ -92,9 +110,26 @@ function routePage(locale: CargoLocale, from: string, to: string): CargoSeoPageC
           ],
         },
       ],
-      faqs: [...pairFaqs.en],
+      faqs: [...pairFaqs.en, ...practicalFaqs],
     };
   }
+
+  const practicalFaqs = [
+    {
+      question: "Nshobora kohereza umuzigo umwe, nk'inkweto?",
+      answer:
+        "Yego, uburyo bwo kohereza bwakira ikintu kimwe. Andika ubwoko bwacyo, nk'imyenda, uburemere cyangwa ingano n'ibipimo bisabwa, hanyuma urebe amahitamo n'igiciro by'iyo mizigo.",
+    },
+    ...(to === "Rusizi"
+      ? [
+          {
+            question: "Iyi ni inzira ya Kigali ijya i Kamembe?",
+            answer:
+              "Kamembe iri mu Karere ka Rusizi. Andika aderesi nyayo ifatirwaho n'ijyanwaho muri Tembera Cargo kuko amahitamo n'igiciro bishingira ku hantu wemeje.",
+          },
+        ]
+      : []),
+  ];
 
   return {
     title: `Kohereza imizigo kuva ${from} ujya ${to} | Tembera Cargo`,
@@ -124,6 +159,7 @@ function routePage(locale: CargoLocale, from: string, to: string): CargoSeoPageC
         heading: `Uko gutwara imizigo kuva ${from} ujya ${to} bikorwa`,
         paragraphs: [
           `Hitamo ${from} nk'aho imizigo ituruka na ${to} nk'aho ijyanwa. Tembera Cargo isaba igiciro gishingiye ku hantu n'amakuru y'imizigo watanze.`,
+          "Ushobora kohereza umuzigo umwe: andika icyo ari cyo, nk'imyenda, ibiribwa cyangwa ibikoresho bya elegitoroniki, uburemere cyangwa ingano, umubare w'ibintu n'ibipimo bisabwa. Porogaramu ikoresha ayo makuru ikagaragaza amahitamo ahari.",
           "Hitamo uburyo bwo gufata cyangwa gutanga imizigo n'uburyo yo kwakira cyangwa kugeza bugaragara ku mizigo yawe. Amahitamo, igiciro n'igihe cyo kuyigeza bigaragara muri porogaramu igihe bihari; iyi paji ntitanga isaha cyangwa igiciro gihoraho.",
         ],
       },
@@ -134,7 +170,7 @@ function routePage(locale: CargoLocale, from: string, to: string): CargoSeoPageC
         ],
       },
     ],
-    faqs: [...pairFaqs.rw],
+    faqs: [...pairFaqs.rw, ...practicalFaqs],
   };
 }
 
