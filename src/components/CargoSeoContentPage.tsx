@@ -4,6 +4,111 @@ import { CloudflareWebAnalytics } from "@/components/CloudflareWebAnalytics";
 import type { CargoLocale } from "@/packages/config/seo";
 import type { CargoSeoPageContent } from "@/packages/config/seo-pages";
 
+function CargoPageVisual({
+  type,
+  locale,
+}: {
+  type: NonNullable<CargoSeoPageContent["visual"]>;
+  locale: "en" | "rw";
+}) {
+  const isEnglish = locale === "en";
+  const copy = {
+    safety: isEnglish
+      ? ["Create shipment", "Confirm handover", "Track by code", "Deliver with code"]
+      : [
+          "Kora imizigo",
+          "Emeza iyishyikirizwa",
+          "Kurikirana ukoresheje kode",
+          "Yishyikirize ukoresheje kode",
+        ],
+    business: isEnglish
+      ? ["Customer order", "Cargo quote", "Shipment tracking", "Customer receives"]
+      : [
+          "Icyo umukiriya yatumije",
+          "Igiciro cy'imizigo",
+          "Gukurikirana imizigo",
+          "Umukiriya arakira",
+        ],
+    farmer: isEnglish
+      ? ["Farm pickup", "Describe produce", "Buyer in Rwanda", "Delivery status"]
+      : ["Gufatira ku murima", "Sobanura umusaruro", "Umuguzi mu Rwanda", "Amakuru yo kugeza"],
+    student: isEnglish
+      ? ["Family sends", "Student gets code", "Track shipment", "Receive package"]
+      : ["Umuryango wohereza", "Umunyeshuri abona kode", "Kurikirana imizigo", "Akira imizigo"],
+    faq: isEnglish
+      ? ["Before sending", "Get a quote", "Track by code", "Solve a problem"]
+      : ["Mbere yo kohereza", "Bona igiciro", "Kurikirana ukoresheje kode", "Kemura ikibazo"],
+  }[type];
+  const title = isEnglish
+    ? "How Tembera Cargo connects the shipment"
+    : "Uko Tembera Cargo ikurikiranya imizigo";
+
+  return (
+    <figure className="overflow-hidden rounded-2xl border border-border bg-surface p-5 shadow-card sm:p-7">
+      <figcaption className="mb-5 text-sm font-semibold uppercase tracking-[0.12em] text-accent">
+        {title}
+      </figcaption>
+      <svg
+        viewBox="0 0 760 170"
+        role="img"
+        aria-label={title}
+        className="h-auto w-full"
+        fill="none"
+      >
+        <path d="M92 78H668" stroke="var(--color-border)" strokeDasharray="8 10" strokeWidth="4" />
+        {copy.map((label, index) => {
+          const x = 20 + index * 190;
+          return (
+            <g key={label}>
+              <rect
+                x={x}
+                y="38"
+                width="144"
+                height="80"
+                rx="18"
+                fill="var(--color-card)"
+                stroke={index === 0 || index === 3 ? "var(--color-accent)" : "var(--color-border)"}
+                strokeWidth="2"
+              />
+              <circle cx={x + 28} cy="67" r="13" fill="var(--color-accent)" opacity="0.18" />
+              <text
+                x={x + 28}
+                y="72"
+                textAnchor="middle"
+                fill="var(--color-accent)"
+                fontSize="13"
+                fontWeight="700"
+              >
+                {index + 1}
+              </text>
+              <text
+                x={x + 72}
+                y="68"
+                textAnchor="middle"
+                fill="currentColor"
+                fontSize="12"
+                fontWeight="600"
+              >
+                {label.split(" ").slice(0, 2).join(" ")}
+              </text>
+              <text
+                x={x + 72}
+                y="86"
+                textAnchor="middle"
+                fill="currentColor"
+                fontSize="12"
+                fontWeight="600"
+              >
+                {label.split(" ").slice(2).join(" ")}
+              </text>
+            </g>
+          );
+        })}
+      </svg>
+    </figure>
+  );
+}
+
 export function CargoSeoContentPage({
   locale,
   slug,
@@ -63,6 +168,8 @@ export function CargoSeoContentPage({
             {trackingLabel}
           </Link>
         </div>
+
+        {page.visual && <CargoPageVisual type={page.visual} locale={locale} />}
 
         {page.contactMethods && (
           <section aria-labelledby="contact-options" className="space-y-4">

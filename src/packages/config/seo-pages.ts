@@ -7,6 +7,7 @@ export type CargoSeoPageContent = {
   heading: string;
   summary: string;
   sections: Array<{ heading: string; paragraphs: string[] }>;
+  visual?: "safety" | "business" | "farmer" | "student" | "faq";
   contactMethods?: Array<{
     label: string;
     description: string;
@@ -15,6 +16,10 @@ export type CargoSeoPageContent = {
   }>;
   steps?: Array<{ name: string; text: string }>;
   faqs: Array<{ question: string; answer: string }>;
+  faqGroups?: Array<{
+    heading: string;
+    faqs: Array<{ question: string; answer: string }>;
+  }>;
   noIndex?: boolean;
 };
 
@@ -308,12 +313,26 @@ const corePages: Record<CargoLocale, Record<string, CargoSeoPageContent>> = {
         "Learn how Tembera Cargo organizes package details, sender and recipient handover choices, and shipment-code tracking across Rwanda.",
       heading: "How does Tembera Cargo help make package handover clearer?",
       summary:
-        "Tembera Cargo gives senders a structured way to enter a shipment, select available pickup and delivery arrangements, and follow its status with a tracking code. Use the shipment flow and share tracking details only with the intended recipient; do not assume insurance or a delivery guarantee unless explicitly offered.",
+        "Tembera Cargo takes responsibility for the cargo entrusted to it. When a shipment is lost, damaged or not delivered because of a service-related issue, Tembera Cargo guarantees compensation equal to 100% of the sender-declared cargo value, subject to the applicable terms. Keep the tracking code and share it only with the intended recipient.",
+      visual: "safety",
       sections: [
         {
           heading: "Record the shipment and recipient details",
           paragraphs: [
             "The app collects the shipment, location and recipient information needed to create a delivery request. Check these details before confirming so the sender and recipient are clear.",
+          ],
+        },
+        {
+          heading: "If something goes wrong",
+          paragraphs: [
+            "If a shipment is lost, damaged or not delivered, report it to Tembera Cargo within 48 hours of the expected delivery or the incident becoming known. Keep the tracking code and contact Tembera Cargo through the official contact page. Tembera Cargo investigates the shipment, reviews the handover records and holds the responsible party accountable. If the claim is eligible, the customer is paid 100% of the sender-declared cargo value.",
+          ],
+        },
+        {
+          heading: "Items and packaging need confirmation",
+          paragraphs: [
+            "Do not assume every item is accepted. Illegal goods, weapons, explosives, dangerous chemicals and stolen goods must not be sent. Food, medicine, agricultural products, fragile goods, electronics, liquids, perishables and valuable items may need special handling or confirmation; check the current app instructions and applicable terms before handover. The sender must declare the cargo honestly and package it adequately.",
+            "Choose packaging that fits the item, protect fragile contents, remove empty space, seal the package securely and label the recipient clearly. The sender remains responsible for describing and preparing the package accurately.",
           ],
         },
         {
@@ -338,7 +357,7 @@ const corePages: Record<CargoLocale, Record<string, CargoSeoPageContent>> = {
         {
           question: "Does Tembera Cargo guarantee delivery or insure every item?",
           answer:
-            "Do not assume a delivery guarantee or insurance from this page. Review the terms and conditions that apply to your shipment before confirming.",
+            "Yes. Tembera Cargo takes responsibility for entrusted cargo and guarantees 100% compensation of the sender-declared value when cargo is lost, damaged or not delivered because of a service-related issue, subject to the applicable terms and a claim reported within 48 hours.",
         },
       ],
     },
@@ -428,11 +447,24 @@ const corePages: Record<CargoLocale, Record<string, CargoSeoPageContent>> = {
       heading: "How can a small business send goods with Tembera Cargo?",
       summary:
         "Tembera Cargo gives a small business a digital flow for arranging goods delivery across Rwanda. Enter the package and recipient details, review the quote and handover options for each shipment, and use its tracking code to follow progress. Check every quote before promising a customer a delivery price or date.",
+      visual: "business",
       sections: [
         {
           heading: "Use the quote for each order",
           paragraphs: [
             "Create a shipment request with its actual origin, destination and package details. The app returns the available option and price for that request; do not reuse an old quote as a guaranteed price for another parcel.",
+          ],
+        },
+        {
+          heading: "What businesses can send and track",
+          paragraphs: [
+            "Businesses can use the shipment flow for customer orders, documents, stock, samples, supplies and goods moving between branches when the item and route are accepted. Keep a record of each shipment and use the tracking code to follow its latest available status.",
+          ],
+        },
+        {
+          heading: "A practical business workflow",
+          paragraphs: [
+            "Create a business account where available, add accurate business and recipient information, create each shipment, review its quote, then track the delivery. Tembera Cargo does not currently promise a separate dashboard, analytics, receipts, bulk tools or API integration on this page; confirm which operational features are available before designing a business process around them.",
           ],
         },
         {
@@ -508,11 +540,24 @@ const corePages: Record<CargoLocale, Record<string, CargoSeoPageContent>> = {
       heading: "Plan a goods shipment with Tembera Cargo",
       summary:
         "Farmers and cooperatives can use Tembera Cargo to request delivery of goods between locations in Rwanda. Describe the package accurately, enter the origin and destination, then review the shipment-specific quote and available handover options before confirming.",
+      visual: "farmer",
       sections: [
         {
           heading: "Describe the goods accurately",
           paragraphs: [
             "Enter the package category and information requested by the form. If a parcel has special handling needs, do not assume those needs can be supported; confirm the available option before dispatch.",
+          ],
+        },
+        {
+          heading: "Useful agricultural shipments",
+          paragraphs: [
+            "Farmers and cooperatives may need to send produce, seeds, samples, tools or other permitted supplies to buyers, cooperatives, businesses, laboratories or agricultural organizations. Food, milk, eggs, honey and other perishables need careful packaging and timing; confirm that the current service can accept and handle them before dispatch.",
+          ],
+        },
+        {
+          heading: "A farmer's shipment workflow",
+          paragraphs: [
+            "Prepare and package the produce, enter the pickup location, add the buyer or receiver, choose the available delivery option, review the quote, and track the shipment until handover. For example, a farmer in Musanze can enter a 15 kg produce shipment to a Kigali buyer and use the app to confirm the actual route options rather than relying on a generic promise.",
           ],
         },
         {
@@ -548,11 +593,24 @@ const corePages: Record<CargoLocale, Record<string, CargoSeoPageContent>> = {
       heading: "Sending a package to a student?",
       summary:
         "A family member can request delivery to a student using Tembera Cargo by entering the sender, destination and recipient details. Review the available handover options and quote before confirming, then send the tracking code privately so the intended recipient can check the shipment.",
+      visual: "student",
       sections: [
         {
           heading: "Confirm the recipient's details",
           paragraphs: [
             "Check the recipient name and phone and enter the correct destination before creating the shipment.",
+          ],
+        },
+        {
+          heading: "Common student shipments",
+          paragraphs: [
+            "Families can send clothes, books, documents, school supplies, chargers and other permitted personal items to a student. Students can also send belongings home. Check the package rules and do not assume electronics, food or fragile items receive special handling.",
+          ],
+        },
+        {
+          heading: "Two simple student workflows",
+          paragraphs: [
+            "To send to a student: create the shipment, enter the student's information, share the tracking code privately, and follow the delivery. To send something home: create the shipment with the family member's details, review the quote and options, then track it until delivery.",
           ],
         },
         {
@@ -587,7 +645,7 @@ const corePages: Record<CargoLocale, Record<string, CargoSeoPageContent>> = {
         "Review package details and current options before requesting delivery for a fragile item with Tembera Cargo.",
       heading: "What should I know before sending a fragile item?",
       summary:
-        "Before requesting delivery for a fragile item, describe the package accurately and check the shipment options shown by Tembera Cargo. Do not assume that special packing, handling, compensation or insurance is included; confirm the applicable terms and available service before handing over the item.",
+        "Before requesting delivery for a fragile item, describe the package accurately and check the shipment options shown by Tembera Cargo. Tembera Cargo guarantees 100% compensation of the sender-declared value if the cargo is damaged, lost or not delivered because of a service-related issue, subject to the applicable terms. The sender must package and declare the item properly.",
       sections: [
         {
           heading: "Describe and prepare the item",
@@ -612,12 +670,12 @@ const corePages: Record<CargoLocale, Record<string, CargoSeoPageContent>> = {
         {
           question: "Does Tembera Cargo guarantee that fragile goods will not break?",
           answer:
-            "This guide makes no such guarantee. Check the applicable shipment terms and confirm any special handling before sending fragile goods.",
+            "Tembera Cargo does not promise that fragile goods cannot break, but eligible damage claims are compensated at 100% of the sender-declared value when reported within 48 hours and handled under the applicable terms.",
         },
         {
           question: "Is fragile-item insurance included?",
           answer:
-            "Do not assume insurance is included. Review the terms and options explicitly shown for your shipment.",
+            "Tembera Cargo guarantees 100% compensation of the sender-declared value for eligible damage, loss or non-delivery claims. The sender must declare the item honestly, package it adequately and report the issue within 48 hours.",
         },
       ],
     },
@@ -1056,12 +1114,26 @@ const corePages: Record<CargoLocale, Record<string, CargoSeoPageContent>> = {
         "Menya uburyo bwo guteganya uko imizigo itangwa, kuyakira no gukoresha kode yo kuyikurikirana muri Tembera Cargo.",
       heading: "Tembera Cargo ifasha ite gutanga imizigo neza?",
       summary:
-        "Tembera Cargo itanga uburyo bwo kwandika imizigo, guhitamo amahitamo yo kuyifata no kuyigeza ahari, no gukurikirana urugendo hakoreshejwe kode. Koresha porogaramu kandi uhe kode uyakira ugenewe gusa; ntukibwire ko ubwishingizi cyangwa igihe ntarengwa byo kuyigeza byemewe niba bitagaragajwe.",
+        "Tembera Cargo ibazwa imizigo wayishinze. Iyo imizigo ibuze, yangiritse cyangwa itagejejwe kubera ikibazo cya serivisi, Tembera Cargo yishyura 100% by'agaciro uwohereje yatangaje, hakurikijwe amategeko akurikizwa. Bika kode yo gukurikirana kandi uyisangize uyakira ugenewe gusa.",
+      visual: "safety",
       sections: [
         {
           heading: "Andika amakuru y'imizigo n'uyakira",
           paragraphs: [
             "Porogaramu isaba amakuru y'aho imizigo ijyanwa, ibicuruzwa n'uyakira. Yagenzure mbere yo kwemeza kugira ngo uwatanze n'uwakira bamenyekane neza.",
+          ],
+        },
+        {
+          heading: "Iyo hari ikibazo",
+          paragraphs: [
+            "Niba imizigo ibuze, yangiritse cyangwa itagejejwe, menyesha Tembera Cargo mu masaha 48 uhereye igihe yagombaga kugerera cyangwa igihe ikibazo cyamenyekanye. Bika kode yo gukurikirana maze uvugane na Tembera Cargo kuri paji y'itumanaho. Tembera Cargo isuzuma imizigo, ireba inyandiko z'uko yashyikirijwe kandi ikabaza uwabigizemo uruhare. Iyo ikirego cyujuje ibisabwa, umukiriya yishyurwa 100% by'agaciro uwohereje yatangaje.",
+          ],
+        },
+        {
+          heading: "Ibicuruzwa n'uko bipfunyikwa bigomba kugenzurwa",
+          paragraphs: [
+            "Ntukibwire ko ibicuruzwa byose byemerwa. Ibitemewe n'amategeko, intwaro, ibiturika, imiti iteje akaga n'ibintu byibwe ntibigomba koherezwa. Ibiribwa, imiti, ibikomoka ku buhinzi, ibimeneka, ibikoresho by'ikoranabuhanga, amazi, ibyangirika vuba n'ibifite agaciro bishobora gusaba kwitabwaho cyangwa kwemezwa byihariye; reba amabwiriza ya porogaramu n'amategeko akurikizwa mbere yo kubishyikiriza. Uwohereza agomba gutangaza ukuri no gupfunyika neza; indishyi ntizikurikizwa ku bicuruzwa bibujijwe, amakuru y'ibinyoma, gupfunyika nabi cyangwa ibibazo biri hanze y'ubushobozi busanzwe bwa serivisi.",
+            "Hitamo igipfunyika gihuye n'ikicuruzwa, urinde ibimeneka, ukuremo umwanya usigaye, ubifunge neza kandi wandike amakuru y'uyakira. Uwohereza ashinzwe gutanga amakuru nyayo no gutegura imizigo neza.",
           ],
         },
         {
@@ -1086,7 +1158,7 @@ const corePages: Record<CargoLocale, Record<string, CargoSeoPageContent>> = {
           question:
             "Tembera Cargo yishingira ko ibicuruzwa bizagera cyangwa ko byose bifite ubwishingizi?",
           answer:
-            "Iyi paji ntitanga iryo sezerano. Soma amategeko akurikizwa ku mizigo yawe mbere yo kwemeza.",
+            "Yego. Tembera Cargo yishyura 100% by'agaciro uwohereje yatangaje ku kirego cyemewe cy'imizigo yangiritse, ibuze cyangwa itagejejwe kubera ikibazo cya serivisi, iyo byamenyeshejwe mu masaha 48 kandi hakurikijwe amategeko akurikizwa.",
         },
       ],
     },
@@ -1177,11 +1249,24 @@ const corePages: Record<CargoLocale, Record<string, CargoSeoPageContent>> = {
       heading: "Ubucuruzi buto bwakoresha bute Tembera Cargo?",
       summary:
         "Tembera Cargo ifasha ubucuruzi buto guteganya kugeza ibicuruzwa ku bakiriya mu Rwanda. Andika amakuru y'imizigo n'uyakira, urebe igiciro n'uburyo bwo kuyishyikiriza kuri buri mizigo, hanyuma ukoreshe kode yo gukurikirana. Reba igiciro mbere yo guha umukiriya ikiguzi cyangwa itariki.",
+      visual: "business",
       sections: [
         {
           heading: "Saba igiciro kuri buri mizigo",
           paragraphs: [
             "Andika aho imizigo ituruka n'aho ijyanwa n'amakuru yayo. Igiciro gishingira kuri iyo mizigo; ntukoreshe icyatanzwe mbere nk'igiciro gihoraho cy'indi mizigo.",
+          ],
+        },
+        {
+          heading: "Ibyo ubucuruzi bushobora kohereza no gukurikirana",
+          paragraphs: [
+            "Ubucuruzi bushobora gukoresha uburyo bwo kohereza ku bicuruzwa by'abakiriya, inyandiko, ububiko, samples, ibikoresho n'ibicuruzwa bijya hagati y'amashami igihe byemewe. Bika amakuru ya buri mizigo kandi ukoreshe kode urebe amakuru aheruka.",
+          ],
+        },
+        {
+          heading: "Uburyo bw'akazi k'ubucuruzi",
+          paragraphs: [
+            "Fungura konti y'ubucuruzi aho iboneka, shyiramo amakuru nyayo y'ubucuruzi n'uyakira, kora imizigo, reba igiciro, hanyuma uyikurikirane. Tembera Cargo nta masezerano itanga kuri iyi paji y'uko hari dashboard yihariye, isesengura, receipts, bulk tools cyangwa API; banza wemeze ibikoresho bihari mbere yo kubishingiraho mu kazi.",
           ],
         },
         {
@@ -1257,11 +1342,24 @@ const corePages: Record<CargoLocale, Record<string, CargoSeoPageContent>> = {
       heading: "Teganya gutwara ibicuruzwa ukoresheje Tembera Cargo",
       summary:
         "Abahinzi na koperative bashobora gukoresha Tembera Cargo gusaba gutwara ibicuruzwa hagati y'ahantu mu Rwanda. Sobanura neza ibicuruzwa, andika aho bituruka n'aho bijyanwa, urebe igiciro n'uburyo bwo kubishyikiriza mbere yo kwemeza.",
+      visual: "farmer",
       sections: [
         {
           heading: "Sobanura ibicuruzwa neza",
           paragraphs: [
             "Andika ubwoko n'amakuru asabwa kuri ibyo bicuruzwa. Niba bisaba kwitabwaho mu buryo bwihariye, banza urebe ko iyo serivisi iboneka; ntubyibwire.",
+          ],
+        },
+        {
+          heading: "Ibicuruzwa by'ubuhinzi by'ingirakamaro kohereza",
+          paragraphs: [
+            "Abahinzi na koperative bashobora kohereza umusaruro, imbuto, samples, ibikoresho cyangwa ibindi bikoresho byemewe ku baguzi, amakoperative, ubucuruzi, laboratwari cyangwa imiryango y'ubuhinzi. Ibiribwa, amata, amagi, ubuki n'ibindi byangirika vuba bisaba gupfunyikwa no gutwarwa neza; banza wemeze ko serivisi ibyakira kandi ibifata neza.",
+          ],
+        },
+        {
+          heading: "Uko umuhinzi yohereza",
+          paragraphs: [
+            "Tegura kandi upfunyike umusaruro, andika aho ufatirwa, shyiramo umuguzi cyangwa uyakira, hitamo uburyo bwo kugeza, reba igiciro kandi ukurikire imizigo kugeza ishyikirijwe. Urugero: umuhinzi wo mu Musanze ufite ibiro 15 by'umusaruro ashobora kwandika uyakira wo muri Kigali muri porogaramu akareba amahitamo nyayo y'inzira.",
           ],
         },
         {
@@ -1297,11 +1395,24 @@ const corePages: Record<CargoLocale, Record<string, CargoSeoPageContent>> = {
       heading: "Ukeneye kohereza imizigo ku munyeshuri?",
       summary:
         "Umuryango ushobora gusaba ko imizigo igezwa ku munyeshuri ukoresheje Tembera Cargo. Andika aho ituruka n'aho ijyanwa n'amakuru y'uyakira, urebe igiciro n'uburyo bwo kuyishyikiriza mbere yo kwemeza, hanyuma usangize kode uyakira mu buryo bwihariye.",
+      visual: "student",
       sections: [
         {
           heading: "Emeza amakuru y'uyakira",
           paragraphs: [
             "Genzura amazina na telefone by'uyakira, wandike aderesi nyayo mbere yo kohereza.",
+          ],
+        },
+        {
+          heading: "Imizigo abanyeshuri bakunze koherezwa",
+          paragraphs: [
+            "Imiryango ishobora kohereza imyenda, ibitabo, inyandiko, ibikoresho by'ishuri, chargers n'ibindi bintu byemewe ku munyeshuri. Abanyeshuri nabo bashobora kohereza ibintu iwabo. Reba amabwiriza y'imizigo kandi ntukibwire ko ibikoresho by'ikoranabuhanga, ibiribwa cyangwa ibimeneka bizitabwaho byihariye.",
+          ],
+        },
+        {
+          heading: "Uburyo bubiri bworoshye ku banyeshuri",
+          paragraphs: [
+            "Kohereza ku munyeshuri: kora imizigo, andika amakuru ye, musangize kode mu ibanga kandi ukurikire kugeza igeze. Kohereza iwanyu: kora imizigo ushyiremo amakuru y'umuryango, reba igiciro n'amahitamo, hanyuma uyikurikirane kugeza igeze.",
           ],
         },
         {
@@ -1335,7 +1446,7 @@ const corePages: Record<CargoLocale, Record<string, CargoSeoPageContent>> = {
         "Reba amakuru y'ibicuruzwa n'amahitamo mbere yo gusaba gutwara ibimeneka muri Tembera Cargo.",
       heading: "Namenya iki mbere yo kohereza ibicuruzwa bimeneka?",
       summary:
-        "Mbere yo kohereza ikintu kimeneka, gisobanure neza kandi urebe amahitamo agaragara muri Tembera Cargo. Ntukibwire ko gupfunyika bidasanzwe, kwitabwaho byihariye, indishyi cyangwa ubwishingizi birimo; banza wemeze amategeko na serivisi biboneka.",
+        "Mbere yo kohereza ikintu kimeneka, gisobanure neza kandi urebe amahitamo agaragara muri Tembera Cargo. Tembera Cargo yishyura 100% by'agaciro uwohereje yatangaje iyo ibicuruzwa byangiritse, bibuze cyangwa bitagejejwe kubera ikibazo cya serivisi, hakurikijwe amategeko akurikizwa. Uwohereza agomba kubipfunyika no kubitangaza neza.",
       sections: [
         {
           heading: "Sobanura kandi upfunyike neza",
@@ -1360,10 +1471,11 @@ const corePages: Record<CargoLocale, Record<string, CargoSeoPageContent>> = {
         {
           question: "Tembera Cargo yemeza ko ibicuruzwa bimeneka bitazangirika?",
           answer:
-            "Iyi paji ntitanga iryo sezerano. Banza usome amategeko kandi wemeze uburyo bwo kwitabwaho mbere yo kohereza.",
+            "Tembera Cargo ntiyemeza ko ibimeneka bitazangirika, ariko ikirego cyemewe cy'ibyangiritse cyishyurwa 100% by'agaciro uwohereje yatangaje iyo gitanzwe mu masaha 48 kandi hakurikijwe amategeko.",
         },
         {
-          question: "Ubwishingizi bw'ibimeneka burimo?",
+          question:
+            "Tembera Cargo yishyura 100% by'agaciro uwohereje yatangaje ku kirego cyemewe cy'ibyangiritse, ibuze cyangwa itagejejwe. Uwohereza agomba gutangaza ukuri, gupfunyika neza no kumenyesha ikibazo mu masaha 48.",
           answer: "Ntukibwire ko burimo. Reba amategeko n'amahitamo byagaragajwe ku mizigo yawe.",
         },
       ],

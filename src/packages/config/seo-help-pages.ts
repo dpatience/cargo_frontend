@@ -10,12 +10,27 @@ export const cargoHelpPage: Record<CargoLocale, CargoSeoPageContent> = {
     heading: "How do I send and track goods with Tembera Cargo?",
     summary:
       "Tembera Cargo arranges door-to-door goods delivery across Rwanda. Enter the collection and destination locations and package details, review the available fulfillment options and shipment-specific quote, then confirm and track the shipment with its code. Check the app for current availability and instructions.",
+    visual: "faq",
     sections: [
       {
-        heading: "Check your shipment in the app",
+        heading: "The Tembera Cargo flow, from a real shipment to delivery",
         paragraphs: [
-          "Available pickup, drop-off, delivery and collection choices depend on the shipment and locations entered. Review the quote and instructions before confirming.",
-          "Last updated: 14 October 2026. This page does not publish fixed delivery times, nationwide flat prices or unverified package rules.",
+          "1. Route: choose the actual origin and destination locations. 2. Cargo: enter the category, weight, size class, description, item count and whether the item is fragile. 3. Quote: compare the options returned for that route and package. 4. Recipient: enter the recipient name and phone, then complete phone confirmation when requested. 5. Handover: choose home pickup or station drop-off, and address delivery or station collection where offered. 6. Confirmation: keep the shipment tracking code and share it only with the intended recipient.",
+          "The tracking record can move through created, picked up, at station, in transit, delivered or cancelled. The tracking page shows the latest available event and may show an estimated delivery time when the service has one; it is not a promise of a universal timetable.",
+          "At delivery, Tembera Cargo uses a six-digit delivery code to verify the handover. Tembera Cargo guarantees 100% compensation of the sender-declared cargo value when cargo is lost, damaged or not delivered because of a service-related issue, subject to the applicable terms.",
+          "Last updated: 7 November 2026. This page does not publish fixed nationwide prices or unverified package-acceptance rules. Current options come from the shipment flow.",
+        ],
+      },
+      {
+        heading: "If the shipment does not go as expected",
+        paragraphs: [
+          "For lost, damaged or undelivered cargo, report the claim within 48 hours of the expected delivery or the incident becoming known. Keep the tracking code and contact Tembera Cargo through the published contact page. Tembera Cargo investigates, reviews the shipment records and holds responsible parties accountable. Eligible claims are paid at 100% of the sender-declared cargo value. Wrong addresses and unreachable recipients should also be reported promptly, but compensation depends on the applicable terms and the facts of the incident.",
+        ],
+      },
+      {
+        heading: "What the quote does and does not mean",
+        paragraphs: [
+          "A quote is calculated for the locations and cargo details you entered. It is not a nationwide tariff and should not be copied to another package. If you change the route or package after receiving a quote, request a new quote before confirming.",
         ],
       },
     ],
@@ -119,12 +134,27 @@ export const cargoHelpPage: Record<CargoLocale, CargoSeoPageContent> = {
     heading: "Nohereza nte kandi nkurikirana nte imizigo muri Tembera Cargo?",
     summary:
       "Tembera Cargo iteganya kugeza ibicuruzwa ku rugi mu Rwanda. Andika aho bifatirwa n’aho bijyanwa n’amakuru y’imizigo, urebe amahitamo n’igiciro byatanzwe kuri iyo mizigo, wemeze hanyuma uyikurikirane ukoresheje kode. Reba muri porogaramu amahitamo n’amabwiriza agezweho.",
+    visual: "faq",
     sections: [
       {
-        heading: "Genzura amakuru y’imizigo muri porogaramu",
+        heading: "Uko umuzigo wa Tembera Cargo ugenda kugeza ugeze ku wakira",
         paragraphs: [
-          "Amahitamo yo gufatira, gushyikiriza, kugeza cyangwa kwakirira kuri sitasiyo aterwa n’imizigo n’aho ijyanwa. Reba igiciro n’amabwiriza mbere yo kwemeza.",
-          "Iheruka kuvugururwa: 14 Ukwakira 2026. Uru rupapuro ntirutangaza ibihe bihoraho byo kugeza, igiciro kimwe ku gihugu cyose cyangwa amategeko y’imizigo atagenzuwe.",
+          "1. Inzira: hitamo aho imizigo ituruka n’aho ijyanwa. 2. Imizigo: andika ubwoko, uburemere, ingano, ibisobanuro, umubare n’uko yameneka. 3. Igiciro: gereranya amahitamo agaruka kuri iyo nzira n’iyo mizigo. 4. Uyakira: andika izina na telefone, ukore kwemeza telefone igihe bisabwe. 5. Gushyikiriza: hitamo gufatira mu rugo cyangwa gutanga kuri sitasiyo, n’uko uyakira ayigezwaho cyangwa ayifatira kuri sitasiyo igihe bihari. 6. Kwemeza: bika kode yo gukurikirana kandi uyisangize uyakira ugenewe gusa.",
+          "Amakuru y’imizigo ashobora kunyura kuri created, picked_up, at_station, in_transit, delivered cyangwa cancelled. Paji yo gukurikirana yerekana event iheruka kandi ishobora kwerekana igihe giteganyijwe iyo serivisi igifite; ntabwo ari isezerano ry’igihe kimwe ku mizigo yose.",
+          "Mu gihe cyo kuyishyikiriza, Tembera Cargo ikoresha kode y’imibare itandatu yo kwemeza ko imizigo igeze ku uyakira. Iyo imizigo ibuze, yangiritse cyangwa itagejejwe kubera ikibazo cya serivisi, Tembera Cargo yishyura 100% by’agaciro uwohereje yatangaje, hakurikijwe amategeko akurikizwa.",
+          "Iheruka kuvugururwa: 7 Ugushyingo 2026. Uru rupapuro ntirutangaza igiciro kimwe ku gihugu cyose cyangwa amategeko y’ibyemewe ataragenzurwa. Amahitamo agezweho aboneka mu buryo bwo kohereza.",
+        ],
+      },
+      {
+        heading: "Iyo imizigo itagenze neza",
+        paragraphs: [
+          "Niba imizigo ibuze, yangiritse cyangwa itagejejwe, menyesha Tembera Cargo mu masaha 48 uhereye igihe yagombaga kugerera cyangwa igihe ikibazo cyamenyekanye. Bika kode yo gukurikirana maze uvugane na Tembera Cargo kuri paji y’itumanaho. Tembera Cargo isuzuma, ireba inyandiko z’imizigo kandi ikabaza ababigizemo uruhare. Ibirego byujuje ibisabwa byishyurwa 100% by’agaciro uwohereje yatangaje. Aderesi itari yo, uyakira utabonetse cyangwa ikibazo cy’umushoferi nabyo bigomba gutangwaho amakuru vuba; indishyi zishingira ku mategeko n’ibyabaye.",
+        ],
+      },
+      {
+        heading: "Icyo igiciro cyatanzwe gisobanura",
+        paragraphs: [
+          "Igiciro gishingira ku hantu n’amakuru y’imizigo watanze. Ntabwo ari igiciro kimwe ku Rwanda kandi ntigomba gukoreshwa ku yindi mizigo. Nuhindura inzira cyangwa amakuru y’imizigo, saba igiciro gishya mbere yo kwemeza.",
         ],
       },
     ],
