@@ -64,6 +64,29 @@ export function CargoSeoContentPage({
           </Link>
         </div>
 
+        {page.contactMethods && (
+          <section aria-labelledby="contact-options" className="space-y-4">
+            <h2 id="contact-options" className="font-display text-2xl font-semibold">
+              {locale === "en" ? "Contact options" : "Uburyo bwo kutuvugisha"}
+            </h2>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {page.contactMethods.map((method) => (
+                <a
+                  key={method.href}
+                  href={method.href}
+                  className="rounded-xl border border-border p-5 transition-colors hover:border-primary hover:bg-primary/5"
+                >
+                  <h3 className="font-semibold">{method.label}</h3>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                    {method.description}
+                  </p>
+                  <p className="mt-3 break-all font-medium text-primary">{method.value}</p>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
+
         {page.steps && (
           <section aria-labelledby="howto-steps">
             <h2 id="howto-steps" className="mb-4 font-display text-2xl font-semibold">
@@ -141,10 +164,7 @@ export function CargoSeoContentPage({
           aria-label={locale === "en" ? "More Tembera services" : "Izindi serivisi za Tembera"}
           className="flex flex-wrap gap-4 border-t border-border pt-5 text-sm"
         >
-          <a
-            href={`https://tembera.app/${locale}/`}
-            className="underline underline-offset-4"
-          >
+          <a href={`https://tembera.app/${locale}/`} className="underline underline-offset-4">
             {locale === "en" ? "Tembera intercity bus tickets" : "Amatike ya bisi za Tembera"}
           </a>
           <a

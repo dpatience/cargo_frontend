@@ -7,6 +7,12 @@ export type CargoSeoPageContent = {
   heading: string;
   summary: string;
   sections: Array<{ heading: string; paragraphs: string[] }>;
+  contactMethods?: Array<{
+    label: string;
+    description: string;
+    href: string;
+    value: string;
+  }>;
   steps?: Array<{ name: string; text: string }>;
   faqs: Array<{ question: string; answer: string }>;
   noIndex?: boolean;
@@ -822,10 +828,48 @@ const corePages: Record<CargoLocale, Record<string, CargoSeoPageContent>> = {
     contact: {
       title: "Contact Tembera Cargo",
       description:
-        "Find the official Tembera Cargo shipment and tracking pages and the Nyxarith company website.",
+        "Contact Tembera Cargo by phone for complaints or by email for information and greetings.",
       heading: "How can I reach Tembera Cargo?",
       summary:
-        "For a shipment, begin with the Tembera Cargo app to create or track a delivery. For company information, visit Nyxarith's official website. A dedicated public support phone number or email has not been verified for this page.",
+        "We are ready to hear from you. Call +250 790 649 157 for complaints, email complaint@tembera.app for complaints, or email info@tembera.app for information. You can also write to Nyxarith at info@nyxarith.com or say hello at hello@nyxarith.com.",
+      contactMethods: [
+        {
+          label: "Call for complaints",
+          description: "Speak with the Tembera Cargo team about a complaint.",
+          href: "tel:+250790649157",
+          value: "+250 790 649 157",
+        },
+        {
+          label: "Email complaints",
+          description: "Send a complaint to the Tembera Cargo team.",
+          href: "mailto:complaint@tembera.app",
+          value: "complaint@tembera.app",
+        },
+        {
+          label: "Email for information",
+          description: "Ask questions or request information about Tembera Cargo.",
+          href: "mailto:info@tembera.app",
+          value: "info@tembera.app",
+        },
+        {
+          label: "Contact Nyxarith",
+          description: "Write to the company behind Tembera.",
+          href: "mailto:info@nyxarith.com",
+          value: "info@nyxarith.com",
+        },
+        {
+          label: "Say hello",
+          description: "Send Nyxarith a greeting.",
+          href: "mailto:hello@nyxarith.com",
+          value: "hello@nyxarith.com",
+        },
+        {
+          label: "Visit the Tembera office",
+          description: "Visit us at our office.",
+          href: "https://www.google.com/maps/search/?api=1&query=KG+1238+St",
+          value: "KG 1238 St",
+        },
+      ],
       sections: [
         {
           heading: "Shipment help",
@@ -836,7 +880,7 @@ const corePages: Record<CargoLocale, Record<string, CargoSeoPageContent>> = {
         {
           heading: "Company information",
           paragraphs: [
-            "Visit the Nyxarith website for published company information. A public Cargo support contact will be added here when the company supplies and verifies one.",
+            "Tembera Cargo is operated by Nyxarith. Visit the Nyxarith website for more company information.",
           ],
         },
       ],
@@ -848,7 +892,8 @@ const corePages: Record<CargoLocale, Record<string, CargoSeoPageContent>> = {
         },
         {
           question: "Is there a Cargo support phone or email listed here?",
-          answer: "No dedicated public phone number or email has been verified for this page yet.",
+          answer:
+            "Yes. Call +250 790 649 157 for complaints, email complaint@tembera.app for complaints, or email info@tembera.app for information. You can also contact Nyxarith at info@nyxarith.com or hello@nyxarith.com.",
         },
       ],
     },
@@ -1526,10 +1571,48 @@ const corePages: Record<CargoLocale, Record<string, CargoSeoPageContent>> = {
     contact: {
       title: "Vugana na Tembera Cargo",
       description:
-        "Fungura porogaramu ya Tembera Cargo cyangwa urubuga rwa Nyxarith ku makuru y'ikigo.",
+        "Hamagara Tembera Cargo ku birego cyangwa wohereze imeyili ku makuru no kubasuhuza.",
       heading: "Nakora iki kugira ngo mbone Tembera Cargo?",
       summary:
-        "Ku bijyanye n'imizigo, fungura porogaramu ya Tembera Cargo kugira ngo wohereze cyangwa ukurikirane. Ku makuru y'ikigo, sura urubuga rwa Nyxarith. Telefoni cyangwa imeyili byihariye byo gufasha abakiriya ntibiragenzurwa ngo bishyirwe kuri iyi paji.",
+        "Twiteguye kumva ibitekerezo byawe. Hamagara +250 790 649 157 ku birego, wohereze imeyili kuri complaint@tembera.app ku birego cyangwa info@tembera.app ku makuru. Ushobora no kwandikira Nyxarith kuri info@nyxarith.com cyangwa kubasuhuza kuri hello@nyxarith.com.",
+      contactMethods: [
+        {
+          label: "Hamagara ku birego",
+          description: "Vugana n'abakozi ba Tembera Cargo ku birego.",
+          href: "tel:+250790649157",
+          value: "+250 790 649 157",
+        },
+        {
+          label: "Ohereza ikirego kuri imeyili",
+          description: "Ohereza ikirego ku bakozi ba Tembera Cargo.",
+          href: "mailto:complaint@tembera.app",
+          value: "complaint@tembera.app",
+        },
+        {
+          label: "Imeyili y'amakuru",
+          description: "Baza ibibazo cyangwa usabe amakuru kuri Tembera Cargo.",
+          href: "mailto:info@tembera.app",
+          value: "info@tembera.app",
+        },
+        {
+          label: "Vugana na Nyxarith",
+          description: "Andikira ikigo gikora Tembera.",
+          href: "mailto:info@nyxarith.com",
+          value: "info@nyxarith.com",
+        },
+        {
+          label: "Basuhuze",
+          description: "Ohereza ubutumwa bwo gusuhuza Nyxarith.",
+          href: "mailto:hello@nyxarith.com",
+          value: "hello@nyxarith.com",
+        },
+        {
+          label: "Sura ibiro bya Tembera",
+          description: "Dusange ku biro byacu.",
+          href: "https://www.google.com/maps/search/?api=1&query=KG+1238+St",
+          value: "KG 1238 St",
+        },
+      ],
       sections: [
         {
           heading: "Ubufasha ku mizigo",
@@ -1540,7 +1623,7 @@ const corePages: Record<CargoLocale, Record<string, CargoSeoPageContent>> = {
         {
           heading: "Amakuru y'ikigo",
           paragraphs: [
-            "Sura urubuga rwa Nyxarith ku makuru y'ikigo yatangajwe. Amakuru yihariye yo gufasha abakiriya azongerwaho amaze gutangwa no kugenzurwa n'ikigo.",
+            "Tembera Cargo ikorwa na Nyxarith. Sura urubuga rwa Nyxarith kugira ngo umenye ibindi ku kigo.",
           ],
         },
       ],
@@ -1552,7 +1635,7 @@ const corePages: Record<CargoLocale, Record<string, CargoSeoPageContent>> = {
         {
           question: "Hari telefone cyangwa imeyili ya Cargo yanditse hano?",
           answer:
-            "Oya. Nta telefone cyangwa imeyili yihariye y'abakiriya iragenzurwa ngo ishyirwe kuri iyi paji.",
+            "Yego. Hamagara +250 790 649 157 ku birego, wohereze complaint@tembera.app ku birego cyangwa info@tembera.app ku makuru. Ushobora no kwandikira Nyxarith kuri info@nyxarith.com cyangwa hello@nyxarith.com.",
         },
       ],
     },
