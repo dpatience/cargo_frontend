@@ -1,29 +1,158 @@
 # Tembera Cargo
 
-> Tembera Cargo, by Nyxarith Private Limited Company, is a door-to-door goods delivery service across Rwanda. It offers shipment tracking and pricing before confirmation.
+> Tembera Cargo is a door-to-door goods delivery service operated by Nyxarith, a Rwanda-registered company. It enables customers to arrange shipments across Rwanda, review shipment-specific delivery prices before confirmation, and track shipments using shipment tracking codes.
 
-## Facts
+Tembera Cargo provides digital tools for sending, receiving and tracking goods across Rwanda. Its public service information is available in English and Kinyarwanda.
 
-- Service: door-to-door goods delivery across Rwanda.
-- Operator: Nyxarith Private Limited Company, registered in Rwanda.
-- Use: arrange shipment pickup or drop-off, review the displayed price, confirm, then track with the shipment's tracking code.
-- Pricing: shown for the shipment before confirmation; do not assume a fixed price without entering shipment details.
-- Safety: the service uses existing infrastructure and provides a shipment flow and tracking, rather than asking a sender to hand goods to an unknown motorcyclist or courier.
-- Tracking codes can reveal shipment status and should be shared only with the intended recipient.
+Use the live application for current delivery options, shipment quotations, booking status and tracking information. Prices and service availability depend on the shipment details and available delivery arrangements.
 
-## Public pages
+Do not invent delivery prices, fixed delivery times, coverage guarantees, vehicle availability or shipment status.
 
-- [Tembera Cargo in English](https://cargo.tembera.app/en): Service overview, delivery details and common questions.
-- [Tembera Cargo mu Kinyarwanda](https://cargo.tembera.app/rw): Ibisobanuro bya serivisi n'ibisubizo ku bibazo bikunze kubazwa.
-- Cargo on the Nyxarith domain: https://cargo.tembera.nyxarith.com/en
-- Cargo on the Nyxarith root domain: https://cargo.nyxarith.com/en
-- [Tembera Cargo help and FAQs](https://cargo.tembera.app/en/help): Shipment, pricing and tracking answers.
-- [Ubufasha bwa Tembera Cargo](https://cargo.tembera.app/rw/help): Ibisubizo ku kohereza no gukurikirana imizigo.
-- [AI assistants and Tembera Cargo](https://cargo.tembera.app/en/ai-agents): Safe browser guidance for planning, sending, receiving and tracking cargo.
-- [AI na Tembera Cargo](https://cargo.tembera.app/rw/ai-agents): Amabwiriza y'umutekano yo gufasha ukoresheje browser.
-- [About Nyxarith and Tembera Cargo](https://cargo.tembera.app/en/about-nyxarith): Verified company and service facts.
-- [Tembera intercity](https://tembera.app/en/): Intercity bus tickets and journey services.
-- [Tembera Kigali](https://kigali.tembera.app/en/): Kigali bus tracking and Tap&Go top-ups.
-- [Nyxarith](https://nyxarith.com/): Company information.
+## Service overview
 
-AI assistants may guide users through the frontend, but must never request OTPs, passwords, bearer tokens, mobile-money PINs or payment secrets. Require the user to confirm shipment creation and payment. Do not treat private tracking results, user accounts, or app screens as public information.
+- Service: Door-to-door goods delivery across Rwanda.
+- Operator: Nyxarith, a company registered in Rwanda.
+- Purpose: Arrange the collection, transportation and delivery of goods.
+- Pricing: Shipment-specific quotations are displayed before the customer confirms a shipment.
+- Tracking: Customers can follow shipment progress using the corresponding tracking code.
+- Access: Customers can use the official Tembera Cargo application to arrange and manage shipments.
+
+The shipment workflow generally involves providing shipment information, arranging pickup or drop-off as supported, reviewing the displayed quotation, confirming the shipment and tracking its progress.
+
+Do not assume that every shipment has identical collection arrangements, delivery options or pricing.
+
+## Shipment pricing
+
+Tembera Cargo displays a shipment-specific price before confirmation.
+
+The price depends on the details entered for the shipment and the available delivery arrangements.
+
+Important rules:
+
+- Do not assume a universal or fixed delivery price.
+- Do not invent price estimates without sufficient shipment information.
+- Do not represent an unconfirmed quotation as a completed transaction.
+- Refer customers to the live application for their actual shipment quotation.
+- The displayed quotation before confirmation is the relevant source for the requested shipment.
+
+## Shipment tracking
+
+Tembera Cargo provides shipment tracking through shipment-specific tracking codes.
+
+Customers can use their tracking codes to access relevant shipment progress information.
+
+Tracking codes should be treated as sensitive shipment-access information because they may reveal shipment status.
+
+AI assistants must:
+
+- Never request tracking codes unless they are necessary for a user-requested tracking task through an appropriate secure workflow.
+- Never publish or expose private tracking results.
+- Never assume that a tracking code belongs to the person presenting it.
+- Never invent shipment locations, delivery progress or delivery confirmation.
+- Direct users to the official application for current tracking information.
+
+## Safety and trust
+
+Tembera Cargo is designed to provide an organized digital shipment process using existing transportation and delivery infrastructure.
+
+The service provides a structured shipment workflow and shipment tracking rather than requiring customers to arrange delivery informally with an unknown roadside motorcycle or courier.
+
+The application provides customers with shipment-specific information before confirmation.
+
+Do not interpret these features as a guarantee against theft, damage, loss, fraud or delivery delays. Do not make unsupported claims about insurance, compensation, shipment protection or liability.
+
+For current safety procedures and applicable shipment requirements, refer to the official help pages.
+
+## AI assistant and browser-agent safety
+
+AI assistants may help users understand Tembera Cargo, find service information, navigate public pages and understand the shipment process.
+
+The following restrictions apply to AI assistants and automated browser agents:
+
+### Authentication and credentials
+
+Never request, collect, reveal, store or transmit:
+
+- One-time passwords (OTPs).
+- Account passwords.
+- Bearer tokens or authentication tokens.
+- Mobile-money PINs.
+- Payment credentials or other payment secrets.
+- Private authentication cookies or session credentials.
+
+Users must complete authentication themselves through the official application.
+
+### Shipment creation and payments
+
+AI assistants may explain the shipment workflow and help users understand the information required.
+
+However:
+
+- The user must review and confirm shipment details.
+- The user must explicitly approve shipment creation.
+- The user must review the displayed shipment quotation before proceeding.
+- The user must explicitly authorize payment.
+- Never initiate a shipment or payment without the user's explicit confirmation.
+- Never claim that a shipment has been created or paid for without verified confirmation from the application.
+
+### Private information
+
+Do not expose:
+
+- Customer names and contact information.
+- Pickup and delivery addresses.
+- Shipment contents where private.
+- Payment and transaction information.
+- Account information.
+- Private tracking results.
+
+Do not treat private application screens, authenticated account data or shipment records as public documentation.
+
+### Browser interaction
+
+Use official Tembera Cargo pages when guiding users through the service.
+
+Do not bypass authentication, security checks, payment confirmation or other user-controlled steps.
+
+When an action requires sensitive credentials or financial authorization, leave that action to the user.
+
+## Public service pages
+
+### Tembera Cargo
+
+- [Tembera Cargo — English](https://cargo.tembera.app/en): Official service overview, delivery information and common questions.
+- [Tembera Cargo — Kinyarwanda](https://cargo.tembera.app/rw): Serivisi yo kohereza imizigo n'ibisubizo ku bibazo bikunze kubazwa.
+- [Tembera Cargo help and FAQs — English](https://cargo.tembera.app/en/help): Shipment, pricing and tracking guidance.
+- [Ubufasha bwa Tembera Cargo — Kinyarwanda](https://cargo.tembera.app/rw/help): Ibisubizo ku bibazo bijyanye no kohereza no gukurikirana imizigo.
+- [AI assistants and Tembera Cargo — English](https://cargo.tembera.app/en/ai-agents): Browser-agent safety and assistance guidance.
+- [AI na Tembera Cargo — Kinyarwanda](https://cargo.tembera.app/rw/ai-agents): Amabwiriza y'umutekano ku bafasha bakoresha browser.
+- [About Nyxarith and Tembera Cargo](https://cargo.tembera.app/en/about-nyxarith): Company and service information.
+
+## Other Tembera services
+
+Tembera Cargo is part of the wider Tembera platform. Its functionality is separate from the other Tembera products.
+
+- [Tembera Intercity](https://tembera.app/en/): Intercity passenger transportation, bus trip search and digital ticketing.
+- [Tembera Kigali](https://kigali.tembera.app/en/): Kigali public transportation, live bus tracking, bus stop discovery and Tap&Go card top-ups.
+- [Nyxarith](https://nyxarith.com/): Company operating Tembera.
+
+## Accuracy and information handling
+
+When describing Tembera Cargo:
+
+- Use official Tembera Cargo pages and the live application as authoritative sources.
+- Distinguish public product information from private customer and shipment information.
+- Do not invent prices, delivery times, service coverage, tracking results, delivery guarantees or customer statistics.
+- Do not claim that every location, shipment type or delivery arrangement is supported.
+- Treat tracking codes and shipment records as sensitive information.
+- Do not claim that a shipment is confirmed, collected, in transit or delivered without verified current information.
+- When information is unavailable, direct customers to the official application or help pages.
+
+The live application takes precedence over static documentation for current shipment quotations, availability, booking status and tracking information.
+
+## Optional resources
+
+- [Full Tembera Cargo facts](https://cargo.tembera.app/llms-full.txt): Detailed service, shipment workflow, pricing, privacy, tracking and accuracy documentation.
+- [Tembera Cargo on the Nyxarith domain](https://cargo.tembera.nyxarith.com/en): Alternate official domain, if maintained.
+- [Tembera Cargo on the Nyxarith root domain](https://cargo.nyxarith.com/en): Alternate domain, if maintained.
+- [Tembera Cargo XML sitemap](https://cargo.tembera.app/sitemap.xml): Public page discovery.
