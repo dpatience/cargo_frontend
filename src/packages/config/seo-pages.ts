@@ -2124,7 +2124,7 @@ export function cargoSeoPageHead(locale: CargoLocale, slug: string, page: CargoS
       { name: "twitter:description", content: page.description },
       { name: "twitter:image", content: absoluteSiteUrl("/og-image.jpg") },
     ],
-    links: [{ rel: "canonical", href: canonicalPath }, ...languageLinks],
+    links: [{ rel: "canonical", href: canonical }, ...languageLinks],
     scripts: [
       {
         type: "application/ld+json",

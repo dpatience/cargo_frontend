@@ -102,7 +102,9 @@ describe("Cargo content pages and structured data", () => {
         expect(application?.image).toBe("https://cargo.tembera.app/tembera-logo.jpg");
         expect(content.title.length).toBeLessThanOrEqual(60);
         expect(content.description.length).toBeLessThanOrEqual(155);
-        expect(head.links.some((link) => link.rel === "canonical")).toBe(true);
+        expect(head.links.find((link) => link.rel === "canonical")?.href).toMatch(
+          /^https:\/\/cargo\.tembera\.app\//,
+        );
         expect(head.links.filter((link) => link.rel === "alternate")).toHaveLength(3);
         expect(faq?.mainEntity).toEqual(
           content.faqs.map(({ question, answer }) => ({
@@ -226,7 +228,7 @@ describe("Cargo content pages and structured data", () => {
           "index,follow,max-image-preview:large",
         );
         expect(head.links.find((link) => link.rel === "canonical")?.href).toBe(
-          `/${locale}/${slug}`,
+          `https://cargo.tembera.app/${locale}/${slug}`,
         );
         expect(sitemap).toContain(`https://cargo.tembera.app/${locale}/${slug}`);
       }

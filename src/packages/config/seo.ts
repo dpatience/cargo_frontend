@@ -98,7 +98,7 @@ export function cargoLandingHead(locale: CargoLocale) {
       { name: "twitter:image:alt", content: "Tembera Cargo door-to-door delivery across Rwanda" },
     ],
     links: [
-      { rel: "canonical", href: canonical },
+      { rel: "canonical", href: canonicalUrl },
       { rel: "alternate", href: absoluteSiteUrl("/en"), hrefLang: "en" },
       { rel: "alternate", href: absoluteSiteUrl("/rw"), hrefLang: "rw" },
       { rel: "alternate", href: absoluteSiteUrl("/en"), hrefLang: "x-default" },
