@@ -35,6 +35,8 @@ A shipment tracking code can reveal shipment information. Share it only with the
 - Ubufasha n'ibibazo: https://cargo.tembera.app/rw/help
 - About Nyxarith: https://cargo.tembera.app/en/about-nyxarith
 - Shipment tracking: https://cargo.tembera.app/track
+- AI browser guidance: https://cargo.tembera.app/en/ai-agents
+- Amabwiriza ya AI: https://cargo.tembera.app/rw/ai-agents
 - Tembera intercity: https://tembera.app/en/
 - Tembera Kigali: https://kigali.tembera.app/en/
 - Nyxarith: https://nyxarith.com/

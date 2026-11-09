@@ -33,19 +33,19 @@ export function Home() {
       icon: Search,
       label: t("home.track"),
       description:
-        lang === "rw" ? "Reba amakuru aheruka ku rugendo" : "See the latest shipment updates",
+        lang === "rw" ? "Reba amakuru aheruka ku rugendo" : "See the latest shipment updates in Tembera Cargo",
     },
     {
       to: "/receive",
       icon: PackageOpen,
       label: t("home.receive"),
-      description: lang === "rw" ? "Reba aho imizigo yawe igeze" : "Check a delivery sent to you",
+      description: lang === "rw" ? "Reba aho imizigo yawe igeze" : "Check a delivery sent to you with Tembera Cargo",
     },
     {
       to: "/shipments",
       icon: Package,
       label: t("home.mine"),
-      description: lang === "rw" ? "Reba imizigo wohereje" : "View the cargo you have sent",
+      description: lang === "rw" ? "Reba imizigo wohereje" : "View the cargo you have sent with Tembera Cargo",
     },
   ] as const;
   const guideGroups = [
@@ -55,10 +55,10 @@ export function Home() {
       links: [
         {
           href: `/${lang}/cargo`,
-          label: lang === "rw" ? "Gutwara imizigo mu Rwanda" : "Cargo delivery across Rwanda",
+          label: lang === "rw" ? "Gutwara imizigo mu Rwanda" : "Cargo delivery across Rwanda with Tembera Cargo",
         },
         { href: `/${lang}/how-it-works`, label: lang === "rw" ? "Uko ikora" : "How it works" },
-        { href: `/${lang}/pricing`, label: lang === "rw" ? "Ibiciro" : "Pricing and quotes" },
+        { href: `/${lang}/pricing`, label: lang === "rw" ? "Ibiciro" : "Pricing and quotes in Tembera Cargo" },
         {
           href: `/${lang}/safety-and-trust`,
           label: lang === "rw" ? "Umutekano n'icyizere" : "Safety and trust",
@@ -66,15 +66,19 @@ export function Home() {
         { href: `/${lang}/coverage`, label: lang === "rw" ? "Aho dukorera" : "Coverage" },
         {
           href: `/${lang}/how-to-send-a-package`,
-          label: lang === "rw" ? "Uko wohereza imizigo" : "How to send a package",
+          label: lang === "rw" ? "Uko wohereza imizigo" : "How to send a package through Rwanda",
         },
         {
           href: `/${lang}/track-a-package`,
           label: lang === "rw" ? "Uko ukurikirana imizigo" : "How to track a package",
         },
         {
+          href: `/${lang}/ai-agents`,
+          label: lang === "rw" ? "AI yagufasha ite?" : "How AI assistants can help with Tembera Cargo",
+        },
+        {
           href: `/${lang}/guides/cargo-vs-courier-vs-bus`,
-          label: lang === "rw" ? "Gereranya uburyo bwo kohereza" : "Compare delivery options",
+          label: lang === "rw" ? "Gereranya uburyo bwo kohereza" : "Compare delivery options in Tembera Cargo, Rwanda",
         },
       ],
     },

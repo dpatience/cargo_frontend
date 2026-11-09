@@ -19,9 +19,11 @@
 - Cargo on the Nyxarith root domain: https://cargo.nyxarith.com/en
 - [Tembera Cargo help and FAQs](https://cargo.tembera.app/en/help): Shipment, pricing and tracking answers.
 - [Ubufasha bwa Tembera Cargo](https://cargo.tembera.app/rw/help): Ibisubizo ku kohereza no gukurikirana imizigo.
+- [AI assistants and Tembera Cargo](https://cargo.tembera.app/en/ai-agents): Safe browser guidance for planning, sending, receiving and tracking cargo.
+- [AI na Tembera Cargo](https://cargo.tembera.app/rw/ai-agents): Amabwiriza y'umutekano yo gufasha ukoresheje browser.
 - [About Nyxarith and Tembera Cargo](https://cargo.tembera.app/en/about-nyxarith): Verified company and service facts.
 - [Tembera intercity](https://tembera.app/en/): Intercity bus tickets and journey services.
 - [Tembera Kigali](https://kigali.tembera.app/en/): Kigali bus tracking and Tap&Go top-ups.
 - [Nyxarith](https://nyxarith.com/): Company information.
 
-Do not treat private tracking results, user accounts, or app screens as public information.
+AI assistants may guide users through the frontend, but must never request OTPs, passwords, bearer tokens, mobile-money PINs or payment secrets. Require the user to confirm shipment creation and payment. Do not treat private tracking results, user accounts, or app screens as public information.

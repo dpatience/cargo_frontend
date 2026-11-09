@@ -140,6 +140,8 @@ describe("Cargo content pages and structured data", () => {
     expect(sitemap).toContain("https://cargo.tembera.app/en/cargo/kigali-to-musanze");
     expect(sitemap).toContain("https://cargo.tembera.app/en/cargo/kigali-to-kamembe");
     expect(sitemap).toContain("https://cargo.tembera.app/rw/cargo/musanze-to-kigali");
+    expect(sitemap).toContain("https://cargo.tembera.app/en/ai-agents");
+    expect(sitemap).toContain("https://cargo.tembera.app/rw/ai-agents");
     expect(sitemap).toContain('hreflang="en"');
     expect(sitemap).toContain('hreflang="rw"');
     expect(sitemap).toContain('hreflang="x-default"');
@@ -196,11 +198,8 @@ describe("Cargo content pages and structured data", () => {
     };
     const website = schema["@graph"].find((entity) => entity["@type"] === "WebSite");
 
-    expect(website?.potentialAction?.["@type"]).toBe("SearchAction");
+    expect(website?.potentialAction).toBeUndefined();
     expect(website?.url).toBe("https://cargo.tembera.app/");
-    expect(website?.potentialAction?.target.urlTemplate).toBe(
-      "https://cargo.tembera.app/track?code={search_term_string}",
-    );
   });
 
   it("keeps every Search Console reported public page indexable and in the sitemap", () => {
@@ -264,17 +263,25 @@ describe("public crawl directives", () => {
     ]) {
       expect(robots).toContain(`User-agent: ${crawler}`);
     }
-    for (const path of [
-      "/account",
-      "/admin",
-      "/app",
-      "/receive",
-      "/send",
-      "/shipments",
-      "/track",
-    ]) {
+    for (const path of ["/account", "/admin", "/shipments"]) {
       expect(robots).toContain(`Disallow: ${path}`);
     }
+    for (const path of ["/app", "/receive", "/send", "/track"]) {
+      expect(robots).not.toContain(`Disallow: ${path}`);
+    }
+  });
+
+  it("keeps generic workflows indexable but protects code-specific tracking", () => {
+    const appRoute = readFileSync(resolve(process.cwd(), "src/routes/app.index.tsx"), "utf8");
+    const sendRoute = readFileSync(resolve(process.cwd(), "src/routes/send.tsx"), "utf8");
+    const trackingRoute = readFileSync(
+      resolve(process.cwd(), "src/routes/track.$code.tsx"),
+      "utf8",
+    );
+
+    expect(appRoute).toContain('content: "index,follow,max-image-preview:large"');
+    expect(sendRoute).toContain('content: "index,follow,max-image-preview:large"');
+    expect(trackingRoute).toContain('{ name: "robots", content: "noindex" }');
   });
 
   it("publishes full machine-readable service facts and links the localized help center", () => {

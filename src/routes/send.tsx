@@ -41,7 +41,7 @@ export const Route = createFileRoute("/send")({
       },
       { property: "og:title", content: "Send cargo — Tembera Cargo" },
       { property: "og:description", content: "Send anything across Rwanda in a few taps." },
-      { name: "robots", content: "noindex, nofollow" },
+      { name: "robots", content: "index,follow,max-image-preview:large" },
     ],
   }),
   component: Send,

@@ -1803,6 +1803,152 @@ for (const locale of ["en", "rw"] as const) {
 }
 
 cargoSeoPages.push({
+  slug: "ai-agents",
+  en: {
+    title: "AI Agents and Tembera Cargo | Safe Browser Guidance",
+    description:
+      "Learn how a browser-capable AI assistant can help plan, send, receive or track Tembera Cargo while protecting OTPs, payments and shipment data.",
+    heading: "How AI assistants can help with Tembera Cargo",
+    summary:
+      "A browser-capable AI assistant can guide you through Tembera Cargo's public web pages, help compare the information you provide, prepare a shipment or enter a tracking code. It must keep control with you: never share an OTP or payment secret, and require your explicit confirmation before sending cargo or approving payment.",
+    steps: [
+      {
+        name: "State the task",
+        text: "Ask the assistant to plan a shipment, explain the delivery options, help receive cargo or check a tracking code through the Tembera Cargo website.",
+      },
+      {
+        name: "Review the details",
+        text: "Confirm the origin, destination, package information, recipient and current quote shown in the frontend before continuing.",
+      },
+      {
+        name: "Complete authentication yourself",
+        text: "Enter OTPs and approve mobile-money prompts yourself. Never give these secrets to an assistant or paste them into chat.",
+      },
+      {
+        name: "Confirm the final action",
+        text: "The assistant may fill or explain a form, but you must explicitly approve shipment creation, payment and recipient details before submission.",
+      },
+    ],
+    sections: [
+      {
+        heading: "What an AI assistant can do in the frontend",
+        paragraphs: [
+          "With your permission, a browser-capable assistant can open the public Tembera Cargo pages, explain how the service works, compare the options shown for the shipment, help enter route and package details, and guide you to the confirmation step.",
+          "If you give the assistant a tracking code, it can open the Tembera Cargo tracking page and read the status displayed there. Treat the code like private shipment information and share it only with an assistant you trust.",
+        ],
+      },
+      {
+        heading: "What the assistant must never do",
+        paragraphs: [
+          "An assistant must not request, store or repeat OTPs, passwords, bearer tokens, mobile-money PINs, card details or one-time payment prompts. It must not bypass login, security checks, rate limits, CAPTCHA or location confirmation.",
+          "An assistant must not create a shipment, select a paid option, submit a recipient's personal data or approve a payment without a clear final confirmation from the user immediately before the action.",
+        ],
+      },
+      {
+        heading: "Security and privacy protections",
+        paragraphs: [
+          "Tembera Cargo protects state-changing requests with authenticated client sessions, OTP sign-in, CSRF protection for server functions and idempotency keys for shipment creation. These controls remain required when a browser is operated by a person or an AI assistant.",
+          "Use the public tracking form for a shipment code, avoid posting codes in public conversations, verify the site address is cargo.tembera.app, and stop if a page asks for a secret that should remain in your phone or password manager.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: "Can ChatGPT help me track cargo?",
+        answer:
+          "A browser-capable assistant can open Tembera Cargo's frontend tracking page and enter a tracking code that you provide. Do not share OTPs, passwords or payment secrets, and keep the tracking code private.",
+      },
+      {
+        question: "Can an AI send cargo for me?",
+        answer:
+          "An assistant can guide you through the frontend and help prepare the shipment details, but you should review the quote and recipient information and explicitly confirm before shipment creation or payment.",
+      },
+      {
+        question: "Can Home Assistant plan a delivery?",
+        answer:
+          "A browser-capable Home Assistant setup can help organize the information needed for a delivery and open the Tembera Cargo frontend. It should not receive OTPs or payment secrets and should stop for your confirmation before a paid or irreversible action.",
+      },
+      {
+        question: "Should I give an AI my Tembera Cargo password or OTP?",
+        answer:
+          "No. Enter OTPs, passwords, mobile-money PINs and payment approvals yourself. Tembera Cargo assistants should never need those secrets in chat.",
+      },
+    ],
+  },
+  rw: {
+    title: "AI na Tembera Cargo | Uko Bikozwe mu Mutekano",
+    description:
+      "Menya uko AI ikoresha browser yagufasha guteganya, kohereza, kwakira cyangwa gukurikirana imizigo utanga OTP cyangwa ibanga ry'ubwishyu.",
+    heading: "Uko AI yagufasha gukoresha Tembera Cargo",
+    summary:
+      "AI ikoresha browser ishobora kukuyobora ku mapaji rusange ya Tembera Cargo, igufasha kugereranya amakuru watanze, gutegura imizigo cyangwa kwandika kode yo kuyikurikirana. Ariko ubuyobozi bugomba kuguma kuri wowe: ntutangire OTP cyangwa ibanga ry'ubwishyu, kandi wemeze ubwawe mbere yo kohereza imizigo cyangwa kwishyura.",
+    steps: [
+      {
+        name: "Vuga icyo ushaka",
+        text: "Saba AI kugufasha guteganya kohereza, gusobanura amahitamo, kwakira imizigo cyangwa kureba kode yo kuyikurikirana kuri Tembera Cargo.",
+      },
+      {
+        name: "Suzuma amakuru",
+        text: "Emeza aho imizigo ituruka, aho ijyanwa, amakuru yayo, uyakira n'igiciro kigaragara muri porogaramu mbere yo gukomeza.",
+      },
+      {
+        name: "Injiza ibanga ubwawe",
+        text: "Injiza OTP kandi wemeze icyifuzo cya MoMo ubwawe. Ntubiha AI cyangwa ngo ubishyire muri chat.",
+      },
+      {
+        name: "Emeza igikorwa cya nyuma",
+        text: "AI ishobora kuzuza cyangwa gusobanura form, ariko ni wowe ugomba kwemeza kohereza, kwishyura n'amakuru y'uyakira mbere yo kohereza.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Ibyo AI yakora muri porogaramu",
+        paragraphs: [
+          "Ubyemeye, AI ikoresha browser ishobora gufungura amapaji rusange ya Tembera Cargo, gusobanura serivisi, kugereranya amahitamo agaragara, no kugufasha kuzuza amakuru y'inzira n'imizigo kugeza ku ntambwe yo kwemeza.",
+          "Iyo uhaye AI kode yo gukurikirana, ishobora gufungura paji yo gukurikirana kuri Tembera Cargo ikagusomera amakuru agaragara. Fata iyo kode nk'ibanga ry'imizigo kandi uyisangize uwo wizeye gusa.",
+        ],
+      },
+      {
+        heading: "Ibyo AI itagomba gukora",
+        paragraphs: [
+          "AI ntigomba gusaba, kubika cyangwa gusubiramo OTP, ijambo ry'ibanga, token, PIN ya MoMo, amakuru y'ikarita cyangwa icyifuzo cy'ubwishyu. Ntigomba kurenga login, igenzura ry'umutekano, rate limit, CAPTCHA cyangwa kwemeza aho imizigo iri.",
+          "AI ntigomba gukora imizigo, guhitamo uburyo bwo kwishyura, kohereza amakuru bwite y'uyakira cyangwa kwemeza ubwishyu utabanje kubyemeza neza mbere y'icyo gikorwa.",
+        ],
+      },
+      {
+        heading: "Umutekano n'amakuru bwite",
+        paragraphs: [
+          "Tembera Cargo irinda ibikorwa bihindura amakuru ikoresheje login y'uwakiriya, OTP, CSRF protection ku server functions na idempotency keys mu gukora imizigo. Ibyo biracyakenewe n'iyo browser ikoreshwa na AI.",
+          "Koresha paji yo gukurikirana rusange, ntushyire kode ahagaragara, genzura ko uri kuri cargo.tembera.app, kandi uhagarare iyo paji igusabye ibanga rigomba kuguma kuri telefoni cyangwa muri password manager.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: "ChatGPT yamfasha gukurikirana imizigo?",
+        answer:
+          "AI ikoresha browser ishobora gufungura paji yo gukurikirana kuri Tembera Cargo ikandikamo kode wayihaye. Ntuyihe OTP, ijambo ry'ibanga cyangwa ibanga ry'ubwishyu, kandi ubike kode mu ibanga.",
+      },
+      {
+        question: "AI yanyoherereza imizigo?",
+        answer:
+          "AI yagufasha kuzuza amakuru no kugusobanurira form, ariko ugomba gusuzuma igiciro n'amakuru y'uyakira kandi ukemeza ubwawe mbere yo gukora imizigo cyangwa kwishyura.",
+      },
+      {
+        question: "Home Assistant yategura kohereza imizigo?",
+        answer:
+          "Home Assistant ifite browser ishobora gutegura amakuru no gufungura frontend ya Tembera Cargo. Ntigomba kwakira OTP cyangwa ibanga ry'ubwishyu kandi igomba guhagarara mbere y'igikorwa cyishyurwa cyangwa kidashobora gusubirwaho.",
+      },
+      {
+        question: "Naha AI OTP cyangwa ijambo ry'ibanga?",
+        answer:
+          "Oya. Injiza OTP, ijambo ry'ibanga, PIN ya MoMo n'ubwishyu ubwawe. AI ntibigomba kuyibona muri chat.",
+      },
+    ],
+  },
+});
+
+cargoSeoPages.push({
   slug: "help",
   en: cargoHelpPage.en,
   rw: cargoHelpPage.rw,
@@ -1861,14 +2007,6 @@ export function cargoSeoPageHead(locale: CargoLocale, slug: string, page: CargoS
       description: page.description,
       publisher: { "@id": "https://nyxarith.com/#organization" },
       inLanguage: locale === "en" ? "en-RW" : "rw-RW",
-      potentialAction: {
-        "@type": "SearchAction",
-        target: {
-          "@type": "EntryPoint",
-          urlTemplate: `${absoluteSiteUrl("/track")}?code={search_term_string}`,
-        },
-        "query-input": "required name=search_term_string",
-      },
     },
     {
       "@type": "SoftwareApplication",

@@ -124,14 +124,6 @@ export function cargoLandingHead(locale: CargoLocale) {
               description: copy.description,
               publisher: { "@id": organizationId },
               inLanguage: language,
-              potentialAction: {
-                "@type": "SearchAction",
-                target: {
-                  "@type": "EntryPoint",
-                  urlTemplate: `${absoluteSiteUrl("/track")}?code={search_term_string}`,
-                },
-                "query-input": "required name=search_term_string",
-              },
             },
             {
               "@type": "SoftwareApplication",
