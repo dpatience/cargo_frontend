@@ -30,6 +30,17 @@ import { formatRWF, useI18n } from "@/packages/i18n";
 import { OtpSignIn, useToken } from "@/packages/ui/auth";
 import { Button, buttonVariants, Card, ErrorState, Field, Input, StatusPill } from "@/packages/ui";
 import { cn } from "@/lib/utils";
+import { zodValidator } from "@tanstack/zod-adapter";
+import { useWebMCP } from "use-webmcp-tool";
+import { runWebMCPTool } from "@/lib/webmcp-telemetry";
+import {
+  CARGO_CATEGORIES,
+  VEHICLE_SIZES,
+  normalizeRwandaPhone,
+  readPrefill,
+  rwandaNetwork,
+  sendPrefillSchema,
+} from "@/apps/client/send/rwanda";
 
 export const Route = createFileRoute("/send")({
   head: () => ({
@@ -42,8 +53,27 @@ export const Route = createFileRoute("/send")({
       { property: "og:title", content: "Send cargo — Tembera Cargo" },
       { property: "og:description", content: "Send anything across Rwanda in a few taps." },
       { name: "robots", content: "index,follow,max-image-preview:large" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Service",
+          name: "Tembera Cargo — Send cargo",
+          serviceType: "Door-to-door goods delivery",
+          areaServed: { "@type": "Country", name: "Rwanda" },
+          provider: { "@type": "Organization", name: "Nyxarith" },
+          availableLanguage: ["en", "rw"],
+          description:
+            "Arrange a delivery across Rwanda: choose pickup and delivery places, describe the cargo, review prices in RWF and confirm.",
+        }),
+      },
     ],
   }),
+  validateSearch: zodValidator(sendPrefillSchema),
   component: Send,
 });
 
@@ -55,20 +85,33 @@ function Send() {
   const auth = useToken("client");
   const points = useQuery(cargoPointsQuery());
   const [step, setStep] = useState<Step>("route");
-  const [from, setFrom] = useState<Location | null>(null);
-  const [to, setTo] = useState<Location | null>(null);
+  const search = Route.useSearch();
+  const [pre] = useState(() => readPrefill(search));
+  const [from, setFrom] = useState<Location | null>(() =>
+    pre.from ? { id: "prefill-from", name: pre.from.label, lat: pre.from.lat, lng: pre.from.lng, source: "pin" } : null,
+  );
+  const [to, setTo] = useState<Location | null>(() =>
+    pre.to ? { id: "prefill-to", name: pre.to.label, lat: pre.to.lat, lng: pre.to.lng, source: "pin" } : null,
+  );
   const [manual, setManual] = useState({
-    category: "",
-    weightKg: "",
-    sizeClass: "",
-    fragile: false,
-    description: "",
+    category: pre.category,
+    weightKg: pre.weightKg ? String(pre.weightKg) : "",
+    sizeClass: pre.size?.sizeClass ?? "",
+    fragile: pre.fragile,
+    description: pre.description,
   });
+  const [vehicle, setVehicle] = useState<string>(pre.size?.id ?? "");
   const [quote, setQuote] = useState<Quote | null>(null);
   const [quotedDestination, setQuotedDestination] = useState<Location | null>(null);
   const [locationChangedAfterQuote, setLocationChangedAfterQuote] = useState(false);
   const [option, setOption] = useState<QuoteOption | null>(null);
-  const [recipient, setRecipient] = useState({ name: "", phone: "+250", notes: "" });
+  const [recipient, setRecipient] = useState({
+    name: pre.recipientName,
+    phone: pre.recipientPhone ?? "+250",
+    notes: pre.notes,
+  });
+  const phoneValid = normalizeRwandaPhone(recipient.phone) !== null;
+  const phoneNetwork = rwandaNetwork(recipient.phone);
   const [locationConfirmation, setLocationConfirmation] = useState<{
     token: string;
     expiresAt: string;
@@ -84,10 +127,22 @@ function Send() {
   const [destinationCargoPointId, setDestinationCargoPointId] = useState("");
   const [measurements, setMeasurements] = useState({
     packageCount: "1",
-    length: "",
-    width: "",
-    height: "",
+    length: pre.size ? String(pre.size.dims.length) : "",
+    width: pre.size ? String(pre.size.dims.width) : "",
+    height: pre.size ? String(pre.size.dims.height) : "",
   });
+  const pickVehicle = (id: string) => {
+    const v = VEHICLE_SIZES.find((x) => x.id === id);
+    if (!v) throw new Error(`Unknown size; expected ${VEHICLE_SIZES.map((x) => x.id).join(", ")}.`);
+    setVehicle(v.id);
+    setManual((m) => ({ ...m, sizeClass: v.sizeClass }));
+    setMeasurements((m) => ({
+      ...m,
+      length: String(v.dims.length),
+      width: String(v.dims.width),
+      height: String(v.dims.height),
+    }));
+  };
   const [shipment, setShipment] = useState<Shipment | null>(null);
   const [idempotencyKey, setIdempotencyKey] = useState<string | null>(null);
 
@@ -285,6 +340,124 @@ function Send() {
       setStep("cargo");
     }
   };
+  // ---- Browser AI assistant tools (WebMCP). They fill the form; a person always confirms and pays. ----
+  const inRwanda = (lat: unknown, lng: unknown) =>
+    typeof lat === "number" && typeof lng === "number" && lat >= -3 && lat <= -1 && lng >= 28.8 && lng <= 31;
+  useWebMCP({
+    name: "read_send_form",
+    description: "Read the current Send Cargo step and what has been filled in so far.",
+    annotations: { readOnlyHint: true, untrustedContentHint: true },
+    execute: () =>
+      runWebMCPTool("read_send_form", () =>
+        [
+          `step: ${step}`,
+          `pickup: ${from?.name ?? "not set"}`,
+          `deliver to: ${(confirmedDestination ?? to)?.name ?? "not set"}`,
+          `cargo: ${manual.category || "not set"}, ${manual.weightKg || "?"} kg, size ${vehicle || "not set"}${manual.fragile ? ", fragile" : ""}`,
+          `recipient: ${recipient.name || "not set"} ${recipient.phone}`,
+          quote ? `options: ${quote.options.map((o) => `${o.id}=${o.label} ${formatRWF(o.price.amount)}`).join("; ")}` : "options: none yet",
+          `selected option: ${option?.id ?? "none"}`,
+        ].join("\n"),
+      ),
+  });
+  useWebMCP({
+    name: "set_route",
+    description: "Set pickup and delivery places in Rwanda by coordinates and a short landmark label.",
+    enabled: step === "route" || step === "cargo",
+    inputSchema: {
+      type: "object",
+      properties: {
+        pickup: { type: "object", description: "Pickup place.", properties: { lat: { type: "number" }, lng: { type: "number" }, label: { type: "string", description: "Landmark, e.g. 'Kimironko market, blue gate'." } }, required: ["lat", "lng", "label"] },
+        destination: { type: "object", description: "Delivery place.", properties: { lat: { type: "number" }, lng: { type: "number" }, label: { type: "string" } }, required: ["lat", "lng", "label"] },
+      },
+    },
+    execute: (args: { pickup?: { lat: number; lng: number; label: string }; destination?: { lat: number; lng: number; label: string } }) =>
+      runWebMCPTool("set_route", () => {
+        for (const [k, v] of Object.entries({ pickup: args.pickup, destination: args.destination })) {
+          if (v === undefined) continue;
+          if (!inRwanda(v.lat, v.lng)) throw new Error(`${k} must be inside Rwanda.`);
+          if (typeof v.label !== "string" || !v.label.trim()) throw new Error(`${k} label is required.`);
+        }
+        if (args.pickup) setFrom({ id: "agent-from", name: args.pickup.label, lat: args.pickup.lat, lng: args.pickup.lng, source: "pin" });
+        if (args.destination) setTo({ id: "agent-to", name: args.destination.label, lat: args.destination.lat, lng: args.destination.lng, source: "pin" });
+        return "Route updated.";
+      }),
+  });
+  useWebMCP({
+    name: "describe_cargo",
+    description: "Describe the cargo: what it is, approximate weight, vehicle size and whether it is fragile. Moves to the cargo step.",
+    enabled: step === "route" || step === "cargo",
+    inputSchema: {
+      type: "object",
+      properties: {
+        category: { type: "string", description: "What it is, e.g. 'Food / produce'." },
+        weightKg: { type: "number", description: "Approximate weight in kg." },
+        size: { type: "string", enum: VEHICLE_SIZES.map((v) => v.id), description: "Smallest vehicle that fits it." },
+        fragile: { type: "boolean" },
+        description: { type: "string" },
+      },
+      required: ["category", "weightKg", "size"],
+    },
+    execute: (a: { category: string; weightKg: number; size: string; fragile?: boolean; description?: string }) =>
+      runWebMCPTool("describe_cargo", () => {
+        if (typeof a.category !== "string" || !a.category.trim()) throw new Error("category is required.");
+        if (typeof a.weightKg !== "number" || !(a.weightKg >= 0.1)) throw new Error("weightKg must be at least 0.1.");
+        if (a.fragile !== undefined && typeof a.fragile !== "boolean") throw new Error("fragile must be true or false.");
+        if (!routeReady) throw new Error("Set pickup and destination first.");
+        pickVehicle(a.size);
+        setManual((m) => ({ ...m, category: a.category, weightKg: String(a.weightKg), fragile: a.fragile ?? m.fragile, description: a.description ?? m.description }));
+        setStep("cargo");
+        return "Cargo described. Call get_prices next.";
+      }),
+  });
+  useWebMCP({
+    name: "get_prices",
+    description: "Ask Tembera for delivery options and prices in RWF for the current route and cargo.",
+    enabled: step === "cargo" && quoteReady && Boolean(manual.sizeClass && manual.category && manual.weightKg) && !getQuote.isPending,
+    annotations: { untrustedContentHint: true },
+    execute: () =>
+      runWebMCPTool("get_prices", async () => {
+        const { quote: q } = await getQuote.mutateAsync();
+        return q.options.map((o) => `${o.id}: ${o.label} — ${formatRWF(o.price.amount)}${o.recommended ? " (recommended)" : ""}`).join("\n");
+      }),
+  });
+  useWebMCP({
+    name: "choose_option",
+    description: "Choose one of the delivery options returned by get_prices.",
+    enabled: step === "price" && Boolean(quote),
+    inputSchema: { type: "object", properties: { optionId: { type: "string", description: "Option id from get_prices." } }, required: ["optionId"] },
+    execute: ({ optionId }: { optionId: string }) =>
+      runWebMCPTool("choose_option", () => {
+        const o = quote?.options.find((x) => x.id === optionId);
+        if (!o) throw new Error("Unknown option id.");
+        setOption(o);
+        setStep("recipient");
+        return `Chose ${o.label}.`;
+      }),
+  });
+  useWebMCP({
+    name: "set_recipient",
+    description: "Set who receives the cargo (Rwandan mobile number) and optional delivery notes.",
+    enabled: step === "recipient",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string" },
+        phone: { type: "string", description: "Rwandan mobile, e.g. 078xxxxxxx or +25078xxxxxxx." },
+        notes: { type: "string" },
+      },
+      required: ["name", "phone"],
+    },
+    execute: (a: { name: string; phone: string; notes?: string }) =>
+      runWebMCPTool("set_recipient", () => {
+        if (typeof a.name !== "string" || !a.name.trim()) throw new Error("name is required.");
+        const phone = typeof a.phone === "string" ? normalizeRwandaPhone(a.phone) : null;
+        if (!phone) throw new Error("phone must be a Rwandan mobile number (MTN or Airtel).");
+        setRecipient((r) => ({ ...r, name: a.name, phone, notes: typeof a.notes === "string" ? a.notes : r.notes }));
+        return "Recipient set. Package count and handoff choices are on screen; the person confirms and pays.";
+      }),
+  });
+
   const stepIcons = [MapPin, Package, RouteIcon, UserRound, CheckCircle2];
   const stepHeadings: Record<Exclude<Step, "done">, string> = {
     route: t("send.pathTitle.route"),
@@ -543,6 +716,26 @@ function Send() {
                     </p>
                   </div>
                 </div>
+                <div role="group" aria-label={t("send.category")} className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                  {CARGO_CATEGORIES.map((c) => {
+                    const label = t(`send.cat.${c}`);
+                    const active = manual.category === label;
+                    return (
+                      <button
+                        key={c}
+                        type="button"
+                        aria-pressed={active}
+                        onClick={() => setManual({ ...manual, category: c === "other" ? "" : label })}
+                        className={cn(
+                          "min-h-12 rounded-xl border px-3 py-2 text-sm font-semibold transition-colors",
+                          active ? "border-accent bg-accent/10 text-foreground" : "border-border bg-surface hover:bg-secondary",
+                        )}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
                 <Field label={t("send.category")}>
                   <Input
                     value={manual.category}
@@ -563,19 +756,25 @@ function Send() {
                       onChange={(e) => setManual({ ...manual, weightKg: e.target.value })}
                     />
                   </Field>
-                  <Field label={t("send.size")}>
-                    <select
-                      required
-                      value={manual.sizeClass}
-                      onChange={(e) => setManual({ ...manual, sizeClass: e.target.value })}
-                      className="h-12 w-full rounded-xl border border-input bg-surface px-3 text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                    >
-                      <option value="">{t("send.chooseSize")}</option>
-                      <option value="small">{t("send.size.small")}</option>
-                      <option value="medium">{t("send.size.medium")}</option>
-                      <option value="large">{t("send.size.large")}</option>
-                      <option value="xlarge">{t("send.size.xlarge")}</option>
-                    </select>
+                  <Field label={t("send.sizeByVehicle")}>
+                    <div role="radiogroup" aria-label={t("send.sizeByVehicle")} className="grid grid-cols-2 gap-2">
+                      {VEHICLE_SIZES.map((v) => (
+                        <button
+                          key={v.id}
+                          type="button"
+                          role="radio"
+                          aria-checked={vehicle === v.id}
+                          onClick={() => pickVehicle(v.id)}
+                          className={cn(
+                            "min-h-12 rounded-xl border px-3 py-2 text-left text-sm transition-colors",
+                            vehicle === v.id ? "border-accent bg-accent/10" : "border-border bg-surface hover:bg-secondary",
+                          )}
+                        >
+                          <span className="block font-semibold">{t(`send.vehicle.${v.id}`)}</span>
+                          <span className="block text-xs text-muted-foreground">{t(`send.vehicle.${v.id}Hint`)}</span>
+                        </button>
+                      ))}
+                    </div>
                   </Field>
                 </div>
                 <Field label={t("send.description")}>
@@ -621,7 +820,7 @@ function Send() {
                   <ArrowLeft className="size-4" />
                   {t("send.editRoute")}
                 </Button>
-                <Button size="lg" loading={getQuote.isPending} disabled={!quoteReady}>
+                <Button size="lg" loading={getQuote.isPending} disabled={!quoteReady || !manual.sizeClass}>
                   {t("send.getPrices")}
                   <ArrowRight className="size-4" />
                 </Button>
@@ -776,9 +975,14 @@ function Send() {
                       value={recipient.phone}
                       onChange={(e) => updateRecipientPhone(e.target.value)}
                       required
-                      pattern="\+?[0-9 ]{9,15}"
+                      inputMode="tel"
+                      aria-invalid={!phoneValid}
+                      aria-describedby="recipient-phone-hint"
                       autoComplete="tel"
                     />
+                    <span id="recipient-phone-hint" className={cn("mt-1 block text-xs", phoneValid ? "text-muted-foreground" : "text-destructive")}>
+                      {phoneValid ? t("send.phoneNetwork", { network: phoneNetwork ?? "" }) : t("send.phoneInvalid")}
+                    </span>
                   </Field>
                 </div>
                 <Field label={t("send.notes")}>
@@ -897,7 +1101,7 @@ function Send() {
                   <ArrowLeft className="size-4" />
                   {t("send.editPrice")}
                 </Button>
-                <Button size="lg">
+                <Button size="lg" disabled={!phoneValid}>
                   {t("common.next")}
                   <ArrowRight className="size-4" />
                 </Button>
