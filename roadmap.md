@@ -1,2 +1,0 @@
-- [ ] Send page: use my location / map pick options
-- [ ] Rwanda-friendly, AI-operable Send flow (see plan)
