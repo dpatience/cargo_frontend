@@ -142,7 +142,7 @@ export function OtpSignIn({
             {t("auth.codeSent")}
           </p>
         ))}
-      {err &&
+      {err != null &&
         (err instanceof ApiError && err.kind === "unconfigured" ? (
           <ErrorState error={err} />
         ) : (

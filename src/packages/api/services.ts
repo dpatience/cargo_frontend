@@ -210,7 +210,7 @@ export const driverApi = {
   scanTag: (
     jobId: string,
     trackingCode: string,
-    deliveryCode?: string,
+    deliveryCode?: string | undefined,
     idempotencyKey = crypto.randomUUID(),
   ) =>
     apiRequest(`/driver/jobs/${jobId}/tag-scan`, Ok, {
@@ -235,7 +235,7 @@ export const dispatchApi = {
     body: {
       shipmentId: string;
       driverId: string;
-      cargoPointId?: string;
+      cargoPointId?: string | undefined;
       type: "pickup" | "handoff" | "delivery";
     },
     idempotencyKey = crypto.randomUUID(),
@@ -247,7 +247,7 @@ export const dispatchApi = {
       area: "admin",
     }),
   scanAtStation: (
-    body: { trackingCode: string; action: "receive" | "release"; deliveryCode?: string },
+    body: { trackingCode: string; action: "receive" | "release"; deliveryCode?: string | undefined },
     idempotencyKey = crypto.randomUUID(),
   ) =>
     apiRequest("/cargo-point-operator/scans", Ok, {
@@ -329,7 +329,7 @@ export const adminApi = {
     }),
   correctShipment: (
     id: string,
-    body: { status: string; reason: string; currentCargoPointId?: string },
+    body: { status: string; reason: string; currentCargoPointId?: string | undefined },
   ) =>
     apiRequest(`/admin/operations/exceptions/${encodeURIComponent(id)}/correct`, Ok, {
       method: "POST",
@@ -367,8 +367,8 @@ export const adminApi = {
     address: string;
     district: string;
     province: string;
-    contactName?: string;
-    contactPhone?: string;
+    contactName?: string | undefined;
+    contactPhone?: string | undefined;
     capacity: { maxItems: number; maxWeightKg: number; maxVolumeM3: number };
     isActive: boolean;
   }) =>
@@ -384,8 +384,8 @@ export const adminApi = {
       address?: string;
       district?: string;
       province?: string;
-      contactName?: string;
-      contactPhone?: string;
+      contactName?: string | undefined;
+      contactPhone?: string | undefined;
       capacity?: { maxItems: number; maxWeightKg: number; maxVolumeM3: number };
       isActive?: boolean;
     },
