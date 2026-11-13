@@ -165,7 +165,7 @@ export async function apiRequest<S extends z.ZodTypeAny>(
       method: opts.method ?? "GET",
       headers,
       body,
-      credentials: opts.credentials,
+      ...(opts.credentials ? { credentials: opts.credentials } : {}),
       signal: ctrl.signal,
     });
   } catch (e) {
@@ -188,7 +188,7 @@ export async function apiRequest<S extends z.ZodTypeAny>(
         method: opts.method ?? "GET",
         headers,
         body,
-        credentials: opts.credentials,
+        ...(opts.credentials ? { credentials: opts.credentials } : {}),
         signal: retryController.signal,
       });
     } catch (error) {

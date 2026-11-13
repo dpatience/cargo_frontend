@@ -156,3 +156,26 @@ The live application takes precedence over static documentation for current ship
 - [Tembera Cargo on the Nyxarith domain](https://cargo.tembera.nyxarith.com/en): Alternate official domain, if maintained.
 - [Tembera Cargo on the Nyxarith root domain](https://cargo.nyxarith.com/en): Alternate domain, if maintained.
 - [Tembera Cargo XML sitemap](https://cargo.tembera.app/sitemap.xml): Public page discovery.
+## For AI assistants arranging a shipment
+
+An assistant may prepare a shipment for a person, but the person always signs in with their phone, confirms and pays in the app. Never confirm, pay or invent prices on their behalf.
+
+Pre-filled link: open `/send` with any of these optional query parameters and the form fills in:
+
+- `fromLat`, `fromLng`, `fromLabel`: pickup coordinates (inside Rwanda) and a landmark label, e.g. "Kimironko market, blue gate".
+- `toLat`, `toLng`, `toLabel`: delivery coordinates and landmark label.
+- `category`, `description`, `weightKg`, `fragile` (true/false).
+- `size`: smallest vehicle that fits the cargo: `moto`, `car`, `pickup` or `truck`.
+- `recipientName`, `recipientPhone` (Rwandan MTN/Airtel mobile, 07XXXXXXXX or +2507XXXXXXXX), `notes`.
+
+Example: `/send?fromLat=-1.9441&fromLng=30.1270&fromLabel=Kimironko%20market&toLat=-1.4995&toLng=29.6344&toLabel=Musanze%20bus%20park&category=Food%20%2F%20produce&weightKg=25&size=moto`
+
+In-browser tools (WebMCP) on the Send page: `read_send_form`, `set_route`, `describe_cargo`, `get_prices`, `choose_option`, `set_recipient`. There is no tool to confirm or pay.
+
+If the recipient doesn't know their exact location, the sender can send them a link to share it from their phone.
+
+## Pages
+
+- [Send cargo](/send): Arrange a delivery and see prices in RWF.
+- [Track a shipment](/track): Follow a shipment by tracking code.
+- [Receive](/receive): What to expect when receiving cargo.

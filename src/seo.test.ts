@@ -195,6 +195,7 @@ describe("Cargo content pages and structured data", () => {
     const schema = JSON.parse(head.scripts[0]!.children) as {
       "@graph": Array<{
         "@type": string;
+        url?: string;
         potentialAction?: { "@type": string; target: { urlTemplate: string } };
       }>;
     };

@@ -13,7 +13,7 @@ export function ThemeToggle() {
     const saved = localStorage.getItem(STORAGE_KEY);
     const initialTheme = saved === "light" ? "light" : "dark";
     setTheme(initialTheme);
-    document.documentElement.dataset.theme = initialTheme;
+    document.documentElement.dataset["theme"] = initialTheme;
     document.documentElement.classList.toggle("dark", initialTheme === "dark");
   }, []);
 
@@ -29,7 +29,7 @@ export function ThemeToggle() {
       onClick={() => {
         localStorage.setItem(STORAGE_KEY, nextTheme);
         setTheme(nextTheme);
-        document.documentElement.dataset.theme = nextTheme;
+        document.documentElement.dataset["theme"] = nextTheme;
         document.documentElement.classList.toggle("dark", nextTheme === "dark");
       }}
     >
