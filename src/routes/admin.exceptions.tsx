@@ -38,7 +38,7 @@ function Exceptions() {
       id: string;
       status: string;
       reason: string;
-      currentCargoPointId?: string;
+      currentCargoPointId?: string | undefined;
     }) => adminApi.correctShipment(id, { status, reason, currentCargoPointId }),
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ["admin", "operations", "exceptions"] });
